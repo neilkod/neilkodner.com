@@ -1,31 +1,6 @@
 {
-  "generated": "2025-04-12T00:00:00Z",
-  "baseUrl": "https://pub-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.r2.dev",
+  "generated": "2026-04-12T17:18:48+00:00",
+  "baseUrl": "https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev",
   "hero": [],
-  "categories": [
-    {
-      "id": "aviation",
-      "name": "Aviation",
-      "cover": "aviation/cover.jpg",
-      "albums": []
-    },
-    {
-      "id": "hockey",
-      "name": "Hockey",
-      "cover": "hockey/cover.jpg",
-      "albums": []
-    },
-    {
-      "id": "travel",
-      "name": "Travel & Street",
-      "cover": "travel/cover.jpg",
-      "albums": []
-    },
-    {
-      "id": "birds",
-      "name": "Birds",
-      "cover": "birds/cover.jpg",
-      "albums": []
-    }
-  ]
+  "categories": []
 }
