@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-12T21:56:31+00:00",
+  "generated": "2026-04-12T22:29:58+00:00",
   "baseUrl": "https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev",
   "hero": [
     {
@@ -41,37 +41,338 @@
               "filename": "DSC02574.JPG",
               "width": 9504,
               "height": 6336,
-              "caption": ""
+              "caption": "",
+              "exif": {}
             },
             {
               "filename": "DSC04597.JPG",
               "width": 9504,
               "height": 6336,
-              "caption": ""
+              "caption": "",
+              "exif": {}
             },
             {
               "filename": "DSC04599.JPG",
               "width": 9504,
               "height": 6336,
-              "caption": ""
+              "caption": "",
+              "exif": {}
             },
             {
               "filename": "DSC04600.JPG",
               "width": 9504,
               "height": 6336,
-              "caption": ""
+              "caption": "",
+              "exif": {}
             },
             {
               "filename": "DSC04617.JPG",
               "width": 9504,
               "height": 6336,
-              "caption": ""
+              "caption": "",
+              "exif": {}
             },
             {
               "filename": "DSC04620.JPG",
               "width": 9504,
               "height": 6336,
-              "caption": ""
+              "caption": "",
+              "exif": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hockey",
+      "name": "Hockey",
+      "cover": "hockey/cover.jpg",
+      "albums": [
+        {
+          "id": "select-images",
+          "folder": "hockey/select-images",
+          "title": "Select Images",
+          "date": "",
+          "location": "",
+          "cover": "hockey/select-images/cover.jpg",
+          "photos": [
+            {
+              "filename": "DSC02559.JPG",
+              "width": 5175,
+              "height": 3449,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "200mm",
+                "aperture": "f/3.2",
+                "shutter_speed": "1/500s",
+                "iso": "ISO 640"
+              }
+            },
+            {
+              "filename": "DSC02573.JPG",
+              "width": 6317,
+              "height": 4211,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "122mm",
+                "aperture": "f/3.2",
+                "shutter_speed": "1/500s",
+                "iso": "ISO 800"
+              }
+            },
+            {
+              "filename": "DSC02899.JPG",
+              "width": 4213,
+              "height": 6319,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "143mm",
+                "aperture": "f/3.2",
+                "shutter_speed": "1/800s",
+                "iso": "ISO 1600"
+              }
+            },
+            {
+              "filename": "DSC04243.jpg",
+              "width": 9504,
+              "height": 6336,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "152mm",
+                "aperture": "f/3.5",
+                "shutter_speed": "1/1000s",
+                "iso": "ISO 800"
+              }
+            },
+            {
+              "filename": "DSC04254.jpg",
+              "width": 4208,
+              "height": 6312,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "144mm",
+                "aperture": "f/3.5",
+                "shutter_speed": "1/1000s",
+                "iso": "ISO 800"
+              }
+            },
+            {
+              "filename": "DSC04314.jpg",
+              "width": 3896,
+              "height": 5844,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "200mm",
+                "aperture": "f/3.5",
+                "shutter_speed": "1/1000s",
+                "iso": "ISO 2000"
+              }
+            },
+            {
+              "filename": "DSC04319.jpg",
+              "width": 9504,
+              "height": 6336,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "200mm",
+                "aperture": "f/3.5",
+                "shutter_speed": "1/1000s",
+                "iso": "ISO 2500"
+              }
+            },
+            {
+              "filename": "DSC04377.jpg",
+              "width": 9504,
+              "height": 6336,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "131mm",
+                "aperture": "f/3.5",
+                "shutter_speed": "1/800s",
+                "iso": "ISO 1600"
+              }
+            },
+            {
+              "filename": "DSC04388.jpg",
+              "width": 2888,
+              "height": 4332,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "162mm",
+                "aperture": "f/3.5",
+                "shutter_speed": "1/800s",
+                "iso": "ISO 800"
+              }
+            },
+            {
+              "filename": "DSC04395.jpg",
+              "width": 8820,
+              "height": 5880,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "122mm",
+                "aperture": "f/3.5",
+                "shutter_speed": "1/800s",
+                "iso": "ISO 500"
+              }
+            },
+            {
+              "filename": "DSC04429.jpg",
+              "width": 9504,
+              "height": 6336,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "120mm",
+                "aperture": "f/3.5",
+                "shutter_speed": "1/800s",
+                "iso": "ISO 800"
+              }
+            },
+            {
+              "filename": "DSC04505.jpg",
+              "width": 9504,
+              "height": 6336,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "200mm",
+                "aperture": "f/3.5",
+                "shutter_speed": "1/800s",
+                "iso": "ISO 1000"
+              }
+            },
+            {
+              "filename": "DSC04674.jpg",
+              "width": 2791,
+              "height": 4184,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "123mm",
+                "aperture": "f/4",
+                "shutter_speed": "1/800s",
+                "iso": "ISO 1600"
+              }
+            },
+            {
+              "filename": "DSC05875.jpg",
+              "width": 9504,
+              "height": 6336,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "100mm",
+                "aperture": "f/3.2",
+                "shutter_speed": "1/1000s",
+                "iso": "ISO 1000"
+              }
+            },
+            {
+              "filename": "DSC05881.jpg",
+              "width": 9441,
+              "height": 6294,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "100mm",
+                "aperture": "f/3.2",
+                "shutter_speed": "1/1000s",
+                "iso": "ISO 1000"
+              }
+            },
+            {
+              "filename": "DSC05897.jpg",
+              "width": 7969,
+              "height": 5312,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "100mm",
+                "aperture": "f/3.2",
+                "shutter_speed": "1/1000s",
+                "iso": "ISO 1000"
+              }
+            },
+            {
+              "filename": "DSC06009.jpg",
+              "width": 9504,
+              "height": 6336,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "148mm",
+                "aperture": "f/3.2",
+                "shutter_speed": "1/1000s",
+                "iso": "ISO 1000"
+              }
+            },
+            {
+              "filename": "DSC06027.jpg",
+              "width": 9504,
+              "height": 6336,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 70-200mm F2.8 GM OSS",
+                "focal_length": "200mm",
+                "aperture": "f/3.2",
+                "shutter_speed": "1/1000s",
+                "iso": "ISO 1000"
+              }
+            },
+            {
+              "filename": "DSCF0880.JPG",
+              "width": 2400,
+              "height": 1601,
+              "caption": "",
+              "exif": {
+                "camera": "X100VI",
+                "focal_length": "23mm",
+                "aperture": "f/4.5",
+                "shutter_speed": "1/500s",
+                "iso": "ISO 1250"
+              }
+            },
+            {
+              "filename": "DSCF0958.JPG",
+              "width": 7728,
+              "height": 5152,
+              "caption": "",
+              "exif": {
+                "camera": "X100VI",
+                "focal_length": "23mm",
+                "aperture": "f/4.5",
+                "shutter_speed": "1/125s",
+                "iso": "ISO 400"
+              }
             }
           ]
         }
