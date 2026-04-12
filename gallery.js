@@ -29,8 +29,23 @@ export function initLightbox(galleryEl) {
     zoomAnimationDuration:  250,
   });
 
-  // ── Caption ──────────────────────────────────────────────────
   lightbox.on('uiRegister', () => {
+    // ── Photo counter ───────────────────────────────────────
+    lightbox.pswp.ui.registerElement({
+      name:     'counter',
+      order:    5,
+      isButton: false,
+      appendTo: 'bar',
+      onInit(el, pswp) {
+        const update = () => {
+          el.textContent = `${pswp.currIndex + 1} / ${pswp.getNumItems()}`;
+        };
+        pswp.on('change', update);
+        update(); // show immediately on open
+      },
+    });
+
+    // ── Caption ─────────────────────────────────────────────
     lightbox.pswp.ui.registerElement({
       name:      'caption',
       order:     9,

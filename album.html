@@ -18,6 +18,21 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@5/dist/photoswipe.css">
 
   <style>
+    /* ── PhotoSwipe counter ──────────────────────────── */
+    .pswp__counter {
+      font-family: var(--font-ui);
+      font-size: var(--text-sm);
+      font-weight: 300;
+      color: rgba(240,237,232,0.75);
+      letter-spacing: 0.06em;
+      padding: 0 var(--gutter, 1.5rem);
+      display: flex;
+      align-items: center;
+      height: 44px; /* matches PhotoSwipe top-bar height */
+      pointer-events: none;
+      user-select: none;
+    }
+
     /* ── PhotoSwipe caption ──────────────────────────── */
     .pswp__custom-caption {
       position: absolute;
