@@ -53,6 +53,30 @@ export function initLightbox(galleryEl) {
   return lightbox;
 }
 
+// ─── Srcset builder ───────────────────────────────────────────
+
+/**
+ * Build a PhotoSwipe srcset string for a photo.
+ *
+ * Reads the optional `photo.sizes` array written by the catalog pipeline:
+ *   [{ w: 800, path: "_resized/800/aviation/album/img.jpg" },
+ *    { w: 1600, path: "_resized/1600/aviation/album/img.jpg" }]
+ *
+ * The full-res URL is always appended as the largest entry.
+ * Falls back to full-res only when `photo.sizes` is absent or empty,
+ * preserving backward compatibility with the current single-size catalog.
+ *
+ * `w` descriptors are the actual pixel widths of each variant so the
+ * browser (and PhotoSwipe) can pick the closest fit for the viewport.
+ */
+function buildPswpSrcset(baseUrl, photo, fullPath) {
+  const fullEntry = `${fullUrl(baseUrl, fullPath)} ${photo.width}w`;
+  if (!photo.sizes?.length) return fullEntry;
+
+  const variantEntries = photo.sizes.map(s => `${fullUrl(baseUrl, s.path)} ${s.w}w`);
+  return [...variantEntries, fullEntry].join(', ');
+}
+
 // ─── Album page ───────────────────────────────────────────────
 
 /**
@@ -129,10 +153,13 @@ export async function renderAlbumPage() {
 
     const a = document.createElement('a');
     a.className = 'album-grid-item';
-    // href = full-res URL (PhotoSwipe reads this)
+    // href = full-res URL (PhotoSwipe fallback if srcset is unsupported)
     a.href = fullUrl(catalog.baseUrl, path);
+    // Dimensions are always the full-res size; PhotoSwipe uses them for
+    // aspect-ratio layout regardless of which srcset entry it loads.
     a.setAttribute('data-pswp-width',  photo.width);
     a.setAttribute('data-pswp-height', photo.height);
+    a.setAttribute('data-pswp-srcset', buildPswpSrcset(catalog.baseUrl, photo, path));
     if (photo.caption) a.setAttribute('data-pswp-caption', photo.caption);
 
     const img = document.createElement('img');
