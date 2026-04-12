@@ -477,9 +477,16 @@ h4 { font-size: var(--text-xl); }
   opacity: 1;
 }
 
-.album-tile:hover .album-tile-cover img {
-  filter: var(--tile-brightness-hover);
-  transform: scale(1.02);
+/* Desktop only — pointer devices with true hover capability */
+@media (hover: hover) {
+  .album-tile:hover .album-tile-cover img {
+    filter: var(--tile-brightness-hover);
+    transform: scale(1.02);
+  }
+
+  .album-tile:hover .tile-accent-border {
+    border-color: var(--color-accent);
+  }
 }
 
 .album-tile-cover .tile-bg {
@@ -495,10 +502,6 @@ h4 { font-size: var(--text-xl); }
   pointer-events: none;
   transition: border-color var(--transition);
   z-index: 2;
-}
-
-.album-tile:hover .tile-accent-border {
-  border-color: var(--color-accent);
 }
 
 .album-tile-meta {
