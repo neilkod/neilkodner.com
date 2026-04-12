@@ -548,6 +548,7 @@ h4 { font-size: var(--text-xl); }
 
 .album-grid-item img {
   width: 100%;
+  height: auto; /* let aspect-ratio drive height; never override to fixed px */
   display: block;
   opacity: 0;
   transition: opacity 0.4s ease, filter var(--transition);

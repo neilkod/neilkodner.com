@@ -124,7 +124,7 @@ export async function renderAlbumPage() {
     return;
   }
 
-  for (const photo of album.photos) {
+  for (const [i, photo] of album.photos.entries()) {
     const path = `${album.folder}/${photo.filename}`;
 
     const a = document.createElement('a');
@@ -138,10 +138,12 @@ export async function renderAlbumPage() {
     const img = document.createElement('img');
     img.src      = thumbUrl(catalog.baseUrl, path);
     img.alt      = photo.caption || '';
-    img.loading  = 'lazy';
+    img.loading  = i === 0 ? 'eager' : 'lazy';
     img.decoding = 'async';
-    // Reserve space to prevent layout shift
-    img.style.aspectRatio = `${photo.width} / ${photo.height}`;
+    // Reserve space before image loads; guard against missing dimensions
+    if (photo.width && photo.height) {
+      img.style.aspectRatio = `${photo.width} / ${photo.height}`;
+    }
 
     fadeInOnLoad(img);
     a.appendChild(img);
