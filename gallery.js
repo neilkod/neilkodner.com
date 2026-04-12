@@ -30,20 +30,8 @@ export function initLightbox(galleryEl) {
   });
 
   lightbox.on('uiRegister', () => {
-    // ── Photo counter ───────────────────────────────────────
-    lightbox.pswp.ui.registerElement({
-      name:     'counter',
-      order:    5,
-      isButton: false,
-      appendTo: 'bar',
-      onInit(el, pswp) {
-        const update = () => {
-          el.textContent = `${pswp.currIndex + 1} / ${pswp.getNumItems()}`;
-        };
-        pswp.on('change', update);
-        update(); // show immediately on open
-      },
-    });
+    // Note: PhotoSwipe v5 registers a built-in counter (name:'counter',
+    // order:5) — no custom registration needed.
 
     // ── Caption + EXIF ──────────────────────────────────────
     lightbox.pswp.ui.registerElement({
