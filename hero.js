@@ -56,13 +56,13 @@ export async function initHero() {
 
   if (slides.length < 2) return;
 
-  // Cycle with a fresh random delay each turn (5–7 s)
+  // Cycle with a fresh random delay each turn (8–12 s)
   let current = 0;
   function advance() {
     slides[current].div.classList.remove('is-active');
     current = (current + 1) % slides.length;
     slides[current].div.classList.add('is-active');
-    setTimeout(advance, randMs(5000, 7000));
+    setTimeout(advance, randMs(8000, 12000));
   }
-  setTimeout(advance, randMs(5000, 7000));
+  setTimeout(advance, randMs(8000, 12000));
 }

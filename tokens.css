@@ -41,7 +41,7 @@
 
   /* Transitions */
   --transition:      0.3s ease;
-  --transition-slow: 1.2s ease;
+  --transition-slow: 2s ease;
 
   /* Tile hover */
   --tile-brightness-hover: brightness(1.15);
