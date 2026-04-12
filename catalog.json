@@ -1,9 +1,24 @@
 {
-  "generated": "2026-04-12T19:46:02+00:00",
+  "generated": "2026-04-12T19:50:49+00:00",
   "baseUrl": "https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev",
   "hero": [
     {
       "filename": "hero1.JPG",
+      "width": 9504,
+      "height": 6336
+    },
+    {
+      "filename": "hero2.JPG",
+      "width": 9504,
+      "height": 6336
+    },
+    {
+      "filename": "hero3.JPG",
+      "width": 9504,
+      "height": 6336
+    },
+    {
+      "filename": "hero4.JPG",
       "width": 9504,
       "height": 6336
     }
