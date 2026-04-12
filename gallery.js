@@ -27,6 +27,11 @@ export function initLightbox(galleryEl) {
     bgOpacity: 0.95,
     showHideAnimationType: 'fade',
     zoomAnimationDuration:  250,
+
+    // Reserve space at top (counter/close bar) and bottom (caption).
+    // This prevents images from extending into either UI zone so the
+    // caption is always below the photo for both orientations.
+    padding: { top: 44, bottom: 80, left: 0, right: 0 },
   });
 
   lightbox.on('uiRegister', () => {
