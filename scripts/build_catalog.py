@@ -33,6 +33,7 @@ import json
 import os
 import sys
 from datetime import datetime, timezone
+from math import gcd
 
 import boto3
 import botocore.exceptions
@@ -80,6 +81,96 @@ def put_bytes(s3, bucket: str, key: str, data: bytes):
 def image_dimensions(data: bytes) -> tuple[int, int]:
     img = Image.open(io.BytesIO(data))
     return img.width, img.height
+
+
+def _rational_to_float(val):
+    """Convert a Pillow IFDRational or (n, d) tuple to float, or None on failure."""
+    try:
+        if hasattr(val, "numerator") and hasattr(val, "denominator"):
+            return val.numerator / val.denominator if val.denominator else None
+        if isinstance(val, tuple) and len(val) == 2:
+            return val[0] / val[1] if val[1] else None
+        return float(val)
+    except (TypeError, ValueError, ZeroDivisionError):
+        return None
+
+
+def _format_exposure(val) -> str | None:
+    """Format ExposureTime rational as '1/1600s', '0.5s', or '2s'."""
+    f = _rational_to_float(val)
+    if not f:
+        return None
+    if hasattr(val, "numerator"):
+        n, d = int(val.numerator), int(val.denominator)
+    elif isinstance(val, tuple):
+        n, d = int(val[0]), int(val[1])
+    else:
+        # Plain float — express as fraction if < 1s
+        if f < 1:
+            d = round(1 / f)
+            return f"1/{d}s"
+        return f"{f:g}s"
+    if d == 0:
+        return None
+    common = gcd(n, d)
+    n, d = n // common, d // common
+    if d == 1:
+        return f"{n}s"
+    if n == 1:
+        return f"1/{d}s"
+    return f"{n}/{d}s"
+
+
+def extract_exif(img: Image.Image) -> dict:
+    """
+    Extract a small set of photographic EXIF fields from a PIL Image.
+    Returns a dict with string values; absent fields are omitted.
+    All failures are silently ignored — EXIF is best-effort.
+    """
+    result: dict = {}
+    try:
+        exif_data = img.getexif()
+        if not exif_data:
+            return result
+
+        # IFD0 ─ Make, Model
+        make  = (exif_data.get(271) or "").strip()
+        model = (exif_data.get(272) or "").strip()
+        if model:
+            # Many cameras embed the make inside the model string; strip it.
+            if make and model.upper().startswith(make.upper()):
+                model = model[len(make):].strip()
+            result["camera"] = model
+
+        # ExifIFD ─ lens, focal length, aperture, shutter speed, ISO
+        ifd = exif_data.get_ifd(0x8769)  # 34665 = ExifIFD pointer
+
+        lens = (ifd.get(42036) or "").strip()   # LensModel
+        if lens:
+            result["lens"] = lens
+
+        fl = _rational_to_float(ifd.get(37386))  # FocalLength
+        if fl:
+            result["focal_length"] = f"{round(fl)}mm"
+
+        fn = _rational_to_float(ifd.get(33437))  # FNumber
+        if fn:
+            result["aperture"] = f"f/{fn:g}"
+
+        et = ifd.get(33434)  # ExposureTime
+        if et is not None:
+            s = _format_exposure(et)
+            if s:
+                result["shutter_speed"] = s
+
+        iso = ifd.get(34855)  # ISOSpeedRatings
+        if iso:
+            result["iso"] = f"ISO {iso}"
+
+    except Exception:
+        pass  # EXIF failures are non-fatal
+
+    return result
 
 
 def make_thumbnail(data: bytes) -> bytes:
@@ -270,6 +361,7 @@ def build():
                         "width":    prev_photo["width"],
                         "height":   prev_photo["height"],
                         "caption":  prev_photo.get("caption", ""),
+                        "exif":     prev_photo.get("exif", {}),
                     })
                     continue
 
@@ -277,7 +369,9 @@ def build():
                 print(f"  Photo  {photo_key}")
                 try:
                     data = get_bytes(s3, bucket, photo_key)
-                    w, h = image_dimensions(data)
+                    img  = Image.open(io.BytesIO(data))
+                    w, h = img.width, img.height
+                    exif = extract_exif(img)
 
                     if thumb_key not in keys_set:
                         print(f"    → thumb  {thumb_key}")
@@ -288,6 +382,7 @@ def build():
                         "width":    w,
                         "height":   h,
                         "caption":  prev_photo.get("caption", "") if prev_photo else "",
+                        "exif":     exif,
                     })
                 except Exception as exc:
                     print(f"  WARN  could not process {photo_key}: {exc}")

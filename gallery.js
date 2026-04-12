@@ -45,7 +45,7 @@ export function initLightbox(galleryEl) {
       },
     });
 
-    // ── Caption ─────────────────────────────────────────────
+    // ── Caption + EXIF ──────────────────────────────────────
     lightbox.pswp.ui.registerElement({
       name:      'caption',
       order:     9,
@@ -53,10 +53,30 @@ export function initLightbox(galleryEl) {
       appendTo:  'wrapper',
       onInit(el, pswp) {
         const refresh = () => {
-          const caption = pswp.currSlide?.data?.element
-            ?.getAttribute('data-pswp-caption') || '';
-          el.innerHTML = caption
-            ? `<p class="pswp-caption-text">${caption}</p>`
+          const elem    = pswp.currSlide?.data?.element;
+          const caption = elem?.getAttribute('data-pswp-caption') || '';
+          const exifRaw = elem?.getAttribute('data-pswp-exif') || '';
+
+          let exifHtml = '';
+          if (exifRaw) {
+            try {
+              const exif  = JSON.parse(exifRaw);
+              const parts = [
+                exif.camera,
+                exif.lens,
+                exif.focal_length,
+                exif.aperture,
+                exif.shutter_speed,
+                exif.iso,
+              ].filter(Boolean);
+              if (parts.length) {
+                exifHtml = `<p class="pswp-exif-text">${parts.join(' · ')}</p>`;
+              }
+            } catch { /* malformed JSON — skip */ }
+          }
+
+          el.innerHTML = caption || exifHtml
+            ? `${caption ? `<p class="pswp-caption-text">${caption}</p>` : ''}${exifHtml}`
             : '';
         };
         pswp.on('change', refresh);
@@ -176,6 +196,9 @@ export async function renderAlbumPage() {
     a.setAttribute('data-pswp-height', photo.height);
     a.setAttribute('data-pswp-srcset', buildPswpSrcset(catalog.baseUrl, photo, path));
     if (photo.caption) a.setAttribute('data-pswp-caption', photo.caption);
+    if (photo.exif && Object.keys(photo.exif).length) {
+      a.setAttribute('data-pswp-exif', JSON.stringify(photo.exif));
+    }
 
     const img = document.createElement('img');
     img.src      = thumbUrl(catalog.baseUrl, path);
