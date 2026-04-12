@@ -43,5 +43,6 @@ jobs:
             echo "catalog.json unchanged — nothing to commit"
           else
             git commit -m "chore: update catalog [skip ci]"
+            git pull --rebase
             git push
           fi
