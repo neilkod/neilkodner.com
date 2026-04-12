@@ -136,14 +136,15 @@ def parse_bucket(keys: list[str]) -> tuple[list[str], dict]:
             continue
 
         cat_id, album_id, filename = parts
-        if not filename or filename == "manifest.json":
+        if not filename or filename.lower() == "manifest.json":
             continue
 
         categories.setdefault(cat_id, {})
-        categories[cat_id].setdefault(album_id, {"files": [], "has_cover": False})
+        categories[cat_id].setdefault(album_id, {"files": [], "has_cover": False, "cover_file": None})
 
-        if filename == "cover.jpg":
+        if filename.lower() == "cover.jpg":
             categories[cat_id][album_id]["has_cover"] = True
+            categories[cat_id][album_id]["cover_file"] = filename  # preserve actual case
         else:
             categories[cat_id][album_id]["files"].append(filename)
 
@@ -203,7 +204,13 @@ def build():
     print("Scanning R2 bucket…")
     all_keys     = list_all_keys(s3, bucket)
     keys_set     = set(all_keys)
+    # Case-insensitive lookup: lowercase path → actual key in R2
+    key_lower    = {k.lower(): k for k in all_keys}
     print(f"  {len(all_keys)} objects found")
+
+    def find_key(path: str):
+        """Return the actual R2 key matching path regardless of case, or None."""
+        return key_lower.get(path.lower())
 
     hero_files, cat_tree = parse_bucket(all_keys)
 
@@ -286,16 +293,15 @@ def build():
                     print(f"  WARN  could not process {photo_key}: {exc}")
 
             # ── Cover thumbnail ───────────────────────────────────────────
-            if info["has_cover"]:
-                cover_key       = f"{folder}/cover.jpg"
-                cover_thumb_key = f"_thumbs/{folder}/cover.jpg"
-                if cover_thumb_key not in keys_set:
-                    print(f"  Cover thumb  {cover_key}")
-                    try:
-                        data = get_bytes(s3, bucket, cover_key)
-                        put_bytes(s3, bucket, cover_thumb_key, make_thumbnail(data))
-                    except Exception as exc:
-                        print(f"  WARN  {cover_key}: {exc}")
+            cover_thumb_key = f"_thumbs/{folder}/cover.jpg"
+            if info["has_cover"] and cover_thumb_key not in keys_set:
+                cover_key = f"{folder}/{info['cover_file']}"  # actual case
+                print(f"  Cover thumb  {cover_key}")
+                try:
+                    data = get_bytes(s3, bucket, cover_key)
+                    put_bytes(s3, bucket, cover_thumb_key, make_thumbnail(data))
+                except Exception as exc:
+                    print(f"  WARN  {cover_key}: {exc}")
 
             album_entries.append({
                 "id":       album_id,
@@ -314,20 +320,20 @@ def build():
         album_entries.sort(key=lambda a: a["date"] or "", reverse=True)
 
         # ── Category cover thumbnail ──────────────────────────────────────
-        cat_cover_key       = f"{cat_id}/cover.jpg"
         cat_cover_thumb_key = f"_thumbs/{cat_id}/cover.jpg"
-        if cat_cover_key in keys_set and cat_cover_thumb_key not in keys_set:
-            print(f"  Cat cover thumb  {cat_cover_key}")
+        actual_cat_cover    = find_key(f"{cat_id}/cover.jpg")  # handles .JPG etc.
+        if actual_cat_cover and cat_cover_thumb_key not in keys_set:
+            print(f"  Cat cover thumb  {actual_cat_cover}")
             try:
-                data = get_bytes(s3, bucket, cat_cover_key)
+                data = get_bytes(s3, bucket, actual_cat_cover)
                 put_bytes(s3, bucket, cat_cover_thumb_key, make_thumbnail(data))
             except Exception as exc:
-                print(f"  WARN  {cat_cover_key}: {exc}")
+                print(f"  WARN  {actual_cat_cover}: {exc}")
 
         category_entries.append({
             "id":     cat_id,
             "name":   folder_to_title(cat_id),
-            "cover":  cat_cover_key if cat_cover_key in keys_set else "",
+            "cover":  f"{cat_id}/cover.jpg" if actual_cat_cover else "",
             "albums": album_entries,
         })
 
