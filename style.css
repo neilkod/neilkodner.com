@@ -160,6 +160,25 @@ h4 { font-size: var(--text-xl); }
   white-space: nowrap;
 }
 
+@media (max-width: 600px) {
+  /* Collapse brand text to "NK" monogram — full title lives in the hero */
+  .nav-brand {
+    font-size: 0;
+  }
+  .nav-brand::after {
+    content: "NK";
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: var(--color-accent);
+  }
+  /* Tighten link spacing so all three fit comfortably */
+  .nav-links {
+    gap: var(--space-6);
+  }
+}
+
 .nav-links {
   display: flex;
   align-items: center;
