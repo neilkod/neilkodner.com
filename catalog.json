@@ -1,0 +1,31 @@
+{
+  "generated": "2025-04-12T00:00:00Z",
+  "baseUrl": "https://pub-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.r2.dev",
+  "hero": [],
+  "categories": [
+    {
+      "id": "aviation",
+      "name": "Aviation",
+      "cover": "aviation/cover.jpg",
+      "albums": []
+    },
+    {
+      "id": "hockey",
+      "name": "Hockey",
+      "cover": "hockey/cover.jpg",
+      "albums": []
+    },
+    {
+      "id": "travel",
+      "name": "Travel & Street",
+      "cover": "travel/cover.jpg",
+      "albums": []
+    },
+    {
+      "id": "birds",
+      "name": "Birds",
+      "cover": "birds/cover.jpg",
+      "albums": []
+    }
+  ]
+}

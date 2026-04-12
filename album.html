@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Album — Neil Kodner</title>
+  <meta name="description" content="Photo album by Neil Kodner.">
+
+  <!-- Open Graph (title and image updated by JS) -->
+  <meta property="og:type"        content="website">
+  <meta property="og:title"       content="Album — Neil Kodner">
+  <meta property="og:description" content="Photo album by Neil Kodner.">
+  <meta property="og:site_name"   content="Photography by Neil Kodner">
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/print.css" media="print">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@5/dist/photoswipe.css">
+
+  <style>
+    /* ── PhotoSwipe caption ──────────────────────────── */
+    .pswp__custom-caption {
+      position: absolute;
+      bottom: 0;
+      inset-inline: 0;
+      padding: 1rem var(--gutter, 1.5rem);
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+      pointer-events: none;
+    }
+    .pswp-caption-text {
+      font-family: var(--font-ui);
+      font-size: var(--text-sm);
+      font-weight: 300;
+      color: rgba(240,237,232,0.85);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <!-- ── Navigation ─────────────────────────────────────── -->
+  <nav class="site-nav" aria-label="Primary">
+    <div class="container">
+      <a href="/" class="nav-brand">Photography by Neil Kodner</a>
+      <ul class="nav-links" role="list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/photography/" aria-current="page">Photography</a></li>
+        <li><a href="/about/">About</a></li>
+      </ul>
+    </div>
+  </nav>
+  <div class="nav-offset" aria-hidden="true"></div>
+
+  <main id="main-content">
+    <div class="container">
+
+      <!-- ── Breadcrumb ──────────────────────────────────── -->
+      <nav class="album-breadcrumb" aria-label="Breadcrumb" style="padding-block:var(--space-6) 0">
+        <ol style="display:flex;gap:var(--space-2);list-style:none;font-size:var(--text-xs);
+                   letter-spacing:0.06em;color:var(--color-text-muted)">
+          <li><a href="/photography/" style="transition:color var(--transition)"
+                 onmouseover="this.style.color='var(--color-accent)'"
+                 onmouseout="this.style.color='var(--color-text-muted)'">Photography</a></li>
+          <li aria-hidden="true" style="opacity:0.4">/</li>
+          <li><a id="breadcrumb-cat" href="/photography/"
+                 style="transition:color var(--transition)"
+                 onmouseover="this.style.color='var(--color-accent)'"
+                 onmouseout="this.style.color='var(--color-text-muted)'">Category</a></li>
+          <li aria-hidden="true" style="opacity:0.4">/</li>
+          <li style="color:var(--color-text)" aria-current="page" id="album-title-crumb">Album</li>
+        </ol>
+      </nav>
+
+      <!-- ── Album header ────────────────────────────────── -->
+      <header class="page-header" style="margin-top:var(--space-4)">
+        <h1 id="album-title">Loading…</h1>
+        <p id="album-meta" class="label" style="margin-top:var(--space-2)"></p>
+      </header>
+
+      <!-- ── States ─────────────────────────────────────── -->
+      <p id="album-loading" style="color:var(--color-text-muted);padding-block:var(--space-8)">
+        Loading photos…
+      </p>
+      <p id="album-error" hidden
+         style="color:var(--color-text-muted);padding-block:var(--space-8)">
+        Could not load album.
+      </p>
+
+      <!-- ── Photo grid (populated by gallery.js) ────────── -->
+      <div class="album-grid" id="photo-grid" style="padding-bottom:var(--space-16)">
+        <!-- <a href=full data-pswp-width data-pswp-height><img src=thumb></a> -->
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── Footer ─────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2025 Neil Kodner</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { renderAlbumPage } from '/gallery.js';
+    renderAlbumPage();
+  </script>
+
+</body>
+</html>

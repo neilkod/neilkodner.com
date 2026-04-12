@@ -1,0 +1,277 @@
+# Photography by Neil Kodner
+
+Personal photography portfolio — neilkodner.com
+
+Static HTML/CSS/JS. No frameworks, no build tools. Images on Cloudflare R2. Deployed via GitHub Pages. Catalog generated automatically by GitHub Actions.
+
+---
+
+## How it works
+
+1. You upload photos to a Cloudflare R2 bucket from your iPad.
+2. A GitHub Action runs every 30 minutes, scans R2, generates thumbnails, and writes `catalog.json`.
+3. GitHub Pages redeploys the site.
+4. The site fetches `catalog.json` on load and renders everything dynamically.
+
+No CMS. No server. No git commands after initial setup.
+
+---
+
+## Project structure
+
+```
+neilkodner.com/
+├── index.html              Home page
+├── photography/index.html  Category and album grids
+├── album.html              Single album view + PhotoSwipe
+├── about/index.html        About page
+├── 404.html                Custom not-found page
+├── app.js                  Shared catalog loading and tile rendering
+├── hero.js                 Hero slideshow
+├── gallery.js              PhotoSwipe lightbox and album rendering
+├── tokens.css              Design tokens (colors, fonts, spacing)
+├── style.css               All component styles
+├── print.css               Print stylesheet
+├── favicon.svg             NK monogram favicon
+├── catalog.json            Generated — do not edit by hand
+├── scripts/
+│   ├── build_catalog.py    Catalog builder (run by GitHub Action)
+│   └── requirements.txt    Python dependencies
+└── .github/workflows/
+    └── update-catalog.yml  GitHub Action definition
+```
+
+---
+
+## 1 — Cloudflare R2 Setup
+
+### Create a bucket
+
+1. Log in to the [Cloudflare dashboard](https://dash.cloudflare.com).
+2. Go to **R2 Object Storage** → **Create bucket**.
+3. Name it (e.g. `neilkodner-photos`). Region: Automatic.
+4. Click **Create bucket**.
+
+### Enable public access
+
+1. Open the bucket → **Settings** tab.
+2. Under **Public access**, click **Allow Access**.
+3. Copy the **Public bucket URL** — it looks like:
+   `https://pub-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.r2.dev`
+4. Save this URL; it becomes `R2_PUBLIC_BASE_URL` in GitHub Secrets.
+
+### Create an API token
+
+1. Go to **R2** → **Manage R2 API Tokens** → **Create API Token**.
+2. Permissions: **Object Read & Write**.
+3. Specify your bucket (or leave as All buckets).
+4. Click **Create API Token**.
+5. Save the **Access Key ID** and **Secret Access Key** — shown once.
+
+### Bucket folder structure
+
+```
+your-bucket/
+├── _hero/
+│   ├── hero1.jpg
+│   └── hero2.jpg
+├── aviation/
+│   ├── cover.jpg                  ← category cover
+│   └── oshkosh-2024/
+│       ├── cover.jpg              ← album cover (required)
+│       ├── manifest.json          ← optional metadata
+│       ├── img001.jpg
+│       └── img002.jpg
+├── hockey/
+│   └── sharks-vs-kings-jan-2025/
+│       ├── cover.jpg
+│       ├── img001.jpg
+│       └── img002.jpg
+├── birds/
+│   └── shorebirds/
+│       ├── cover.jpg
+│       └── img001.jpg
+└── travel/
+    └── boston-march-2025/
+        ├── cover.jpg
+        └── img001.jpg
+```
+
+Rules:
+- `_hero/` — hero slideshow images (any filename)
+- Top-level folders (no leading `_`) are **categories**
+- Second-level folders are **albums**
+- Each album needs a `cover.jpg`
+- Prefix any folder with `_draft-` to hide it from the site
+- `_thumbs/` is written by the automation — do not modify
+
+### Optional manifest.json
+
+Create `manifest.json` inside any album folder to override its metadata:
+
+```json
+{
+  "title": "EAA AirVenture Oshkosh 2024",
+  "date": "2024-07",
+  "location": "Oshkosh, Wisconsin"
+}
+```
+
+All fields are optional. Missing fields fall back to the existing catalog value, then to the folder name.
+
+---
+
+## 2 — GitHub Pages Setup
+
+1. Push this repository to GitHub.
+2. Go to the repo → **Settings** → **Pages**.
+3. Source: **Deploy from a branch**.
+4. Branch: `main` — folder: `/ (root)`.
+5. Click **Save**.
+
+GitHub Pages will assign a URL like `https://neilkodner.github.io/neilkodner.com/`.
+After DNS is configured it will serve at `neilkodner.com`.
+
+**Custom domain:**
+1. In **Settings → Pages**, enter `neilkodner.com` under Custom domain.
+2. GitHub creates a `CNAME` file in your repo automatically.
+3. Check **Enforce HTTPS** once the certificate provisions (a few minutes).
+
+---
+
+## 3 — Namecheap DNS Records
+
+Log in to Namecheap → **Domain List** → **Manage** → **Advanced DNS**.
+
+Add these records:
+
+| Type  | Host | Value                         | TTL        |
+|-------|------|-------------------------------|------------|
+| A     | @    | `185.199.108.153`             | Automatic  |
+| A     | @    | `185.199.109.153`             | Automatic  |
+| A     | @    | `185.199.110.153`             | Automatic  |
+| A     | @    | `185.199.111.153`             | Automatic  |
+| CNAME | www  | `neilkodner.github.io`        | Automatic  |
+
+These are GitHub Pages' current IP addresses. The `www` CNAME redirects to the apex domain via GitHub's infrastructure.
+
+DNS propagation takes a few minutes to a few hours. Check with:
+```
+dig neilkodner.com
+```
+
+---
+
+## 4 — GitHub Secrets Setup
+
+In the repo: **Settings → Secrets and variables → Actions → New repository secret**
+
+| Secret name            | Where to find it                                      |
+|------------------------|-------------------------------------------------------|
+| `R2_ENDPOINT`          | `https://<account_id>.r2.cloudflarestorage.com` — find your Account ID on the R2 overview page |
+| `R2_ACCESS_KEY_ID`     | From the API token you created                        |
+| `R2_SECRET_ACCESS_KEY` | From the API token you created                        |
+| `R2_BUCKET_NAME`       | The bucket name (e.g. `neilkodner-photos`)            |
+| `R2_PUBLIC_BASE_URL`   | The public bucket URL (e.g. `https://pub-xxxx.r2.dev`) |
+
+After adding all five secrets, trigger the workflow manually:
+**Actions → Update Catalog → Run workflow**.
+
+Watch the run log to confirm it connects to R2 and writes `catalog.json`.
+
+---
+
+## 5 — iPad Upload Workflow
+
+**Recommended app:** [Creativit S3 Files](https://apps.apple.com/app/id1440621285) or [Cyberduck](https://apps.apple.com/app/id409222199)
+
+### One-time app setup (S3 Files example)
+
+1. Open S3 Files → **Add Connection**.
+2. Select **S3-Compatible**.
+3. Server: your R2 endpoint (e.g. `abc123.r2.cloudflarestorage.com`)
+4. Access Key / Secret: paste from the R2 API token.
+5. Bucket: your bucket name.
+6. Save.
+
+### Per-shoot workflow
+
+```
+1. Edit photos in Lightroom Mobile
+2. Export (see Lightroom settings below)
+3. Open S3 Files
+4. Navigate to the correct folder:
+      aviation/oshkosh-2024/
+5. Upload all exported JPEGs
+6. Upload a cover.jpg (your best shot from the album)
+7. Optionally create and upload a manifest.json with title/date/location
+8. Wait up to 30 minutes for the GitHub Action to run
+   — or trigger it manually from GitHub Actions
+```
+
+The site updates automatically. No git commands needed.
+
+---
+
+## 6 — Lightroom Export Settings
+
+These settings balance image quality against file size and load time.
+
+| Setting              | Value                        |
+|----------------------|------------------------------|
+| Format               | JPEG                         |
+| Quality              | 85–90                        |
+| Color Space          | sRGB                         |
+| Long edge            | 3000 px (landscape)          |
+| Long edge            | 2400 px (portrait)           |
+| Resolution           | 72 PPI (web display)         |
+| Sharpening           | Screen, Standard             |
+| Metadata             | Copyright only               |
+| Watermark            | None                         |
+
+**Why these sizes:**
+- 3000 px long edge gives excellent quality in PhotoSwipe fullscreen on Retina displays.
+- The automation generates 500 px thumbnails automatically.
+- Files typically land around 1–3 MB each, which is reasonable for an LTE/Wi-Fi upload.
+
+**Naming:** Any filename works. Alphabetical order determines gallery order, so `img001.jpg`, `img002.jpg`… gives you control. Or just let Lightroom use its defaults.
+
+---
+
+## Ongoing Maintenance
+
+**Add a new album:**
+Upload photos to `aviation/new-album-name/` with a `cover.jpg`. The next Action run adds it automatically.
+
+**Hide an album while editing:**
+Rename the folder to `_draft-new-album-name/`. Rename it back when ready.
+
+**Edit an album title without renaming the folder:**
+Add or update `manifest.json` inside the album folder.
+
+**Update the hero images:**
+Upload new JPEGs to `_hero/`. Remove old ones to stop them from cycling.
+
+**Manually trigger a catalog rebuild:**
+GitHub repo → **Actions** → **Update Catalog** → **Run workflow**.
+
+---
+
+## Troubleshooting
+
+**Photos not appearing after upload**
+- Check the GitHub Action ran (Actions tab). If it failed, read the log.
+- Confirm `cover.jpg` exists in the album folder.
+- Confirm the folder is not prefixed `_draft-`.
+
+**Thumbnails not generating**
+- Check the Action log for `WARN` lines.
+- Confirm the R2 API token has write permission.
+
+**Site not updating after catalog commit**
+- Check **Settings → Pages** — Pages deployment may have failed.
+- The Action commits with `[skip ci]`; a subsequent photo upload or manual trigger will redeploy.
+
+**DNS not resolving**
+- Propagation can take up to 24 hours.
+- Verify records with `dig neilkodner.com +short`.

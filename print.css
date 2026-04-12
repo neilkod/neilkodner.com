@@ -1,0 +1,74 @@
+@media print {
+  /* ── Hide chrome ──────────────────────────────────── */
+  .site-nav,
+  .nav-offset,
+  .hero,
+  .section-heading a,
+  .site-footer,
+  .btn,
+  .album-breadcrumb {
+    display: none !important;
+  }
+
+  /* ── Reset colors for paper ──────────────────────── */
+  body {
+    background: #fff !important;
+    color: #111 !important;
+    font-size: 11pt;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  h1, h2, h3, h4 {
+    color: #111 !important;
+    page-break-after: avoid;
+  }
+
+  /* ── Images ───────────────────────────────────────── */
+  img {
+    opacity: 1 !important;
+    max-width: 100%;
+    page-break-inside: avoid;
+  }
+
+  /* Force album grid images to show */
+  .album-grid-item img,
+  .album-tile-cover img,
+  .category-tile img {
+    opacity: 1 !important;
+  }
+
+  /* ── Album grid ───────────────────────────────────── */
+  .album-grid {
+    columns: 2 !important;
+    column-gap: 6pt;
+  }
+
+  .album-grid-item {
+    break-inside: avoid;
+    margin-bottom: 6pt;
+    background: none !important;
+  }
+
+  /* ── Disable animations ───────────────────────────── */
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* ── About page ───────────────────────────────────── */
+  .about-body {
+    padding-block: 0 !important;
+    max-width: 100%;
+  }
+
+  .about-body p { color: #333 !important; }
+  .about-body p:first-of-type { color: #111 !important; }
+
+  /* ── Album meta ───────────────────────────────────── */
+  #album-title { font-size: 20pt; }
+  #album-meta  { font-size: 10pt; color: #555 !important; }
+
+  /* ── Page break hints ─────────────────────────────── */
+  .section { page-break-inside: avoid; }
+}

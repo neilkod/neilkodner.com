@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photography by Neil Kodner</title>
+  <meta name="description" content="Photography by Neil Kodner — aviation, hockey, birds, and travel from San Jose, California.">
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://neilkodner.com/">
+  <meta property="og:title"       content="Photography by Neil Kodner">
+  <meta property="og:description" content="Aviation, hockey, birds, and travel photography from San Jose, California.">
+  <meta property="og:site_name"   content="Photography by Neil Kodner">
+  <!-- og:image set by JS from first hero image in catalog.json -->
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/print.css" media="print">
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <!-- ── Navigation ─────────────────────────────────────── -->
+  <nav class="site-nav" aria-label="Primary">
+    <div class="container">
+      <a href="/" class="nav-brand">Photography by Neil Kodner</a>
+      <ul class="nav-links" role="list">
+        <li><a href="/" aria-current="page">Home</a></li>
+        <li><a href="/photography/">Photography</a></li>
+        <li><a href="/about/">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main id="main-content">
+
+    <!-- ── Hero ───────────────────────────────────────────── -->
+    <section class="hero" aria-label="Featured photography">
+      <!-- JS populates .hero-slides from catalog.json hero[] -->
+      <div class="hero-slides" id="hero-slides" aria-hidden="true">
+        <div class="hero-placeholder"></div>
+      </div>
+
+      <div class="hero-overlay">
+        <p class="hero-title">Photography by Neil Kodner</p>
+        <p class="hero-subtitle">San Jose, California</p>
+      </div>
+    </section>
+
+    <!-- ── Category Tiles ─────────────────────────────────── -->
+    <section class="section section--tight" aria-labelledby="categories-heading">
+      <div class="container">
+        <div class="section-heading">
+          <h2 id="categories-heading">Categories</h2>
+          <a href="/photography/">View all</a>
+        </div>
+
+        <div class="category-grid" id="category-grid">
+
+          <a class="category-tile" href="/photography/?cat=aviation">
+            <div class="tile-bg"></div>
+            <div class="category-tile-border"></div>
+            <div class="category-tile-info">
+              <h3>Aviation</h3>
+            </div>
+          </a>
+
+          <a class="category-tile" href="/photography/?cat=hockey">
+            <div class="tile-bg"></div>
+            <div class="category-tile-border"></div>
+            <div class="category-tile-info">
+              <h3>Hockey</h3>
+            </div>
+          </a>
+
+          <a class="category-tile" href="/photography/?cat=travel">
+            <div class="tile-bg"></div>
+            <div class="category-tile-border"></div>
+            <div class="category-tile-info">
+              <h3>Travel &amp; Street</h3>
+            </div>
+          </a>
+
+          <a class="category-tile" href="/photography/?cat=birds">
+            <div class="tile-bg"></div>
+            <div class="category-tile-border"></div>
+            <div class="category-tile-info">
+              <h3>Birds</h3>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Latest Albums ──────────────────────────────────── -->
+    <section class="section section--tight" aria-labelledby="latest-heading">
+      <div class="container">
+        <div class="section-heading">
+          <h2 id="latest-heading">Latest Albums</h2>
+        </div>
+
+        <!-- JS populates this strip from catalog.json (newest 4 albums) -->
+        <div class="albums-strip" id="latest-albums" aria-label="Latest albums">
+
+          <!-- Placeholder tiles shown before catalog loads -->
+          <div class="album-tile">
+            <div class="album-tile-cover">
+              <div class="tile-bg"></div>
+              <div class="tile-accent-border"></div>
+            </div>
+            <div class="album-tile-meta">
+              <span class="album-tile-title">—</span>
+              <span class="album-tile-sub">Loading…</span>
+            </div>
+          </div>
+
+          <div class="album-tile">
+            <div class="album-tile-cover">
+              <div class="tile-bg"></div>
+              <div class="tile-accent-border"></div>
+            </div>
+            <div class="album-tile-meta">
+              <span class="album-tile-title">—</span>
+              <span class="album-tile-sub">Loading…</span>
+            </div>
+          </div>
+
+          <div class="album-tile">
+            <div class="album-tile-cover">
+              <div class="tile-bg"></div>
+              <div class="tile-accent-border"></div>
+            </div>
+            <div class="album-tile-meta">
+              <span class="album-tile-title">—</span>
+              <span class="album-tile-sub">Loading…</span>
+            </div>
+          </div>
+
+          <div class="album-tile">
+            <div class="album-tile-cover">
+              <div class="tile-bg"></div>
+              <div class="tile-accent-border"></div>
+            </div>
+            <div class="album-tile-meta">
+              <span class="album-tile-title">—</span>
+              <span class="album-tile-sub">Loading…</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Footer ─────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2025 Neil Kodner</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { fetchCatalog, hydrateCategoryTiles, renderLatestAlbums } from '/app.js';
+    import { initHero } from '/hero.js';
+
+    initHero();
+
+    fetchCatalog()
+      .then(catalog => {
+        hydrateCategoryTiles(catalog);
+        renderLatestAlbums(catalog);
+
+        // Set OG image to first hero once catalog loads
+        const first = catalog.hero?.[0];
+        if (first) {
+          const ogImg = document.querySelector('meta[property="og:image"]')
+            || Object.assign(document.createElement('meta'), { property: 'og:image' });
+          ogImg.content = `${catalog.baseUrl}/_hero/${first.filename}`;
+          if (!ogImg.parentNode) document.head.appendChild(ogImg);
+        }
+      })
+      .catch(err => console.warn('Gallery init:', err));
+  </script>
+
+</body>
+</html>

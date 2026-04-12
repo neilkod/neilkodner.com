@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photography — Neil Kodner</title>
+  <meta name="description" content="Browse aviation, hockey, birds, and travel photography by Neil Kodner.">
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://neilkodner.com/photography/">
+  <meta property="og:title"       content="Photography — Neil Kodner">
+  <meta property="og:description" content="Browse aviation, hockey, birds, and travel photography by Neil Kodner.">
+  <meta property="og:site_name"   content="Photography by Neil Kodner">
+  <!-- og:image: replace with your R2 public URL once bucket is live -->
+  <!-- <meta property="og:image" content="https://pub-xxxx.r2.dev/_hero/hero1.jpg"> -->
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="/print.css" media="print">
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <!-- ── Navigation ─────────────────────────────────────── -->
+  <nav class="site-nav" aria-label="Primary">
+    <div class="container">
+      <a href="/" class="nav-brand">Photography by Neil Kodner</a>
+      <ul class="nav-links" role="list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/photography/" aria-current="page">Photography</a></li>
+        <li><a href="/about/">About</a></li>
+      </ul>
+    </div>
+  </nav>
+  <div class="nav-offset" aria-hidden="true"></div>
+
+  <main id="main-content">
+
+    <!-- ── Page header ────────────────────────────────────── -->
+    <div class="container">
+      <header class="page-header">
+        <p class="label">Portfolio</p>
+        <h1>Photography</h1>
+      </header>
+    </div>
+
+    <!-- ── Category grid ──────────────────────────────────── -->
+    <!--
+      When a category is selected (?cat=aviation) this page will
+      transition to showing album tiles for that category.
+      That behaviour is wired up in a later milestone.
+      For now this renders the four static category tiles.
+    -->
+    <section class="section section--tight" aria-label="Categories">
+      <div class="container">
+
+        <div class="category-grid" id="category-grid">
+
+          <a class="category-tile" href="/photography/?cat=aviation">
+            <div class="tile-bg"></div>
+            <div class="category-tile-border"></div>
+            <div class="category-tile-info">
+              <p class="label" style="margin-bottom:0.25rem">Category</p>
+              <h3>Aviation</h3>
+            </div>
+          </a>
+
+          <a class="category-tile" href="/photography/?cat=hockey">
+            <div class="tile-bg"></div>
+            <div class="category-tile-border"></div>
+            <div class="category-tile-info">
+              <p class="label" style="margin-bottom:0.25rem">Category</p>
+              <h3>Hockey</h3>
+            </div>
+          </a>
+
+          <a class="category-tile" href="/photography/?cat=travel">
+            <div class="tile-bg"></div>
+            <div class="category-tile-border"></div>
+            <div class="category-tile-info">
+              <p class="label" style="margin-bottom:0.25rem">Category</p>
+              <h3>Travel &amp; Street</h3>
+            </div>
+          </a>
+
+          <a class="category-tile" href="/photography/?cat=birds">
+            <div class="tile-bg"></div>
+            <div class="category-tile-border"></div>
+            <div class="category-tile-info">
+              <p class="label" style="margin-bottom:0.25rem">Category</p>
+              <h3>Birds</h3>
+            </div>
+          </a>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Album grid placeholder ─────────────────────────── -->
+    <!--
+      JS will inject album tiles here when ?cat= is present in the URL.
+      Hidden until a category is selected.
+    -->
+    <section class="section section--tight" id="album-section" hidden aria-label="Albums">
+      <div class="container">
+
+        <div class="section-heading" id="album-section-heading">
+          <h2 id="album-section-title">Albums</h2>
+        </div>
+
+        <div class="albums-strip" id="album-grid">
+          <!-- populated by JS -->
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Footer ─────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2025 Neil Kodner</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { fetchCatalog, hydrateCategoryTiles, renderAlbumGrid } from '/app.js';
+
+    fetchCatalog()
+      .then(catalog => {
+        hydrateCategoryTiles(catalog);
+
+        const catId = new URLSearchParams(location.search).get('cat');
+        if (!catId) return;
+
+        const cat = catalog.categories.find(c => c.id === catId);
+        if (!cat) return;
+
+        // Switch view: hide category grid, show album strip
+        document.querySelector('.category-grid').closest('section').hidden = true;
+        document.getElementById('album-section').hidden = false;
+        document.getElementById('album-section-title').textContent = cat.name;
+
+        // Update page heading and title
+        document.querySelector('h1').textContent = cat.name;
+        document.title = `${cat.name} — Neil Kodner`;
+
+        renderAlbumGrid(catalog, catId, document.getElementById('album-grid'));
+      })
+      .catch(err => console.warn('Photography page:', err));
+  </script>
+
+</body>
+</html>
