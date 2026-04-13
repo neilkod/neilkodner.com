@@ -22,9 +22,18 @@ export async function initHero() {
 
   if (!catalog.hero?.length) return;
 
+  // Serve landscape images on wide viewports, portrait on tall viewports.
+  // Falls back to the full set if the matched orientation has no images.
+  const isPortraitViewport = window.innerHeight > window.innerWidth;
+  const landscape = catalog.hero.filter(h => h.width >= h.height);
+  const portrait  = catalog.hero.filter(h => h.height > h.width);
+  const heroImages = (isPortraitViewport ? portrait : landscape).length
+    ? (isPortraitViewport ? portrait : landscape)
+    : catalog.hero;
+
   container.innerHTML = '';   // remove static placeholder
 
-  const slides = catalog.hero.map((h, i) => {
+  const slides = heroImages.map((h, i) => {
     const div = document.createElement('div');
     div.className = 'hero-slide';
 
