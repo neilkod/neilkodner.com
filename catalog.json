@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-13T21:42:31+00:00",
+  "generated": "2026-04-13T22:16:24+00:00",
   "baseUrl": "https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev",
   "hero": [
     {
@@ -43,6 +43,11 @@
       "height": 1365
     },
     {
+      "filename": "DSC09360.jpg",
+      "width": 1638,
+      "height": 2048
+    },
+    {
       "filename": "DSC09363.jpg",
       "width": 2048,
       "height": 1365
@@ -63,9 +68,19 @@
       "height": 1365
     },
     {
+      "filename": "L1000106.jpg",
+      "width": 2048,
+      "height": 1363
+    },
+    {
       "filename": "L1000247.jpg",
       "width": 2048,
       "height": 1363
+    },
+    {
+      "filename": "L1000347.JPG",
+      "width": 2048,
+      "height": 1359
     },
     {
       "filename": "L1000452.JPG",
