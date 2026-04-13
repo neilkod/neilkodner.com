@@ -1,26 +1,46 @@
 {
-  "generated": "2026-04-13T00:02:14+00:00",
+  "generated": "2026-04-13T02:37:49+00:00",
   "baseUrl": "https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev",
   "hero": [
     {
-      "filename": "hero1.JPG",
-      "width": 9504,
-      "height": 6336
+      "filename": "DSC03881.jpg",
+      "width": 2048,
+      "height": 1365
     },
     {
-      "filename": "hero2.JPG",
-      "width": 9504,
-      "height": 6336
+      "filename": "DSC04395.jpg",
+      "width": 2048,
+      "height": 1365
     },
     {
-      "filename": "hero3.JPG",
-      "width": 9504,
-      "height": 6336
+      "filename": "DSC07673.jpg",
+      "width": 2048,
+      "height": 1365
     },
     {
-      "filename": "hero4.JPG",
-      "width": 9504,
-      "height": 6336
+      "filename": "DSC09434.jpg",
+      "width": 1639,
+      "height": 2048
+    },
+    {
+      "filename": "DSC09829.jpg",
+      "width": 2048,
+      "height": 1365
+    },
+    {
+      "filename": "L1001008.JPG",
+      "width": 2048,
+      "height": 1152
+    },
+    {
+      "filename": "L1002033.JPG",
+      "width": 2048,
+      "height": 1363
+    },
+    {
+      "filename": "L1011672.JPG",
+      "width": 1359,
+      "height": 2048
     }
   ],
   "categories": [
