@@ -237,6 +237,23 @@ h4 { font-size: var(--text-xl); }
   justify-content: center;
 }
 
+/* Radial scrim — soft dark ellipse centered on the text zone.
+   Provides ~40% darkening at the centre where the title sits,
+   fading to zero at the frame edges. Imperceptible on dark images;
+   meaningful contrast on bright ones (e.g. ice, sky, sand). */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(
+    ellipse 75% 55% at 50% 50%,
+    rgba(0, 0, 0, 0.42) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
 /* slide container — JS will populate this */
 .hero-slides {
   position: absolute;
@@ -296,12 +313,13 @@ h4 { font-size: var(--text-xl); }
   letter-spacing: 0.04em;
   color: rgba(240, 237, 232, 0.95);
   line-height: 1.1;
-  /* Two-layer shadow: close sharp layer handles bright edges;
-     far diffuse layer provides overall luminance separation.
-     Invisible over dark backgrounds — only activates where needed. */
+  /* Three-layer shadow: sharp edge → mid diffuse → wide halo.
+     The scrim handles macro contrast; the shadow handles letterform
+     crispness at the boundary between stroke and background. */
   text-shadow:
-    0 1px 3px  rgba(0, 0, 0, 0.55),
-    0 4px 24px rgba(0, 0, 0, 0.40);
+    0 1px 3px  rgba(0, 0, 0, 0.70),
+    0 4px 16px rgba(0, 0, 0, 0.50),
+    0 8px 40px rgba(0, 0, 0, 0.35);
 }
 
 .hero-subtitle {
@@ -313,8 +331,9 @@ h4 { font-size: var(--text-xl); }
   text-transform: uppercase;
   color: rgba(240, 237, 232, 0.70);
   text-shadow:
-    0 1px 3px  rgba(0, 0, 0, 0.55),
-    0 4px 24px rgba(0, 0, 0, 0.40);
+    0 1px 3px  rgba(0, 0, 0, 0.70),
+    0 4px 16px rgba(0, 0, 0, 0.50),
+    0 8px 40px rgba(0, 0, 0, 0.35);
 }
 
 /* ─── Section headings ────────────────────────────────────── */
