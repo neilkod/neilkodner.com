@@ -45,6 +45,12 @@ CATALOG_PATH    = "catalog.json"
 THUMB_LONG_EDGE = 500
 THUMB_QUALITY   = 85
 
+# Override display names for category folders whose folder name alone
+# doesn't reflect what you want shown on the site.
+CATEGORY_NAMES = {
+    "travel": "Places",
+}
+
 
 # ── R2 client ─────────────────────────────────────────────────────────────────
 
@@ -427,7 +433,7 @@ def build():
 
         category_entries.append({
             "id":     cat_id,
-            "name":   folder_to_title(cat_id),
+            "name":   CATEGORY_NAMES.get(cat_id) or folder_to_title(cat_id),
             "cover":  f"{cat_id}/cover.jpg" if actual_cat_cover else "",
             "albums": album_entries,
         })
