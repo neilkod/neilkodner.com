@@ -148,16 +148,33 @@ export async function renderAlbumPage() {
   if (loadingEl) loadingEl.hidden = true;
 
   // ── Page metadata ─────────────────────────────────────────
-  document.title = `${album.title || albumId} — Neil Kodner`;
+  // For flat categories the album title equals the category name —
+  // use the category name as the page title so it reads naturally.
+  const pageTitle = cat.flat ? cat.name : (album.title || albumId);
+  document.title = `${pageTitle} — Neil Kodner`;
 
   const breadcrumbCat = document.getElementById('breadcrumb-cat');
   if (breadcrumbCat) {
-    breadcrumbCat.textContent = cat.name;
-    breadcrumbCat.href = `/photography/?cat=${catId}`;
+    if (cat.flat) {
+      // Flat: breadcrumb reads "Photography / Aviation" — no album level.
+      breadcrumbCat.textContent = cat.name;
+      breadcrumbCat.href = `/photography/`;
+      breadcrumbCat.setAttribute('aria-current', 'page');
+      // Hide the separators and album crumb that follow
+      const crumbItems = breadcrumbCat.closest('ol')?.querySelectorAll('li');
+      if (crumbItems) {
+        // li[0]=Photography li[1]=/ li[2]=Category li[3]=/ li[4]=Album
+        crumbItems[3]?.remove();
+        crumbItems[4]?.remove();
+      }
+    } else {
+      breadcrumbCat.textContent = cat.name;
+      breadcrumbCat.href = `/photography/?cat=${catId}`;
+    }
   }
 
   const titleEl = document.getElementById('album-title');
-  if (titleEl) titleEl.textContent = album.title || albumId;
+  if (titleEl) titleEl.textContent = pageTitle;
 
   const metaEl = document.getElementById('album-meta');
   if (metaEl) {

@@ -45,15 +45,22 @@ export function hydrateCategoryTiles(catalog) {
     } catch { return; }
 
     const cat = catalog.categories.find(c => c.id === catId);
-    if (!cat?.cover) return;
+    if (!cat) return;
+
+    // Flat categories skip the album grid — link directly to the photo page.
+    if (cat.flat) {
+      tile.setAttribute('href', `/album.html?cat=${catId}&album=${catId}`);
+    }
+
+    if (!cat.cover) return;
 
     // Don't inject twice
     if (tile.querySelector('img')) return;
 
     const img = document.createElement('img');
-    img.src     = thumbUrl(catalog.baseUrl, cat.cover);
-    img.alt     = cat.name;
-    img.loading = 'lazy';
+    img.src      = thumbUrl(catalog.baseUrl, cat.cover);
+    img.alt      = cat.name;
+    img.loading  = 'lazy';
     img.decoding = 'async';
     fadeInOnLoad(img);
     // prepend so it sits behind the absolute-positioned overlay divs

@@ -194,17 +194,22 @@ def make_thumbnail(data: bytes) -> bytes:
 
 # ── Bucket tree parser ────────────────────────────────────────────────────────
 
-def parse_bucket(keys: list[str]) -> tuple[list[str], dict]:
+def parse_bucket(keys: list[str]) -> tuple[list[str], dict, dict]:
     """
     Build an in-memory representation of the bucket layout.
 
     Returns
     -------
-    hero_files : sorted list of filenames under _hero/
-    categories : {cat_id: {album_id: {"files": [...], "has_cover": bool}}}
+    hero_files  : sorted list of filenames under _hero/
+    categories  : {cat_id: {album_id: {"files": [...], "has_cover": bool, "cover_file": str|None}}}
+                  Only populated when sub-albums exist (depth-3 keys).
+    flat_photos : {cat_id: {"files": [...], "has_cover": bool, "cover_file": str|None}}
+                  Depth-2 image files sitting directly in a category folder.
+                  Ignored for any cat_id that also has sub-albums (albums win).
     """
-    hero_files = []
-    categories: dict = {}
+    hero_files  = []
+    categories:  dict = {}
+    flat_photos: dict = {}
 
     for key in keys:
         parts = key.split("/")
@@ -227,8 +232,20 @@ def parse_bucket(keys: list[str]) -> tuple[list[str], dict]:
                 hero_files.append(parts[1])
             continue
 
-        # ── Categories / albums ───────────────────────────────────────────
-        # We only care about depth-3 keys: cat/album/file.jpg
+        # ── Flat category photos (depth 2: cat/file.jpg) ──────────────────
+        if len(parts) == 2:
+            cat_id, filename = parts
+            if not filename or filename.lower() == "manifest.json":
+                continue
+            flat_photos.setdefault(cat_id, {"files": [], "has_cover": False, "cover_file": None})
+            if filename.lower() == "cover.jpg":
+                flat_photos[cat_id]["has_cover"] = True
+                flat_photos[cat_id]["cover_file"] = filename
+            else:
+                flat_photos[cat_id]["files"].append(filename)
+            continue
+
+        # ── Album photos (depth 3: cat/album/file.jpg) ────────────────────
         if len(parts) != 3:
             continue
 
@@ -246,7 +263,7 @@ def parse_bucket(keys: list[str]) -> tuple[list[str], dict]:
             categories[cat_id][album_id]["files"].append(filename)
 
     hero_files.sort()
-    return hero_files, categories
+    return hero_files, categories, flat_photos
 
 
 # ── Catalog merging helpers ───────────────────────────────────────────────────
@@ -309,7 +326,7 @@ def build():
         """Return the actual R2 key matching path regardless of case, or None."""
         return key_lower.get(path.lower())
 
-    hero_files, cat_tree = parse_bucket(all_keys)
+    hero_files, cat_tree, flat_photos = parse_bucket(all_keys)
 
     # ── Hero images ───────────────────────────────────────────────────────────
     hero_entries = []
@@ -327,41 +344,31 @@ def build():
             print(f"  WARN  could not process {key}: {exc}")
 
     # ── Categories ────────────────────────────────────────────────────────────
+    # Merge cat_tree (album-based) and flat_photos into one sorted list of ids.
+    # Albums win: if a cat_id appears in cat_tree it is treated as album-based
+    # even if flat photos also exist alongside.
+    all_cat_ids = sorted(set(cat_tree) | set(flat_photos))
+
     category_entries = []
 
-    for cat_id in sorted(cat_tree):
-        albums_map = cat_tree[cat_id]
+    for cat_id in all_cat_ids:
+        is_flat    = cat_id not in cat_tree  # no sub-albums found
+        albums_map = cat_tree.get(cat_id, {})
         album_entries = []
 
-        for album_id in sorted(albums_map):
-            info   = albums_map[album_id]
-            folder = f"{cat_id}/{album_id}"
+        if is_flat:
+            # ── Flat category — photos live directly in cat_id/ ───────────
+            info   = flat_photos[cat_id]
+            folder = cat_id
+            prev   = old_albums.get(folder, {})
 
-            # ── manifest.json ──────────────────────────────────────────────
-            manifest = {}
-            manifest_key = f"{folder}/manifest.json"
-            if manifest_key in keys_set:
-                try:
-                    manifest = json.loads(get_bytes(s3, bucket, manifest_key))
-                except Exception as exc:
-                    print(f"  WARN  bad manifest {manifest_key}: {exc}")
-
-            # Title / date / location: manifest > existing catalog > folder name
-            prev = old_albums.get(folder, {})
-            title    = manifest.get("title")    or prev.get("title")    or folder_to_title(album_id)
-            date     = manifest.get("date")     or prev.get("date")     or ""
-            location = manifest.get("location") or prev.get("location") or ""
-
-            # ── Photos ────────────────────────────────────────────────────
             photos = []
             for filename in sorted(info["files"]):
                 photo_key = f"{folder}/{filename}"
                 thumb_key = f"_thumbs/{folder}/{filename}"
-
                 prev_photo = old_photos.get(photo_key)
 
                 if prev_photo and thumb_key in keys_set:
-                    # Preserve existing entry — no download needed
                     photos.append({
                         "filename": filename,
                         "width":    prev_photo["width"],
@@ -371,8 +378,7 @@ def build():
                     })
                     continue
 
-                # New photo or missing thumbnail — download original
-                print(f"  Photo  {photo_key}")
+                print(f"  Photo (flat)  {photo_key}")
                 try:
                     data = get_bytes(s3, bucket, photo_key)
                     img  = Image.open(io.BytesIO(data))
@@ -393,32 +399,102 @@ def build():
                 except Exception as exc:
                     print(f"  WARN  could not process {photo_key}: {exc}")
 
-            # ── Cover thumbnail ───────────────────────────────────────────
-            cover_thumb_key = f"_thumbs/{folder}/cover.jpg"
-            if info["has_cover"] and cover_thumb_key not in keys_set:
-                cover_key = f"{folder}/{info['cover_file']}"  # actual case
-                print(f"  Cover thumb  {cover_key}")
-                try:
-                    data = get_bytes(s3, bucket, cover_key)
-                    put_bytes(s3, bucket, cover_thumb_key, make_thumbnail(data))
-                except Exception as exc:
-                    print(f"  WARN  {cover_key}: {exc}")
-
+            # Single implicit album — id and folder both equal cat_id
             album_entries.append({
-                "id":       album_id,
+                "id":       cat_id,
                 "folder":   folder,
-                "title":    title,
-                "date":     date,
-                "location": location,
+                "title":    CATEGORY_NAMES.get(cat_id) or folder_to_title(cat_id),
+                "date":     prev.get("date", ""),
+                "location": prev.get("location", ""),
                 "cover":    f"{folder}/cover.jpg" if info["has_cover"] else "",
                 "photos":   photos,
             })
 
-        # Sort newest-first by date; albums without dates sort alphabetically
-        # at the end (empty string sorts before any date string when reversed,
-        # so undated albums appear last — correct for Aviation/Hockey/Travel).
-        # For Birds (all undated), sorted(albums_map) already gives alphabetical order.
-        album_entries.sort(key=lambda a: a["date"] or "", reverse=True)
+        else:
+            # ── Album-based category ──────────────────────────────────────
+            for album_id in sorted(albums_map):
+                info   = albums_map[album_id]
+                folder = f"{cat_id}/{album_id}"
+
+                # ── manifest.json ──────────────────────────────────────────
+                manifest = {}
+                manifest_key = f"{folder}/manifest.json"
+                if manifest_key in keys_set:
+                    try:
+                        manifest = json.loads(get_bytes(s3, bucket, manifest_key))
+                    except Exception as exc:
+                        print(f"  WARN  bad manifest {manifest_key}: {exc}")
+
+                # Title / date / location: manifest > existing catalog > folder name
+                prev = old_albums.get(folder, {})
+                title    = manifest.get("title")    or prev.get("title")    or folder_to_title(album_id)
+                date     = manifest.get("date")     or prev.get("date")     or ""
+                location = manifest.get("location") or prev.get("location") or ""
+
+                # ── Photos ────────────────────────────────────────────────
+                photos = []
+                for filename in sorted(info["files"]):
+                    photo_key = f"{folder}/{filename}"
+                    thumb_key = f"_thumbs/{folder}/{filename}"
+
+                    prev_photo = old_photos.get(photo_key)
+
+                    if prev_photo and thumb_key in keys_set:
+                        # Preserve existing entry — no download needed
+                        photos.append({
+                            "filename": filename,
+                            "width":    prev_photo["width"],
+                            "height":   prev_photo["height"],
+                            "caption":  prev_photo.get("caption", ""),
+                            "exif":     prev_photo.get("exif", {}),
+                        })
+                        continue
+
+                    # New photo or missing thumbnail — download original
+                    print(f"  Photo  {photo_key}")
+                    try:
+                        data = get_bytes(s3, bucket, photo_key)
+                        img  = Image.open(io.BytesIO(data))
+                        w, h = img.width, img.height
+                        exif = extract_exif(img)
+
+                        if thumb_key not in keys_set:
+                            print(f"    → thumb  {thumb_key}")
+                            put_bytes(s3, bucket, thumb_key, make_thumbnail(data))
+
+                        photos.append({
+                            "filename": filename,
+                            "width":    w,
+                            "height":   h,
+                            "caption":  prev_photo.get("caption", "") if prev_photo else "",
+                            "exif":     exif,
+                        })
+                    except Exception as exc:
+                        print(f"  WARN  could not process {photo_key}: {exc}")
+
+                # ── Cover thumbnail ───────────────────────────────────────
+                cover_thumb_key = f"_thumbs/{folder}/cover.jpg"
+                if info["has_cover"] and cover_thumb_key not in keys_set:
+                    cover_key = f"{folder}/{info['cover_file']}"  # actual case
+                    print(f"  Cover thumb  {cover_key}")
+                    try:
+                        data = get_bytes(s3, bucket, cover_key)
+                        put_bytes(s3, bucket, cover_thumb_key, make_thumbnail(data))
+                    except Exception as exc:
+                        print(f"  WARN  {cover_key}: {exc}")
+
+                album_entries.append({
+                    "id":       album_id,
+                    "folder":   folder,
+                    "title":    title,
+                    "date":     date,
+                    "location": location,
+                    "cover":    f"{folder}/cover.jpg" if info["has_cover"] else "",
+                    "photos":   photos,
+                })
+
+            # Sort newest-first by date
+            album_entries.sort(key=lambda a: a["date"] or "", reverse=True)
 
         # ── Category cover thumbnail ──────────────────────────────────────
         cat_cover_thumb_key = f"_thumbs/{cat_id}/cover.jpg"
@@ -434,6 +510,7 @@ def build():
         category_entries.append({
             "id":     cat_id,
             "name":   CATEGORY_NAMES.get(cat_id) or folder_to_title(cat_id),
+            "flat":   is_flat,
             "cover":  f"{cat_id}/cover.jpg" if actual_cat_cover else "",
             "albums": album_entries,
         })
