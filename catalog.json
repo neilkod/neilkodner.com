@@ -1,7 +1,12 @@
 {
-  "generated": "2026-04-14T02:02:33+00:00",
+  "generated": "2026-04-14T05:09:19+00:00",
   "baseUrl": "https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev",
   "hero": [
+    {
+      "filename": "DSC01346.jpg",
+      "width": 2048,
+      "height": 1365
+    },
     {
       "filename": "DSC03881.jpg",
       "width": 2048,
@@ -117,57 +122,96 @@
     {
       "id": "aviation",
       "name": "Aviation",
-      "cover": "aviation/cover.jpg",
+      "flat": false,
+      "cover": "",
       "albums": [
         {
-          "id": "testalbum-01",
-          "folder": "aviation/testalbum-01",
-          "title": "Testalbum 01",
+          "id": "Other",
+          "folder": "aviation/Other",
+          "title": "Other",
           "date": "",
           "location": "",
-          "cover": "aviation/testalbum-01/cover.jpg",
+          "cover": "",
           "photos": [
             {
-              "filename": "DSC02574.JPG",
-              "width": 9504,
-              "height": 6336,
+              "filename": "DSC00933.JPG",
+              "width": 2048,
+              "height": 1365,
               "caption": "",
-              "exif": {}
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 200-600mm F5.6-6.3 G OSS",
+                "focal_length": "600mm",
+                "aperture": "f/6.3",
+                "shutter_speed": "1/3200s",
+                "iso": "ISO 250"
+              }
+            }
+          ]
+        },
+        {
+          "id": "USAF Thunderbirds",
+          "folder": "aviation/USAF Thunderbirds",
+          "title": "Usaf Thunderbirds",
+          "date": "",
+          "location": "",
+          "cover": "",
+          "photos": [
+            {
+              "filename": "DSC01295.jpg",
+              "width": 2048,
+              "height": 1365,
+              "caption": "",
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 200-600mm F5.6-6.3 G OSS",
+                "focal_length": "347mm",
+                "aperture": "f/6.3",
+                "shutter_speed": "1/6400s",
+                "iso": "ISO 250"
+              }
             },
             {
-              "filename": "DSC04597.JPG",
-              "width": 9504,
-              "height": 6336,
+              "filename": "DSC01330.jpg",
+              "width": 2048,
+              "height": 1366,
               "caption": "",
-              "exif": {}
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 200-600mm F5.6-6.3 G OSS",
+                "focal_length": "426mm",
+                "aperture": "f/6.3",
+                "shutter_speed": "1/6400s",
+                "iso": "ISO 250"
+              }
             },
             {
-              "filename": "DSC04599.JPG",
-              "width": 9504,
-              "height": 6336,
+              "filename": "DSC01346.jpg",
+              "width": 2048,
+              "height": 1365,
               "caption": "",
-              "exif": {}
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 200-600mm F5.6-6.3 G OSS",
+                "focal_length": "600mm",
+                "aperture": "f/6.3",
+                "shutter_speed": "1/6400s",
+                "iso": "ISO 320"
+              }
             },
             {
-              "filename": "DSC04600.JPG",
-              "width": 9504,
-              "height": 6336,
+              "filename": "DSC01583.jpg",
+              "width": 2048,
+              "height": 1365,
               "caption": "",
-              "exif": {}
-            },
-            {
-              "filename": "DSC04617.JPG",
-              "width": 9504,
-              "height": 6336,
-              "caption": "",
-              "exif": {}
-            },
-            {
-              "filename": "DSC04620.JPG",
-              "width": 9504,
-              "height": 6336,
-              "caption": "",
-              "exif": {}
+              "exif": {
+                "camera": "ILCE-7RM4",
+                "lens": "FE 200-600mm F5.6-6.3 G OSS",
+                "focal_length": "376mm",
+                "aperture": "f/6.3",
+                "shutter_speed": "1/6400s",
+                "iso": "ISO 320"
+              }
             }
           ]
         }
@@ -176,6 +220,7 @@
     {
       "id": "hockey",
       "name": "Hockey",
+      "flat": false,
       "cover": "hockey/cover.jpg",
       "albums": [
         {
