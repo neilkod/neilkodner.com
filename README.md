@@ -9,7 +9,7 @@ Static HTML/CSS/JS. No frameworks, no build tools. Images on Cloudflare R2. Depl
 ## How it works
 
 1. You upload photos to a Cloudflare R2 bucket from your iPad.
-2. A GitHub Action runs every 30 minutes, scans R2, generates thumbnails, and writes `catalog.json`.
+2. A GitHub Action runs every 30 minutes, scans R2, generates thumbnails, extracts EXIF metadata, and writes `catalog.json`.
 3. GitHub Pages redeploys the site.
 4. The site fetches `catalog.json` on load and renders everything dynamically.
 
@@ -29,7 +29,8 @@ No CMS. No server. No git commands after initial setup.
 │       │  export JPEG (3000px, quality 85)                   │
 │       ▼                                                     │
 │  S3 Files app                                               │
-│       │  upload to aviation/oshkosh-2024/img001.jpg         │
+│       │  upload to aviation/img001.jpg          (flat)      │
+│       │          or aviation/oshkosh-2024/img001.jpg (album) │
 └───────┼─────────────────────────────────────────────────────┘
         │
         ▼
@@ -38,9 +39,13 @@ No CMS. No server. No git commands after initial setup.
 │                       │
 │  _hero/               │
 │  aviation/            │
-│    oshkosh-2024/      │
+│    cover.jpg          │
+│    img001.jpg  ◄──────┘  (flat: photos at category level)
+│  places/              │
+│    cover.jpg          │
+│    boston-2025/       │
 │      cover.jpg        │
-│      img001.jpg  ◄────┘
+│      img001.jpg  ◄────┘  (album: photos inside sub-folder)
 │  _thumbs/  (written   │
 │   by GitHub Action)   │
 └───────────┬───────────┘
@@ -55,11 +60,13 @@ No CMS. No server. No git commands after initial setup.
 │  3. scripts/build_catalog.py                              │
 │       • list all R2 objects                               │
 │       • skip _draft- folders                              │
+│       • detect flat vs album-based categories             │
 │       • read manifest.json metadata                       │
-│       • download new photos → get dimensions              │
+│       • download new photos → get dimensions + EXIF       │
 │       • generate _thumbs/ (500px long edge)               │
 │       • upload thumbnails back to R2                      │
-│       • merge with existing catalog (preserve captions)   │
+│       • merge with existing catalog (preserve captions,   │
+│         captions, EXIF, and dimensions)                   │
 │       • write catalog.json                                │
 │  4. git commit catalog.json                               │
 │  5. git push  →  triggers GitHub Pages redeploy           │
@@ -89,20 +96,25 @@ No CMS. No server. No git commands after initial setup.
           │                                               │
           ├── hero[]          ──► hero.js                 │
           │                       crossfade slideshow     │
-          │                       images from R2 _hero/   │
+          │                       filtered by viewport    │
+          │                       orientation (landscape  │
+          │                       vs portrait images)     │
           │                                               │
           ├── categories[]    ──► app.js                  │
           │                       category tile covers    │
           │                       from R2 _thumbs/        │
+          │                       flat categories link    │
+          │                       directly to album page  │
           │                                               │
           └── latest albums   ──► app.js                  │
                                   4 newest across all     │
                                   categories              │
                                                           │
-  User clicks album                                       │
+  User clicks category or album                           │
           │                                               │
           ▼                                               │
-  album.html?cat=aviation&album=oshkosh-2024              │
+  album.html?cat=aviation&album=aviation  (flat)          │
+  album.html?cat=places&album=boston-2025 (album)         │
           │                                               │
           ▼                                               │
   gallery.js reads catalog.json ◄────────────────────────┘
@@ -114,11 +126,39 @@ No CMS. No server. No git commands after initial setup.
                     │
                     ▼
               PhotoSwipe v5
-              loads full-res image
-              from R2 (no _thumbs/)
+              full-res image + EXIF overlay
+              (camera · lens · focal length ·
+               aperture · shutter · ISO)
 ```
 
 ### R2 bucket layout
+
+There are two ways to organize a category: **flat** (no sub-albums) or **album-based**.
+
+**Flat category** — photos sit directly inside the category folder:
+
+```
+neilkodner-photos/
+├── aviation/
+│   ├── cover.jpg          ← category cover (required)
+│   ├── img001.jpg
+│   └── img002.jpg
+```
+
+**Album-based category** — photos are grouped in named sub-folders:
+
+```
+neilkodner-photos/
+├── places/
+│   ├── cover.jpg          ← category cover (required)
+│   └── boston-2025/
+│       ├── manifest.json  ← optional title/date/location
+│       ├── cover.jpg      ← album cover (required)
+│       ├── img001.jpg
+│       └── img002.jpg
+```
+
+Full example with all current categories:
 
 ```
 neilkodner-photos/
@@ -127,26 +167,52 @@ neilkodner-photos/
 │   ├── hero1.jpg
 │   └── hero2.jpg
 │
-├── _thumbs/                      ← generated by GitHub Action
+├── _thumbs/                      ← generated by GitHub Action — do not modify
 │   ├── aviation/
 │   │   ├── cover.jpg
-│   │   └── oshkosh-2024/
-│   │       ├── cover.jpg
-│   │       └── img001.jpg
-│   └── ...
+│   │   ├── img001.jpg
+│   │   └── ...
+│   └── places/
+│       ├── cover.jpg
+│       └── boston-2025/
+│           ├── cover.jpg
+│           └── img001.jpg
 │
-├── aviation/
-│   ├── cover.jpg                 ← category cover
-│   └── oshkosh-2024/
-│       ├── manifest.json         ← optional title/date/location
-│       ├── cover.jpg             ← album cover (required)
+├── aviation/                     ← flat: photos at top level
+│   ├── cover.jpg
+│   ├── img001.jpg
+│   └── img002.jpg
+│
+├── hockey/                       ← album-based
+│   ├── cover.jpg
+│   └── sharks-vs-kings-jan-2025/
+│       ├── cover.jpg
 │       ├── img001.jpg
 │       └── img002.jpg
 │
-├── hockey/
-├── birds/
-└── travel/
+├── birds/                        ← album-based
+│   ├── cover.jpg
+│   └── shorebirds/
+│       ├── cover.jpg
+│       └── img001.jpg
+│
+└── places/                       ← album-based (display name overridden from "travel")
+    ├── cover.jpg
+    └── boston-2025/
+        ├── cover.jpg
+        └── img001.jpg
 ```
+
+Rules:
+- `_hero/` — hero slideshow images (any filename). Mix landscape and portrait freely; the site automatically serves the right orientation based on the viewer's screen.
+- Top-level folders (no leading `_`) are **categories**
+- If a category has photos directly inside it (no sub-folders), it is **flat** — clicking the tile goes straight to the photo grid
+- If a category has sub-folders, those sub-folders are **albums** — clicking the tile shows the album grid
+- If both exist, albums take precedence
+- Each category needs a `cover.jpg` at the category level
+- Each album needs a `cover.jpg` at the album level
+- Prefix any folder with `_draft-` to hide it from the site
+- `_thumbs/` is written by the automation — do not modify
 
 ---
 
@@ -160,7 +226,7 @@ neilkodner.com/
 ├── about/index.html        About page
 ├── 404.html                Custom not-found page
 ├── app.js                  Shared catalog loading and tile rendering
-├── hero.js                 Hero slideshow
+├── hero.js                 Hero slideshow (orientation-filtered)
 ├── gallery.js              PhotoSwipe lightbox and album rendering
 ├── tokens.css              Design tokens (colors, fonts, spacing)
 ├── style.css               All component styles
@@ -203,54 +269,7 @@ neilkodner.com/
 
 ### Bucket folder structure
 
-```
-your-bucket/
-├── _hero/
-│   ├── hero1.jpg
-│   └── hero2.jpg
-├── aviation/
-│   ├── cover.jpg                  ← category cover
-│   └── oshkosh-2024/
-│       ├── cover.jpg              ← album cover (required)
-│       ├── manifest.json          ← optional metadata
-│       ├── img001.jpg
-│       └── img002.jpg
-├── hockey/
-│   └── sharks-vs-kings-jan-2025/
-│       ├── cover.jpg
-│       ├── img001.jpg
-│       └── img002.jpg
-├── birds/
-│   └── shorebirds/
-│       ├── cover.jpg
-│       └── img001.jpg
-└── travel/
-    └── boston-march-2025/
-        ├── cover.jpg
-        └── img001.jpg
-```
-
-Rules:
-- `_hero/` — hero slideshow images (any filename)
-- Top-level folders (no leading `_`) are **categories**
-- Second-level folders are **albums**
-- Each album needs a `cover.jpg`
-- Prefix any folder with `_draft-` to hide it from the site
-- `_thumbs/` is written by the automation — do not modify
-
-### Optional manifest.json
-
-Create `manifest.json` inside any album folder to override its metadata:
-
-```json
-{
-  "title": "EAA AirVenture Oshkosh 2024",
-  "date": "2024-07",
-  "location": "Oshkosh, Wisconsin"
-}
-```
-
-All fields are optional. Missing fields fall back to the existing catalog value, then to the folder name.
+See the [R2 bucket layout](#r2-bucket-layout) section above.
 
 ---
 
@@ -327,14 +346,28 @@ Watch the run log to confirm it connects to R2 and writes `catalog.json`.
 5. Bucket: your bucket name.
 6. Save.
 
-### Per-shoot workflow
+### Per-shoot workflow — flat category (e.g. aviation)
 
 ```
 1. Edit photos in Lightroom Mobile
 2. Export (see Lightroom settings below)
 3. Open S3 Files
-4. Navigate to the correct folder:
-      aviation/oshkosh-2024/
+4. Navigate to the category folder:
+      aviation/
+5. Upload all exported JPEGs
+6. Upload a cover.jpg (your best shot — replaces the existing category cover)
+7. Wait up to 30 minutes for the GitHub Action to run
+   — or trigger it manually from GitHub Actions
+```
+
+### Per-shoot workflow — album-based category (e.g. places)
+
+```
+1. Edit photos in Lightroom Mobile
+2. Export (see Lightroom settings below)
+3. Open S3 Files
+4. Navigate to (or create) the album folder:
+      places/boston-march-2025/
 5. Upload all exported JPEGs
 6. Upload a cover.jpg (your best shot from the album)
 7. Optionally create and upload a manifest.json with title/date/location
@@ -359,7 +392,7 @@ These settings balance image quality against file size and load time.
 | Long edge            | 2400 px (portrait)           |
 | Resolution           | 72 PPI (web display)         |
 | Sharpening           | Screen, Standard             |
-| Metadata             | Copyright only               |
+| Metadata             | All metadata (enables EXIF)  |
 | Watermark            | None                         |
 
 **Why these sizes:**
@@ -367,23 +400,53 @@ These settings balance image quality against file size and load time.
 - The automation generates 500 px thumbnails automatically.
 - Files typically land around 1–3 MB each, which is reasonable for an LTE/Wi-Fi upload.
 
+**EXIF metadata:** Export with **All metadata** (or at minimum Copyright + Camera info) so the build script can read camera, lens, focal length, aperture, shutter speed, and ISO. These appear in the photo viewer below each image.
+
 **Naming:** Any filename works. Alphabetical order determines gallery order, so `img001.jpg`, `img002.jpg`… gives you control. Or just let Lightroom use its defaults.
+
+---
+
+## Optional manifest.json
+
+Create `manifest.json` inside any **album** folder to override its metadata:
+
+```json
+{
+  "title": "EAA AirVenture Oshkosh 2024",
+  "date": "2024-07",
+  "location": "Oshkosh, Wisconsin"
+}
+```
+
+All fields are optional. Missing fields fall back to the existing catalog value, then to the folder name.
 
 ---
 
 ## Ongoing Maintenance
 
-**Add a new album:**
-Upload photos to `aviation/new-album-name/` with a `cover.jpg`. The next Action run adds it automatically.
+**Add photos to a flat category (e.g. aviation):**
+Upload photos directly to `aviation/`. The next Action run adds them automatically.
 
-**Hide an album while editing:**
-Rename the folder to `_draft-new-album-name/`. Rename it back when ready.
+**Add a new album (e.g. places):**
+Upload photos to `places/new-trip-name/` with a `cover.jpg`. The next Action run adds it automatically.
+
+**Hide a folder while editing:**
+Rename the folder to `_draft-folder-name/`. Rename it back when ready.
 
 **Edit an album title without renaming the folder:**
 Add or update `manifest.json` inside the album folder.
 
 **Update the hero images:**
-Upload new JPEGs to `_hero/`. Remove old ones to stop them from cycling.
+Upload new JPEGs to `_hero/`. Add both landscape and portrait images for the best experience — the site automatically shows landscape images on wide screens and portrait images on tall screens. Remove old files to stop them from cycling.
+
+**Rename a category's display name:**
+Edit `CATEGORY_NAMES` in `scripts/build_catalog.py`. For example, the `travel` folder currently displays as "Places":
+```python
+CATEGORY_NAMES = {"travel": "Places"}
+```
+
+**Convert a flat category to album-based:**
+Move the photos from the category root into a sub-folder (e.g. `aviation/oshkosh-2024/`), add a `cover.jpg` to that sub-folder, and keep `cover.jpg` at the category root. The next Action run detects the albums and switches the category to album mode.
 
 **Manually trigger a catalog rebuild:**
 GitHub repo → **Actions** → **Update Catalog** → **Run workflow**.
@@ -394,8 +457,12 @@ GitHub repo → **Actions** → **Update Catalog** → **Run workflow**.
 
 **Photos not appearing after upload**
 - Check the GitHub Action ran (Actions tab). If it failed, read the log.
-- Confirm `cover.jpg` exists in the album folder.
+- Confirm `cover.jpg` exists in the category (and album, if album-based).
 - Confirm the folder is not prefixed `_draft-`.
+
+**EXIF not showing in the photo viewer**
+- Lightroom must export with metadata included (not "Copyright only").
+- EXIF is read when the photo is first downloaded by the Action. To force a re-read, delete the photo's entry from `_thumbs/` in R2 and re-run the Action.
 
 **Thumbnails not generating**
 - Check the Action log for `WARN` lines.
@@ -408,3 +475,8 @@ GitHub repo → **Actions** → **Update Catalog** → **Run workflow**.
 **DNS not resolving**
 - Propagation can take up to 24 hours.
 - Verify records with `dig neilkodner.com +short`.
+
+**Hero images not showing for my screen orientation**
+- The site picks landscape images for wide screens and portrait images for tall screens.
+- If one orientation has no images, it falls back to the full set.
+- Add appropriately oriented images to `_hero/` and re-run the Action.
