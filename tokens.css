@@ -8,8 +8,8 @@
   --color-border:       #D9D4CC;
 
   /* Typography */
-  --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-ui:      'Jost', system-ui, sans-serif;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-ui:      'Space Grotesk', system-ui, sans-serif;
 
   /* Type scale */
   --text-xs:   0.75rem;
