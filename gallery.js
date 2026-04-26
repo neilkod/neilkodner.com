@@ -28,51 +28,115 @@ export function initLightbox(galleryEl) {
     showHideAnimationType: 'fade',
     zoomAnimationDuration:  250,
 
-    // Reserve space at top (counter/close bar) and bottom (caption).
-    // This prevents images from extending into either UI zone so the
-    // caption is always below the photo for both orientations.
-    padding: { top: 44, bottom: 80, left: 0, right: 0 },
+    // Reserve space at top (counter/close bar) and bottom (info panel).
+    padding: { top: 44, bottom: 200, left: 0, right: 0 },
   });
 
   lightbox.on('uiRegister', () => {
     // Note: PhotoSwipe v5 registers a built-in counter (name:'counter',
     // order:5) — no custom registration needed.
 
-    // ── Caption + EXIF ──────────────────────────────────────
+    // ── Info panel: caption + EXIF table ────────────────────
     lightbox.pswp.ui.registerElement({
-      name:      'caption',
-      order:     9,
-      isButton:  false,
-      appendTo:  'wrapper',
+      name:     'caption',
+      order:    9,
+      isButton: false,
+      appendTo: 'root',
       onInit(el, pswp) {
+        el.className = 'pswp__caption pswp-info';
+
+        const LABELS = {
+          camera:        'Camera',
+          lens:          'Lens',
+          focal_length:  'Focal length',
+          aperture:      'Aperture',
+          shutter_speed: 'Shutter',
+          iso:           'ISO',
+        };
+        const ORDER = ['camera', 'lens', 'focal_length', 'aperture', 'shutter_speed', 'iso'];
+
         const refresh = () => {
           const elem    = pswp.currSlide?.data?.element;
           const caption = elem?.getAttribute('data-pswp-caption') || '';
           const exifRaw = elem?.getAttribute('data-pswp-exif') || '';
 
+          let captionHtml = caption
+            ? `<p class="pswp-caption">${caption}</p>`
+            : '';
+
           let exifHtml = '';
           if (exifRaw) {
             try {
-              const exif  = JSON.parse(exifRaw);
-              const parts = [
-                exif.camera,
-                exif.lens,
-                exif.focal_length,
-                exif.aperture,
-                exif.shutter_speed,
-                exif.iso,
-              ].filter(Boolean);
-              if (parts.length) {
-                exifHtml = `<p class="pswp-exif-text">${parts.join(' · ')}</p>`;
-              }
+              const exif = JSON.parse(exifRaw);
+              const rows = ORDER
+                .filter(k => exif[k])
+                .map(k => `<dt>${LABELS[k]}</dt><dd>${exif[k]}</dd>`)
+                .join('');
+              if (rows) exifHtml = `<dl class="pswp-exif-table">${rows}</dl>`;
             } catch { /* malformed JSON — skip */ }
           }
 
-          el.innerHTML = caption || exifHtml
-            ? `${caption ? `<p class="pswp-caption-text">${caption}</p>` : ''}${exifHtml}`
-            : '';
+          el.innerHTML = captionHtml + exifHtml;
         };
+
         pswp.on('change', refresh);
+      },
+    });
+
+    // ── Share / permalink button ─────────────────────────────
+    lightbox.pswp.ui.registerElement({
+      name:     'share-button',
+      order:    8,
+      isButton: true,
+      appendTo: 'bar',
+      html: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+             </svg>`,
+      onInit(el, pswp) {
+        el.setAttribute('aria-label', 'Copy link to this photo');
+        el.setAttribute('title', 'Copy link');
+
+        const LINK_SVG  = el.innerHTML;
+        const CHECK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>`;
+
+        // Keep URL hash in sync with current photo
+        pswp.on('change', () => {
+          const anchor = pswp.currSlide?.data?.element;
+          const href   = anchor?.getAttribute('href') || '';
+          const stem   = href.split('/').pop().replace(/\.[^.]+$/, '');
+          if (stem) {
+            history.replaceState(null, '', `${location.pathname}${location.search}#${stem}`);
+          }
+        });
+
+        // Restore clean URL when lightbox closes
+        pswp.on('close', () => {
+          history.replaceState(null, '', `${location.pathname}${location.search}`);
+        });
+
+        el.addEventListener('click', () => {
+          const url  = location.href;
+          const confirm = () => {
+            el.innerHTML = CHECK_SVG;
+            el.setAttribute('title', 'Copied!');
+            setTimeout(() => {
+              el.innerHTML = LINK_SVG;
+              el.setAttribute('title', 'Copy link');
+            }, 2000);
+          };
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(confirm).catch(() => prompt('Copy this link:', url));
+          } else {
+            prompt('Copy this link:', url);
+          }
+        });
       },
     });
   });
@@ -225,5 +289,16 @@ export async function renderAlbumPage() {
     grid.appendChild(a);
   }
 
-  initLightbox(grid);
+  const lb = initLightbox(grid);
+
+  // If the URL contains a filename hash (e.g. #IMG_0042), open directly to that photo
+  const hash = location.hash.slice(1);
+  if (hash) {
+    const items = [...grid.querySelectorAll('a[data-pswp-width]')];
+    const idx = items.findIndex(a => {
+      const href = a.getAttribute('href') || '';
+      return href.split('/').pop().replace(/\.[^.]+$/, '') === decodeURIComponent(hash);
+    });
+    if (idx >= 0) lb.loadAndOpen(idx);
+  }
 }

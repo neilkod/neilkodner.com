@@ -4,6 +4,8 @@ Personal photography portfolio — neilkodner.com
 
 Static HTML/CSS/JS. No frameworks, no build tools. Images on Cloudflare R2. Deployed via GitHub Pages. Catalog generated automatically by GitHub Actions.
 
+Warm light theme. Cormorant Garamond display font. PhotoSwipe v5 lightbox with per-photo permalink URLs and a structured EXIF table.
+
 ---
 
 ## How it works
@@ -125,10 +127,13 @@ No CMS. No server. No git commands after initial setup.
           └── user clicks photo
                     │
                     ▼
-              PhotoSwipe v5
-              full-res image + EXIF overlay
-              (camera · lens · focal length ·
-               aperture · shutter · ISO)
+              PhotoSwipe v5 lightbox
+              full-res image
+              EXIF table below photo
+              (Camera, Lens, Focal length,
+               Aperture, Shutter, ISO)
+              URL hash updates to photo filename
+              share button copies permalink
 ```
 
 ### R2 bucket layout
@@ -463,6 +468,11 @@ GitHub repo → **Actions** → **Update Catalog** → **Run workflow**.
 **EXIF not showing in the photo viewer**
 - Lightroom must export with metadata included (not "Copyright only").
 - EXIF is read when the photo is first downloaded by the Action. To force a re-read, delete the photo's entry from `_thumbs/` in R2 and re-run the Action.
+- Only fields present in the image are shown; photos with no EXIF data will show an empty panel.
+
+**Permalink not opening the right photo**
+- The URL hash is the filename without extension (e.g. `#IMG_0042`).
+- Hashes are case-sensitive — confirm the filename case matches what the catalog recorded.
 
 **Thumbnails not generating**
 - Check the Action log for `WARN` lines.

@@ -1,11 +1,11 @@
 :root {
   /* Colors */
-  --color-bg:           #111111;
-  --color-text:         #F0EDE8;
+  --color-bg:           #F6F3EE;
+  --color-text:         #1C1916;
   --color-accent:       #C9963A;
-  --color-text-muted:   #888880;
-  --color-surface:      #1A1A1A;
-  --color-border:       #222222;
+  --color-text-muted:   #7A736B;
+  --color-surface:      #EDE9E3;
+  --color-border:       #D9D4CC;
 
   /* Typography */
   --font-display: 'Cormorant Garamond', Georgia, serif;

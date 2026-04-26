@@ -28,7 +28,7 @@ html {
   z-index: 200;
   padding: var(--space-2) var(--space-6);
   background: var(--color-accent);
-  color: var(--color-bg);
+  color: #1C1916; /* fixed dark — amber needs dark text regardless of site theme */
   font-family: var(--font-ui);
   font-size: var(--text-sm);
   font-weight: 500;
@@ -138,11 +138,11 @@ h4 { font-size: var(--text-xl); }
   height: var(--nav-height);
   display: flex;
   align-items: center;
-  /* glass effect */
-  background: rgba(17, 17, 17, 0.85);
+  /* frosted glass — warm light */
+  background: rgba(246, 243, 238, 0.88);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 }
 
 .site-nav .container {
@@ -407,11 +407,11 @@ h4 { font-size: var(--text-xl); }
   opacity: 1;
 }
 
-/* placeholder gradient when no image */
+/* placeholder when no cover image */
 .category-tile .tile-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, #181818, #0f0f0f);
+  background: var(--color-surface);
 }
 
 .category-tile:hover img,
