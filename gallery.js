@@ -28,8 +28,15 @@ export function initLightbox(galleryEl) {
     showHideAnimationType: 'fade',
     zoomAnimationDuration:  250,
 
-    // Reserve space at top (counter/close bar) and bottom (info panel).
-    padding: { top: 44, bottom: 200, left: 0, right: 0 },
+    // Reserve space for toolbar (top) and info panel (bottom).
+    // Collapse the bottom panel on short viewports (landscape mobile) so
+    // the photo isn't squeezed to a sliver.
+    paddingFn: (viewportSize) => ({
+      top:    44,
+      bottom: viewportSize.y < 500 ? 80 : 200,
+      left:   0,
+      right:  0,
+    }),
   });
 
   lightbox.on('uiRegister', () => {
@@ -122,7 +129,18 @@ export function initLightbox(galleryEl) {
         });
 
         el.addEventListener('click', () => {
-          const url  = location.href;
+          // Build a /photo/ permalink rather than the album+hash URL so
+          // shared links land on the dedicated page with full og:image support.
+          const anchor   = pswp.currSlide?.data?.element;
+          const href     = anchor?.getAttribute('href') || '';
+          const filename = href.split('/').pop();
+          const sp       = new URLSearchParams(location.search);
+          const photoUrl = new URL('/photo/', location.origin);
+          photoUrl.searchParams.set('cat',   sp.get('cat')   || '');
+          photoUrl.searchParams.set('album', sp.get('album') || '');
+          photoUrl.searchParams.set('photo', filename);
+          const url = photoUrl.toString();
+
           const confirm = () => {
             el.innerHTML = CHECK_SVG;
             el.setAttribute('title', 'Copied!');

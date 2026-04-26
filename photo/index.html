@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo — Neil Kodner</title>
+  <meta name="description" content="Photography by Neil Kodner.">
+
+  <!-- Open Graph — title, image, and url updated by JS once catalog loads -->
+  <meta property="og:type"        content="article">
+  <meta property="og:title"       content="Photo — Neil Kodner">
+  <meta property="og:description" content="Photography by Neil Kodner.">
+  <meta property="og:site_name"   content="Photography by Neil Kodner">
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/print.css" media="print">
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <!-- ── Navigation ─────────────────────────────────────── -->
+  <nav class="site-nav" aria-label="Primary">
+    <div class="container">
+      <a href="/" class="nav-brand">Photography by Neil Kodner</a>
+      <ul class="nav-links" role="list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/photography/" aria-current="page">Photography</a></li>
+        <li><a href="/about/">About</a></li>
+      </ul>
+    </div>
+  </nav>
+  <div class="nav-offset" aria-hidden="true"></div>
+
+  <main id="main-content">
+    <div class="container">
+
+      <!-- Breadcrumb (populated by JS) -->
+      <nav class="photo-breadcrumb" aria-label="Breadcrumb"></nav>
+
+      <!-- Loading / error states -->
+      <p id="photo-loading" class="photo-status">Loading…</p>
+      <p id="photo-error"   class="photo-status" hidden></p>
+
+      <!-- Photo article (populated by JS) -->
+      <article id="photo-article" class="photo-article" hidden>
+
+        <figure class="photo-figure">
+          <div class="photo-figure-inner" id="photo-figure-inner">
+            <!-- full-res img injected by JS -->
+          </div>
+          <figcaption id="photo-caption" class="photo-caption"></figcaption>
+        </figure>
+
+        <!-- EXIF table -->
+        <div class="photo-meta" id="photo-meta"></div>
+
+        <!-- Prev / Next -->
+        <nav class="photo-nav" id="photo-nav" aria-label="Photo navigation"></nav>
+
+      </article>
+
+    </div>
+  </main>
+
+  <!-- ── Footer ─────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 Neil Kodner</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { renderPhotoPage } from '/photo.js';
+    renderPhotoPage();
+  </script>
+
+</body>
+</html>

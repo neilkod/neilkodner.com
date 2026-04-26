@@ -414,10 +414,17 @@ h4 { font-size: var(--text-xl); }
   background: var(--color-surface);
 }
 
-.category-tile:hover img,
-.category-tile:hover .tile-bg {
-  filter: var(--tile-brightness-hover);
-  transform: scale(1.02);
+/* Hover only on devices that support it — prevents sticky-hover on touch */
+@media (hover: hover) {
+  .category-tile:hover img,
+  .category-tile:hover .tile-bg {
+    filter: var(--tile-brightness-hover);
+    transform: scale(1.02);
+  }
+
+  .category-tile:hover .category-tile-border {
+    border-color: var(--color-accent);
+  }
 }
 
 .category-tile::after {
@@ -434,12 +441,19 @@ h4 { font-size: var(--text-xl); }
   inset-inline: 0;
   z-index: 2;
   padding: var(--space-6);
+  /* Text always sits over the dark photo gradient — must stay light */
+  color: rgba(240, 237, 232, 0.9);
 }
 
 .category-tile-info h3 {
   font-size: var(--text-xl);
   font-weight: 300;
-  color: var(--color-text);
+  color: rgba(240, 237, 232, 0.95);
+}
+
+/* Override the global .label muted color inside tiles */
+.category-tile-info .label {
+  color: rgba(240, 237, 232, 0.6);
 }
 
 .category-tile-border {
@@ -449,10 +463,6 @@ h4 { font-size: var(--text-xl); }
   pointer-events: none;
   transition: border-color var(--transition);
   z-index: 3;
-}
-
-.category-tile:hover .category-tile-border {
-  border-color: var(--color-accent);
 }
 
 /* ─── Latest Albums strip ─────────────────────────────────── */
@@ -742,4 +752,137 @@ h4 { font-size: var(--text-xl); }
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+}
+
+/* ─── Photo page ──────────────────────────────────────────── */
+
+.photo-status {
+  color: var(--color-text-muted);
+  padding-block: var(--space-8);
+}
+
+.photo-breadcrumb {
+  padding-block: var(--space-6) 0;
+}
+
+.breadcrumb-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.breadcrumb-list a {
+  color: var(--color-text-muted);
+  transition: color var(--transition);
+}
+
+.breadcrumb-list a:hover {
+  color: var(--color-accent);
+}
+
+.breadcrumb-list [aria-hidden="true"] {
+  opacity: 0.4;
+}
+
+.photo-article {
+  padding-block: var(--space-8) var(--space-16);
+}
+
+.photo-figure {
+  margin: var(--space-6) auto var(--space-4);
+  max-width: 960px;
+}
+
+.photo-figure-inner {
+  background: var(--color-surface);
+  line-height: 0;
+}
+
+.photo-figure-inner img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.photo-caption {
+  margin-top: var(--space-3);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 300;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.photo-meta {
+  max-width: 960px;
+  margin: var(--space-6) auto var(--space-4);
+}
+
+.photo-exif-table {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 1.5rem;
+  row-gap: 6px;
+  margin: 0;
+}
+
+.photo-exif-table dt {
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+
+.photo-exif-table dd {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 300;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.photo-nav {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+
+.photo-nav-btn {
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  transition: color var(--transition);
+  min-width: 5rem; /* prevent layout shift between prev/next states */
+}
+
+.photo-nav-prev { text-align: left; }
+.photo-nav-next { text-align: right; }
+
+.photo-nav-btn--disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+a.photo-nav-btn:hover {
+  color: var(--color-accent);
+}
+
+.photo-nav-count {
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  letter-spacing: 0.06em;
 }

@@ -130,10 +130,13 @@ No CMS. No server. No git commands after initial setup.
               PhotoSwipe v5 lightbox
               full-res image
               EXIF table below photo
-              (Camera, Lens, Focal length,
-               Aperture, Shutter, ISO)
-              URL hash updates to photo filename
-              share button copies permalink
+              URL hash updates to #filename
+              share button copies /photo/ permalink
+                    │
+                    ▼ (share link)
+              /photo/?cat=…&album=…&photo=…
+              editorial single-photo page
+              full-res image · EXIF · prev/next nav
 ```
 
 ### R2 bucket layout
@@ -233,6 +236,8 @@ neilkodner.com/
 ├── app.js                  Shared catalog loading and tile rendering
 ├── hero.js                 Hero slideshow (orientation-filtered)
 ├── gallery.js              PhotoSwipe lightbox and album rendering
+├── photo.js                Single-photo page rendering
+├── photo/index.html        Dedicated photo permalink page
 ├── tokens.css              Design tokens (colors, fonts, spacing)
 ├── style.css               All component styles
 ├── print.css               Print stylesheet
