@@ -391,30 +391,53 @@ The site updates automatically. No git commands needed.
 
 ## 6 — Lightroom Export Settings
 
-Primary camera: Sony Alpha (ARW). These settings also apply to any other camera whose RAW files Lightroom supports.
+**Primary workflow: Lightroom Mobile on iPad Pro.** Primary camera: Sony Alpha (ARW). Settings apply to any other camera Lightroom supports.
 
-| Setting              | Value                                        |
-|----------------------|----------------------------------------------|
-| Format               | JPEG                                         |
-| Quality              | 90–92                                        |
-| Color Space          | Display P3                                   |
-| Long edge            | 3000 px (both orientations)                  |
-| Resolution           | 72 PPI (web display only — has no effect)    |
-| Output Sharpening    | Screen, High                                 |
-| Metadata             | All metadata (enables EXIF display on site)  |
-| Watermark            | None                                         |
+### Lightroom Mobile export settings (iPad)
 
-**Quality 90–92:** Higher than the Lightroom default. At 85, JPEG compression artifacts appear first in high-frequency detail — feathers, fur, rivets, ice texture, bokeh edges. At 90–92 those artifacts are essentially gone. File sizes land around 2–5 MB each, which is fine over LTE/Wi-Fi from an iPad.
+In Lightroom Mobile: open the photo → **•••** → **Share** → **Export As…**
 
-**Display P3 color space:** Sony Alpha sensors capture a wide color gamut. Exporting in Display P3 (instead of sRGB) preserves that gamut on any wide-gamut display — iPhones, iPads, MacBooks, and most modern monitors. Browsers color-manage automatically, so images still look correct on older sRGB-only displays. This is the most visible quality improvement for saturated subjects (birds, jerseys, sunsets, aircraft livery).
+| Setting    | Value                                       |
+|------------|---------------------------------------------|
+| Format     | JPEG                                        |
+| Quality    | 90 (slide to ~90%)                          |
+| Dimensions | Custom — Long Edge 3000 px                  |
+| Include    | All Metadata ✓                              |
 
-**Output Sharpening → Screen → High:** Lightroom calibrates output sharpening to the export pixel dimensions. "High" applies a stronger radius that compensates for the softening introduced when the browser downscales a 3000 px image to fit a 960–1400 px container. This is the single most visible sharpness improvement vs. the default "Standard" or no sharpening.
+**What Lightroom Mobile cannot do (vs. desktop):**
 
-**Long edge 3000 px for both orientations:** The previous recommendation of 2400 px for portrait images could look soft on a large monitor or iPad Pro. 3000 px is sufficient for 2× Retina at the maximum display width of the photo page (960 px) and the full-viewport lightbox.
+- **No color space selector.** LR Mobile JPEG exports are sRGB. There is no Display P3 option. sRGB is fine for this workflow — browsers on all devices render it correctly. If you ever export from Lightroom Classic on a Mac, use Display P3 instead for noticeably more vibrant colors on wide-gamut displays (iPhone, iPad Pro, MacBook).
+- **No output sharpening.** "Screen → High" is a desktop-only export feature. Use the Detail panel workaround below instead.
 
-**EXIF metadata:** Export with **All metadata** so the build script can read and display camera body, lens, focal length, aperture, shutter speed, and ISO on the photo viewer. Sony Alpha ARW files carry full EXIF including lens data for E-mount and A-mount lenses. If you shoot with adapted lenses (e.g. via LA-EA adapter), confirm that lens EXIF is embedded — some third-party adapters do not pass it through.
+**Sharpening workaround for LR Mobile:**
+Output sharpening (desktop) is calibrated to the final export size. LR Mobile lacks this, but you can approximate the effect in the editing panels before export:
 
-**Naming:** Any filename works. Alphabetical order determines gallery order within an album, so `img001.jpg`, `img002.jpg`… gives you explicit control. Sony's default naming (`DSC09999.jpg`, `_DSC0001.jpg`) also works fine; just be aware that Sony resets its counter and the prefix changes when crossing 9999, which can affect sort order across shoots.
+- **Detail → Sharpening:** Amount 70–80, Radius 0.8–1.0, Masking 20–40 (hold Alt/Option on desktop to visualise; on iPad, adjust until edges sharpen without noise)
+- **Texture: +10 to +20** — adds micro-contrast that compensates for the softening introduced when the browser downscales a 3000 px image
+
+Apply these globally as a preset or as part of your standard edit so you don't have to remember them per shot.
+
+**Quality 90:** At 85 (the old recommendation), JPEG artifacts appear first in high-frequency detail — feathers, fur, rivets, ice texture, bokeh edges. At 90 they are essentially gone. Files land around 2–5 MB, which is fine over LTE/Wi-Fi.
+
+**Long edge 3000 px for both orientations:** 3000 px is sufficient for 2× Retina at the photo page width (960 px) and the full-viewport lightbox. Portrait images were previously recommended at 2400 px, which can look soft on large monitors.
+
+**All Metadata:** Required for the build script to display camera body, lens, focal length, aperture, shutter speed, and ISO in the photo viewer. Sony Alpha ARW files carry full EXIF including lens data for native E-mount and A-mount lenses. If you use adapted lenses (e.g. via LA-EA5 or third-party adapters), lens name and focal length may not be embedded — some adapters do not pass that data through to the ARW file.
+
+**Naming:** Any filename works. Album photo order is alphabetical, so Sony's default `DSC09999.jpg` / `_DSC0001.ARW` scheme is fine for a single shoot. Be aware that Sony resets its counter and changes the filename prefix (DSC → \_DSC) when crossing 9999, which can split a shoot alphabetically — rename if that affects a single album.
+
+### If you export from Lightroom Classic on a Mac
+
+Use these settings instead for the best possible output:
+
+| Setting           | Value                |
+|-------------------|----------------------|
+| Quality           | 90–92                |
+| Color Space       | Display P3           |
+| Long edge         | 3000 px              |
+| Output Sharpening | Screen, High         |
+| Metadata          | All                  |
+
+Display P3 makes a visible difference for saturated subjects — bird plumage, aircraft livery, jersey colors, arena lighting. Browsers on all modern Apple devices (and most Windows monitors made after ~2020) will render the wider gamut. Older sRGB-only displays still render it correctly.
 
 ---
 
