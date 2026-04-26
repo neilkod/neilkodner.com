@@ -434,33 +434,26 @@ h4 { font-size: var(--text-xl); }
   }
 }
 
-.category-tile::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%);
-  pointer-events: none;
-}
-
 .category-tile-info {
   position: absolute;
   bottom: 0;
   inset-inline: 0;
   z-index: 2;
-  padding: var(--space-6);
-  /* Text always sits over the dark photo gradient — must stay light */
-  color: rgba(240, 237, 232, 0.9);
+  padding: var(--space-4) var(--space-6);
+  /* Frosted light panel — dark text reads on any photo background */
+  background: rgba(246, 243, 238, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .category-tile-info h3 {
   font-size: var(--text-xl);
   font-weight: 500;
-  color: rgba(240, 237, 232, 0.95);
+  color: var(--color-text);
 }
 
-/* Override the global .label muted color inside tiles */
 .category-tile-info .label {
-  color: rgba(240, 237, 232, 0.6);
+  color: var(--color-text-muted);
 }
 
 .category-tile-border {
