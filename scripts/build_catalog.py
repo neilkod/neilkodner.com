@@ -43,7 +43,7 @@ from PIL import Image
 
 CATALOG_PATH    = "catalog.json"
 THUMB_LONG_EDGE = 500
-THUMB_QUALITY   = 85
+THUMB_QUALITY   = 90
 
 # Override display names for category folders whose folder name alone
 # doesn't reflect what you want shown on the site.

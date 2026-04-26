@@ -391,28 +391,30 @@ The site updates automatically. No git commands needed.
 
 ## 6 — Lightroom Export Settings
 
-These settings balance image quality against file size and load time.
+Primary camera: Sony Alpha (ARW). These settings also apply to any other camera whose RAW files Lightroom supports.
 
-| Setting              | Value                        |
-|----------------------|------------------------------|
-| Format               | JPEG                         |
-| Quality              | 85–90                        |
-| Color Space          | sRGB                         |
-| Long edge            | 3000 px (landscape)          |
-| Long edge            | 2400 px (portrait)           |
-| Resolution           | 72 PPI (web display)         |
-| Sharpening           | Screen, Standard             |
-| Metadata             | All metadata (enables EXIF)  |
-| Watermark            | None                         |
+| Setting              | Value                                        |
+|----------------------|----------------------------------------------|
+| Format               | JPEG                                         |
+| Quality              | 90–92                                        |
+| Color Space          | Display P3                                   |
+| Long edge            | 3000 px (both orientations)                  |
+| Resolution           | 72 PPI (web display only — has no effect)    |
+| Output Sharpening    | Screen, High                                 |
+| Metadata             | All metadata (enables EXIF display on site)  |
+| Watermark            | None                                         |
 
-**Why these sizes:**
-- 3000 px long edge gives excellent quality in PhotoSwipe fullscreen on Retina displays.
-- The automation generates 500 px thumbnails automatically.
-- Files typically land around 1–3 MB each, which is reasonable for an LTE/Wi-Fi upload.
+**Quality 90–92:** Higher than the Lightroom default. At 85, JPEG compression artifacts appear first in high-frequency detail — feathers, fur, rivets, ice texture, bokeh edges. At 90–92 those artifacts are essentially gone. File sizes land around 2–5 MB each, which is fine over LTE/Wi-Fi from an iPad.
 
-**EXIF metadata:** Export with **All metadata** (or at minimum Copyright + Camera info) so the build script can read camera, lens, focal length, aperture, shutter speed, and ISO. These appear in the photo viewer below each image.
+**Display P3 color space:** Sony Alpha sensors capture a wide color gamut. Exporting in Display P3 (instead of sRGB) preserves that gamut on any wide-gamut display — iPhones, iPads, MacBooks, and most modern monitors. Browsers color-manage automatically, so images still look correct on older sRGB-only displays. This is the most visible quality improvement for saturated subjects (birds, jerseys, sunsets, aircraft livery).
 
-**Naming:** Any filename works. Alphabetical order determines gallery order, so `img001.jpg`, `img002.jpg`… gives you control. Or just let Lightroom use its defaults.
+**Output Sharpening → Screen → High:** Lightroom calibrates output sharpening to the export pixel dimensions. "High" applies a stronger radius that compensates for the softening introduced when the browser downscales a 3000 px image to fit a 960–1400 px container. This is the single most visible sharpness improvement vs. the default "Standard" or no sharpening.
+
+**Long edge 3000 px for both orientations:** The previous recommendation of 2400 px for portrait images could look soft on a large monitor or iPad Pro. 3000 px is sufficient for 2× Retina at the maximum display width of the photo page (960 px) and the full-viewport lightbox.
+
+**EXIF metadata:** Export with **All metadata** so the build script can read and display camera body, lens, focal length, aperture, shutter speed, and ISO on the photo viewer. Sony Alpha ARW files carry full EXIF including lens data for E-mount and A-mount lenses. If you shoot with adapted lenses (e.g. via LA-EA adapter), confirm that lens EXIF is embedded — some third-party adapters do not pass it through.
+
+**Naming:** Any filename works. Alphabetical order determines gallery order within an album, so `img001.jpg`, `img002.jpg`… gives you explicit control. Sony's default naming (`DSC09999.jpg`, `_DSC0001.jpg`) also works fine; just be aware that Sony resets its counter and the prefix changes when crossing 9999, which can affect sort order across shoots.
 
 ---
 
