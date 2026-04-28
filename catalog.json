@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-28T23:17:16+00:00",
+  "generated": "2026-04-28T23:18:38+00:00",
   "baseUrl": "https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev",
   "hero": [
     {
@@ -133,6 +133,20 @@
           "location": "",
           "cover": "",
           "photos": [
+            {
+              "filename": "DJI_20260427193101_0006_D.jpg",
+              "width": 3000,
+              "height": 2250,
+              "caption": "",
+              "exif": {
+                "camera": "FC9184",
+                "lens": "70.0 mm f/2.8",
+                "focal_length": "19mm",
+                "aperture": "f/2.8",
+                "shutter_speed": "1/40s",
+                "iso": "ISO 100"
+              }
+            },
             {
               "filename": "DSC00933.JPG",
               "width": 2048,
