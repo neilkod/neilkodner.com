@@ -180,35 +180,54 @@ def extract_exif(img: Image.Image) -> dict:
     return result
 
 
+# Values written by iOS Photos when it misreads the XMP language tag — not real captions.
+_BAD_CAPTION_VALUES = {"default", "x-default"}
+
+
 def extract_caption(img: Image.Image) -> str:
     """
-    Read caption from IPTC (APP13) or XMP (APP1), whichever has a value.
-    IPTC Caption-Abstract (2,120) is written by Lightroom Classic.
-    XMP dc:description is written by Lightroom Mobile (and also Classic).
+    Read caption from IPTC (APP13) or XMP (APP1), whichever has a real value.
+
+    When a photo passes through the iOS Photos library before upload, iOS can
+    corrupt the XMP metadata by replacing the caption text with the literal
+    string "default" (misread from the xml:lang="x-default" language tag).
+    Those known-bad values are skipped.
+
+    Field priority:
+      1. IPTC Caption-Abstract (2,120) — Lightroom Classic, iOS Photos edits
+      2. XMP dc:description             — Lightroom Mobile direct export
+      3. XMP dc:title                   — Lightroom Mobile Title field fallback
     """
-    # IPTC first
+    def _is_real(val: str) -> bool:
+        return bool(val) and val.lower() not in _BAD_CAPTION_VALUES
+
+    # IPTC Caption-Abstract (2,120)
     try:
         iptc = IptcImagePlugin.getiptcinfo(img)
         if iptc:
             raw = iptc.get((2, 120), b"")
             if isinstance(raw, list):
                 raw = raw[0] if raw else b""
-            caption = raw.decode("utf-8", errors="ignore").strip()
-            if caption:
-                return caption
+            val = raw.decode("utf-8", errors="ignore").strip()
+            if _is_real(val):
+                return val
     except Exception:
         pass
 
-    # XMP fallback
+    # XMP dc:description, then dc:title
     try:
         xmp_bytes = img.info.get("xmp", b"")
         if xmp_bytes:
             root = ET.fromstring(xmp_bytes)
-            for desc in root.iter("{http://purl.org/dc/elements/1.1/}description"):
-                for li in desc.iter("{http://www.w3.org/1999/02/22-rdf-syntax-ns#}li"):
-                    text = (li.text or "").strip()
-                    if text:
-                        return text
+            for field in (
+                "{http://purl.org/dc/elements/1.1/}description",
+                "{http://purl.org/dc/elements/1.1/}title",
+            ):
+                for elem in root.iter(field):
+                    for li in elem.iter("{http://www.w3.org/1999/02/22-rdf-syntax-ns#}li"):
+                        val = (li.text or "").strip()
+                        if _is_real(val):
+                            return val
     except Exception:
         pass
 
