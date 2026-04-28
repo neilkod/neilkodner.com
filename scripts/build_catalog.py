@@ -37,7 +37,7 @@ from math import gcd
 
 import boto3
 import botocore.exceptions
-from PIL import Image
+from PIL import Image, IptcImagePlugin
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -177,6 +177,20 @@ def extract_exif(img: Image.Image) -> dict:
         pass  # EXIF failures are non-fatal
 
     return result
+
+
+def extract_caption(img: Image.Image) -> str:
+    """Read IPTC Caption-Abstract (2,120) embedded by Lightroom on export."""
+    try:
+        iptc = IptcImagePlugin.getiptcinfo(img)
+        if not iptc:
+            return ""
+        raw = iptc.get((2, 120), b"")
+        if isinstance(raw, list):
+            raw = raw[0] if raw else b""
+        return raw.decode("utf-8", errors="ignore").strip()
+    except Exception:
+        return ""
 
 
 def make_thumbnail(data: bytes) -> bytes:
@@ -393,7 +407,7 @@ def build():
                         "filename": filename,
                         "width":    w,
                         "height":   h,
-                        "caption":  prev_photo.get("caption", "") if prev_photo else "",
+                        "caption":  prev_photo.get("caption", "") if prev_photo else extract_caption(img),
                         "exif":     exif,
                     })
                 except Exception as exc:
@@ -466,7 +480,7 @@ def build():
                             "filename": filename,
                             "width":    w,
                             "height":   h,
-                            "caption":  prev_photo.get("caption", "") if prev_photo else "",
+                            "caption":  prev_photo.get("caption", "") if prev_photo else extract_caption(img),
                             "exif":     exif,
                         })
                     except Exception as exc:
