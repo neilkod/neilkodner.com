@@ -32,6 +32,7 @@ import io
 import json
 import os
 import sys
+import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from math import gcd
 
@@ -180,17 +181,38 @@ def extract_exif(img: Image.Image) -> dict:
 
 
 def extract_caption(img: Image.Image) -> str:
-    """Read IPTC Caption-Abstract (2,120) embedded by Lightroom on export."""
+    """
+    Read caption from IPTC (APP13) or XMP (APP1), whichever has a value.
+    IPTC Caption-Abstract (2,120) is written by Lightroom Classic.
+    XMP dc:description is written by Lightroom Mobile (and also Classic).
+    """
+    # IPTC first
     try:
         iptc = IptcImagePlugin.getiptcinfo(img)
-        if not iptc:
-            return ""
-        raw = iptc.get((2, 120), b"")
-        if isinstance(raw, list):
-            raw = raw[0] if raw else b""
-        return raw.decode("utf-8", errors="ignore").strip()
+        if iptc:
+            raw = iptc.get((2, 120), b"")
+            if isinstance(raw, list):
+                raw = raw[0] if raw else b""
+            caption = raw.decode("utf-8", errors="ignore").strip()
+            if caption:
+                return caption
     except Exception:
-        return ""
+        pass
+
+    # XMP fallback
+    try:
+        xmp_bytes = img.info.get("xmp", b"")
+        if xmp_bytes:
+            root = ET.fromstring(xmp_bytes)
+            for desc in root.iter("{http://purl.org/dc/elements/1.1/}description"):
+                for li in desc.iter("{http://www.w3.org/1999/02/22-rdf-syntax-ns#}li"):
+                    text = (li.text or "").strip()
+                    if text:
+                        return text
+    except Exception:
+        pass
+
+    return ""
 
 
 def make_thumbnail(data: bytes) -> bytes:
