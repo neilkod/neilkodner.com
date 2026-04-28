@@ -29,49 +29,48 @@ lightbox.pswp.ui.registerElement({
   name:     'caption',
   order:    9,
   isButton: false,
-  appendTo: 'wrapper',
+  appendTo: 'root',   // NOT 'wrapper' — root places it relative to the PhotoSwipe container
   onInit(el, pswp) {
-    const refresh = () => { /* build innerHTML from caption + exif */ };
+    el.className = 'pswp__caption pswp-info';
+    const refresh = () => { /* build innerHTML from caption + exif dl table */ };
     pswp.on('change', refresh);
   },
 });
 ```
 
-`appendTo: 'wrapper'` places the element inside the PhotoSwipe wrapper so it sits below the image but inside the viewport.
+`appendTo: 'root'` positions the element relative to the PhotoSwipe root container. Give it the class `pswp-info` for styling (not `pswp__custom-caption`).
 
 ## Caption positioning — always below the photo
 
 The problem: for portrait images that fill the full viewport height, an `position: absolute; bottom: 0` caption lands on top of the photo.
 
-The fix: use the PhotoSwipe `padding` option to permanently reserve 80px at the bottom (and 44px at the top for the counter bar). This shrinks the image's available space so it never extends into the caption zone:
+The fix: use the PhotoSwipe `paddingFn` option to reserve space at the bottom. The reservation is adaptive — 200px on normal viewports, 80px on short viewports (landscape mobile, `height < 500px`). See Prompt 09 for the `paddingFn` implementation. This shrinks the image's available space so it never extends into the caption zone.
 
-```js
-padding: { top: 44, bottom: 80, left: 0, right: 0 }
-```
-
-Style the caption container as a fixed-height flex bar, not a gradient overlay:
+Style the info panel as a fixed-height block at the bottom. The EXIF is a `<dl>` table (see Prompt 11):
 
 ```css
-.pswp__custom-caption {
+.pswp-info {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3rem;
-  /* No background — the padding option keeps images above this zone */
+  padding: 0.75rem 1rem;
+  text-align: center;
 }
-.pswp-caption-text {
+.pswp-caption {
   color: rgba(255,255,255,0.9);
   font-size: 0.85rem;
+  margin: 0 0 0.4rem;
 }
-.pswp-exif-text {
+.pswp-exif-table {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 1.25rem;
+  margin: 0;
+  font-size: 0.7rem;
   color: rgba(255,255,255,0.5);
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
 }
+.pswp-exif-table dt { font-weight: 500; margin-right: 0.3em; }
+.pswp-exif-table dd { margin: 0; }
 ```

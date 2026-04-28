@@ -41,15 +41,26 @@ if (photo.exif && Object.keys(photo.exif).length) {
 }
 ```
 
-In the PhotoSwipe `uiRegister` → custom caption element's `onInit`, read both `data-pswp-caption` and `data-pswp-exif`:
+In the PhotoSwipe `uiRegister` → custom caption element's `onInit`, read both `data-pswp-caption` and `data-pswp-exif`. Display EXIF as a definition list (`<dl>`) with human-readable labels, not as dot-separated text:
 
 ```js
-const exif  = JSON.parse(elem.getAttribute('data-pswp-exif'));
-const parts = [
-  exif.camera, exif.lens, exif.focal_length,
-  exif.aperture, exif.shutter_speed, exif.iso,
-].filter(Boolean);
-exifHtml = `<p class="pswp-exif-text">${parts.join(' · ')}</p>`;
+const LABELS = {
+  camera:        'Camera',
+  lens:          'Lens',
+  focal_length:  'Focal length',
+  aperture:      'Aperture',
+  shutter_speed: 'Shutter',
+  iso:           'ISO',
+};
+const ORDER = ['camera', 'lens', 'focal_length', 'aperture', 'shutter_speed', 'iso'];
+
+// inside refresh():
+const exif = JSON.parse(exifRaw);
+const rows = ORDER
+  .filter(k => exif[k])
+  .map(k => `<dt>${LABELS[k]}</dt><dd>${exif[k]}</dd>`)
+  .join('');
+if (rows) exifHtml = `<dl class="pswp-exif-table">${rows}</dl>`;
 ```
 
 Refresh on every `pswp.on('change', refresh)` event so it updates as the user navigates.

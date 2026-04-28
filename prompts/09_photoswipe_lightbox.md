@@ -40,10 +40,15 @@ Add a `<link>` to the PhotoSwipe base CSS from CDN. Then add a `<style>` block i
 
 ## PhotoSwipe UI padding
 
-Reserve space for the counter bar at top and caption bar at bottom so images never extend into those zones:
+Reserve space for the counter bar at top and caption bar at bottom so images never extend into those zones. Use `paddingFn` (a function, not a static object) so the bottom padding adapts to the viewport height — on short viewports (landscape mobile, height < 500px) use 80px; on normal viewports use 200px:
 
 ```js
-padding: { top: 44, bottom: 80, left: 0, right: 0 }
+paddingFn: (viewportSize) => ({
+  top:    44,
+  bottom: viewportSize.y < 500 ? 80 : 200,
+  left:   0,
+  right:  0,
+}),
 ```
 
-This ensures the photo is always fully visible with UI chrome above and below.
+This ensures the photo is always fully visible with UI chrome above and below, and the larger 200px bottom reserve gives the EXIF table and caption room to breathe.

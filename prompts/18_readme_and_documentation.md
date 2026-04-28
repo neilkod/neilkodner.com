@@ -24,7 +24,18 @@ Write a comprehensive `README.md` for this project. It should be useful both as 
 - `_thumbs/` is auto-generated — do not modify
 
 ### Project structure
-- File tree with one-line descriptions for each file
+- File tree with one-line descriptions for each file:
+  - `index.html` — homepage (hero, category tiles, latest albums)
+  - `photography/index.html` — category/album index
+  - `album.html` — single album photo grid with PhotoSwipe lightbox
+  - `photo/index.html` + `photo.js` — dedicated single-photo permalink page with OG metadata
+  - `about/index.html` — bio page
+  - `app.js` — shared catalog fetch, URL helpers, tile rendering
+  - `hero.js` — hero slideshow with orientation filtering
+  - `gallery.js` — album page rendering, PhotoSwipe lightbox, share button
+  - `tokens.css` / `style.css` — design system and all component styles
+  - `scripts/build_catalog.py` — catalog builder (run by GitHub Actions)
+  - `.github/workflows/update-catalog.yml` — scheduled automation
 
 ### Setup sections (numbered)
 1. Cloudflare R2 setup (create bucket, enable public access, create API token)
@@ -47,6 +58,7 @@ Write a comprehensive `README.md` for this project. It should be useful both as 
 - How to rename a category display name via `CATEGORY_NAMES` in build_catalog.py
 - How to convert a flat category to album-based
 - How to manually trigger the catalog rebuild
+- How to share a direct link to a photo (the share button in the lightbox, the `/photo/` permalink URL structure)
 
 ### Troubleshooting
 - Photos not appearing

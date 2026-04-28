@@ -26,8 +26,9 @@ If a category has both flat photos and sub-folders, the albums take precedence.
 ## build_catalog.py changes
 
 In `parse_bucket()`, collect R2 keys separately by depth:
-- **Depth 2** (`cat/file.jpg`) → `flat_photos` dict: `{cat_id: [filename, ...]}`
-- **Depth 3** (`cat/album/file.jpg`) → `cat_tree` dict (existing album logic)
+- **Depth 2** (`cat/file.jpg`) → `flat_photos` dict: `{cat_id: {"files": [filenames...], "has_cover": bool, "cover_file": str|None}}`
+  — `cover.jpg` sets `has_cover=True` and `cover_file` to the actual filename; it is NOT added to `files`
+- **Depth 3** (`cat/album/file.jpg`) → `cat_tree` dict (existing album logic, same cover tracking)
 
 In `build()`, merge both sets:
 ```python
