@@ -10,6 +10,17 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/print.css" media="print">
+  <style>
+    #not-found-copy {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+    #not-found-copy.fade-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
 </head>
 <body>
 
@@ -32,7 +43,7 @@
     <div class="not-found-inner">
       <p class="not-found-code" aria-hidden="true">404</p>
       <h1>Nothing here</h1>
-      <p>
+      <p id="not-found-copy">
         The page you're looking for has moved, been renamed,<br>
         or never existed — like a bird that flew before the shutter.
       </p>
@@ -47,5 +58,33 @@
     </div>
   </footer>
 
+  <script>
+    const phrases = [
+      "This page is underexposed and wandered off the frame.",
+      "Looks like the composition here has gone soft.",
+      "The page you wanted is hiding behind a forest of raw files.",
+      "No page here — consider it pro-level negative space.",
+      "This route is out of focus, but the rest of the site is sharp.",
+      "The subject has moved — maybe it ducked behind the tripod.",
+      "It’s just a missed shot: the page didn’t make the final edit.",
+      "The page is lost in the light meter’s shadows.",
+      "This frame is empty; go explore a better exposure.",
+      "A wandering lens found nothing but silence here.",
+      "This page vanished like a phantom frame in the darkroom.",
+      "The path here is hidden, like a secret shrine tucked in the woods.",
+      "The page is more elusive than a Master Sword in a lost gallery.",
+      "Some pages never existed — this one is a ghost in the viewfinder."
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const copy = document.getElementById('not-found-copy');
+      if (!copy) return;
+
+      const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+      copy.textContent = phrase;
+      copy.style.opacity = '0';
+      window.requestAnimationFrame(() => copy.classList.add('fade-in'));
+    });
+  </script>
 </body>
 </html>
