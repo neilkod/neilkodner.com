@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
   <title>Photography — Neil Kodner</title>
-  <meta name="description" content="Browse aviation, hockey, birds, and travel photography by Neil Kodner.">
+  <meta name="description" content="Browse aviation and hockey photography by Neil Kodner.">
 
   <!-- Open Graph -->
   <meta property="og:type"        content="website">
   <meta property="og:url"         content="https://neilkodner.com/photography/">
   <meta property="og:title"       content="Photography — Neil Kodner">
-  <meta property="og:description" content="Browse aviation, hockey, birds, and travel photography by Neil Kodner.">
+  <meta property="og:description" content="Browse aviation and hockey photography by Neil Kodner.">
   <meta property="og:site_name"   content="Photography by Neil Kodner">
   <!-- og:image: replace with your R2 public URL once bucket is live -->
   <!-- <meta property="og:image" content="https://pub-xxxx.r2.dev/_hero/hero1.jpg"> -->
@@ -52,50 +52,12 @@
       When a category is selected (?cat=aviation) this page will
       transition to showing album tiles for that category.
       That behaviour is wired up in a later milestone.
-      For now this renders the four static category tiles.
+      Category tiles are rendered dynamically from catalog.json by renderCategoryGrid().
     -->
     <section class="section section--tight" aria-label="Categories">
       <div class="container">
 
-        <div class="category-grid" id="category-grid">
-
-          <a class="category-tile" href="/photography/?cat=aviation">
-            <div class="tile-bg"></div>
-            <div class="category-tile-border"></div>
-            <div class="category-tile-info">
-              <p class="label" style="margin-bottom:0.25rem">Category</p>
-              <h3>Aviation</h3>
-            </div>
-          </a>
-
-          <a class="category-tile" href="/photography/?cat=hockey">
-            <div class="tile-bg"></div>
-            <div class="category-tile-border"></div>
-            <div class="category-tile-info">
-              <p class="label" style="margin-bottom:0.25rem">Category</p>
-              <h3>Hockey</h3>
-            </div>
-          </a>
-
-          <a class="category-tile" href="/photography/?cat=travel">
-            <div class="tile-bg"></div>
-            <div class="category-tile-border"></div>
-            <div class="category-tile-info">
-              <p class="label" style="margin-bottom:0.25rem">Category</p>
-              <h3>Places</h3>
-            </div>
-          </a>
-
-          <a class="category-tile" href="/photography/?cat=birds">
-            <div class="tile-bg"></div>
-            <div class="category-tile-border"></div>
-            <div class="category-tile-info">
-              <p class="label" style="margin-bottom:0.25rem">Category</p>
-              <h3>Birds</h3>
-            </div>
-          </a>
-
-        </div>
+        <div class="category-grid" id="category-grid"></div>
 
       </div>
     </section>
@@ -129,11 +91,11 @@
   </footer>
 
   <script type="module">
-    import { fetchCatalog, hydrateCategoryTiles, renderAlbumGrid } from '/app.js';
+    import { fetchCatalog, renderCategoryGrid, renderAlbumGrid } from '/app.js';
 
     fetchCatalog()
       .then(catalog => {
-        hydrateCategoryTiles(catalog);
+        renderCategoryGrid(catalog, document.getElementById('category-grid'), { showLabel: true });
 
         const catId = new URLSearchParams(location.search).get('cat');
         if (!catId) return;

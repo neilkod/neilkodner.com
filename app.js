@@ -29,43 +29,48 @@ export function fadeInOnLoad(img) {
   }
 }
 
-// ─── Tile hydration ───────────────────────────────────────────
+// ─── Category grid rendering ──────────────────────────────────
 
 /**
- * Inject cover images into all .category-tile elements.
- * Reads the category id from the existing href (?cat=<id>) —
- * no data attributes needed in the HTML.
+ * Build category tiles dynamically from catalog.categories.
+ * Pass showLabel: true on the photography index to render the "Category" label.
  */
-export function hydrateCategoryTiles(catalog) {
-  document.querySelectorAll('.category-tile').forEach(tile => {
-    const href = tile.getAttribute('href') || '';
-    let catId;
-    try {
-      catId = new URL(href, location.origin).searchParams.get('cat');
-    } catch { return; }
+export function renderCategoryGrid(catalog, container, { showLabel = false } = {}) {
+  container.innerHTML = '';
+  for (const cat of catalog.categories) {
+    const href = cat.flat
+      ? `/album.html?cat=${cat.id}&album=${cat.id}`
+      : `/photography/?cat=${cat.id}`;
 
-    const cat = catalog.categories.find(c => c.id === catId);
-    if (!cat) return;
+    const a = document.createElement('a');
+    a.className = 'category-tile';
+    a.href = href;
 
-    // Flat categories skip the album grid — link directly to the photo page.
-    if (cat.flat) {
-      tile.setAttribute('href', `/album.html?cat=${catId}&album=${catId}`);
+    a.appendChild(Object.assign(document.createElement('div'), { className: 'tile-bg' }));
+    a.appendChild(Object.assign(document.createElement('div'), { className: 'category-tile-border' }));
+
+    const info = document.createElement('div');
+    info.className = 'category-tile-info';
+    if (showLabel) {
+      const p = Object.assign(document.createElement('p'), { className: 'label', textContent: 'Category' });
+      p.style.marginBottom = '0.25rem';
+      info.appendChild(p);
+    }
+    info.appendChild(Object.assign(document.createElement('h3'), { textContent: cat.name }));
+    a.appendChild(info);
+
+    if (cat.cover) {
+      const img = document.createElement('img');
+      img.src      = thumbUrl(catalog.baseUrl, cat.cover);
+      img.alt      = cat.name;
+      img.loading  = 'lazy';
+      img.decoding = 'async';
+      fadeInOnLoad(img);
+      a.prepend(img);
     }
 
-    if (!cat.cover) return;
-
-    // Don't inject twice
-    if (tile.querySelector('img')) return;
-
-    const img = document.createElement('img');
-    img.src      = thumbUrl(catalog.baseUrl, cat.cover);
-    img.alt      = cat.name;
-    img.loading  = 'lazy';
-    img.decoding = 'async';
-    fadeInOnLoad(img);
-    // prepend so it sits behind the absolute-positioned overlay divs
-    tile.prepend(img);
-  });
+    container.appendChild(a);
+  }
 }
 
 // ─── Date formatting ──────────────────────────────────────────

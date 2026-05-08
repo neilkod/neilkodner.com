@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
   <title>Photography by Neil Kodner</title>
-  <meta name="description" content="Photography by Neil Kodner — aviation, hockey, birds, and places from Los Gatos, California.">
+  <meta name="description" content="Photography by Neil Kodner — aviation and hockey from Los Gatos, California.">
 
   <!-- Open Graph -->
   <meta property="og:type"        content="website">
   <meta property="og:url"         content="https://neilkodner.com/">
   <meta property="og:title"       content="Photography by Neil Kodner">
-  <meta property="og:description" content="Aviation, hockey, birds, and places photography from Los Gatos, California.">
+  <meta property="og:description" content="Aviation and hockey photography from Los Gatos, California.">
   <meta property="og:site_name"   content="Photography by Neil Kodner">
   <!-- og:image set by JS from first hero image in catalog.json -->
 
@@ -58,41 +58,7 @@
           <a href="/photography/">View all</a>
         </div>
 
-        <div class="category-grid" id="category-grid">
-
-          <a class="category-tile" href="/photography/?cat=aviation">
-            <div class="tile-bg"></div>
-            <div class="category-tile-border"></div>
-            <div class="category-tile-info">
-              <h3>Aviation</h3>
-            </div>
-          </a>
-
-          <a class="category-tile" href="/photography/?cat=hockey">
-            <div class="tile-bg"></div>
-            <div class="category-tile-border"></div>
-            <div class="category-tile-info">
-              <h3>Hockey</h3>
-            </div>
-          </a>
-
-          <a class="category-tile" href="/photography/?cat=travel">
-            <div class="tile-bg"></div>
-            <div class="category-tile-border"></div>
-            <div class="category-tile-info">
-              <h3>Places</h3>
-            </div>
-          </a>
-
-          <a class="category-tile" href="/photography/?cat=birds">
-            <div class="tile-bg"></div>
-            <div class="category-tile-border"></div>
-            <div class="category-tile-info">
-              <h3>Birds</h3>
-            </div>
-          </a>
-
-        </div>
+        <div class="category-grid" id="category-grid"></div>
       </div>
     </section>
 
@@ -165,14 +131,14 @@
   </footer>
 
   <script type="module">
-    import { fetchCatalog, hydrateCategoryTiles, renderLatestAlbums } from '/app.js';
+    import { fetchCatalog, renderCategoryGrid, renderLatestAlbums } from '/app.js';
     import { initHero } from '/hero.js';
 
     initHero();
 
     fetchCatalog()
       .then(catalog => {
-        hydrateCategoryTiles(catalog);
+        renderCategoryGrid(catalog, document.getElementById('category-grid'));
         renderLatestAlbums(catalog);
 
         // Set OG image to first hero once catalog loads
