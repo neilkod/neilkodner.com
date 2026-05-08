@@ -17,7 +17,7 @@ Pushing to `main` triggers a GitHub Pages rebuild. The site is live at neilkodne
 
 ## Content pipeline
 
-Photos are uploaded to Cloudflare R2 via iPad (Lightroom Mobile export → S3 app). The GitHub Action (`update-catalog.yml`) picks them up automatically — no git involvement needed for adding photos.
+Photos are uploaded to Cloudflare R2 via Cyberduck (or any S3-compatible client) from a Mac. Export from Lightroom Classic, upload to the appropriate bucket folder, and the GitHub Action (`update-catalog.yml`) picks them up automatically — no git involvement needed for adding photos.
 
 ## Secrets
 
