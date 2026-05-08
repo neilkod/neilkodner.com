@@ -43,6 +43,9 @@ jobs:
             echo "catalog.json unchanged — nothing to commit"
           else
             git commit -m "chore: update catalog [skip ci]"
-            git pull --rebase
-            git push
+            for i in 1 2 3; do
+              git pull --rebase && git push && break
+              echo "Push attempt $i failed, retrying..."
+              sleep 5
+            done
           fi
