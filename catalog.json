@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-08T02:33:24+00:00",
+  "generated": "2026-05-08T04:33:00+00:00",
   "baseUrl": "https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev",
   "hero": [
     {
@@ -159,6 +159,20 @@
                 "aperture": "f/6.3",
                 "shutter_speed": "1/3200s",
                 "iso": "ISO 250"
+              }
+            },
+            {
+              "filename": "L1000632.jpg",
+              "width": 3000,
+              "height": 1997,
+              "caption": "baking bagels(caption)",
+              "exif": {
+                "camera": "LEICA Q3",
+                "lens": "SUMMILUX 1:1.7/28 ASPH.",
+                "focal_length": "28mm",
+                "aperture": "f/5",
+                "shutter_speed": "1/125s",
+                "iso": "ISO 800"
               }
             }
           ]
