@@ -3,7 +3,7 @@
  * Reads catalog.hero[], builds slides, crossfades every 5–7 s.
  */
 
-import { fetchCatalog, fullUrl } from '/app.js';
+import { fetchCatalog, fullUrl } from '/js/app.js';
 
 /** Random delay in [min, max] ms. */
 const randMs = (min, max) => min + Math.random() * (max - min);

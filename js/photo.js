@@ -2,7 +2,7 @@
  * photo.js — dedicated single-photo page
  */
 
-import { fetchCatalog, fullUrl, formatDate } from '/app.js';
+import { fetchCatalog, fullUrl, formatDate } from '/js/app.js';
 
 const EXIF_LABELS = {
   camera:        'Camera',
