@@ -64,6 +64,7 @@ echo ""
 
 rclone "$MODE" "$LOCAL" "${REMOTE}:${BUCKET}" \
   --exclude "_thumbs/**" \
+  --exclude ".DS_Store" \
   --progress \
   --transfers 8 \
   $DRY_RUN
