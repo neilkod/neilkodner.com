@@ -18,8 +18,9 @@
 #   8. Leave all other settings blank/default
 #
 # Usage:
-#   ./scripts/upload-to-r2.sh           # live sync
-#   ./scripts/upload-to-r2.sh --dry-run # preview what would change
+#   ./scripts/upload-to-r2.sh           # copy (upload new/changed, never delete)
+#   ./scripts/upload-to-r2.sh --sync    # mirror (also deletes from R2 what's missing locally)
+#   ./scripts/upload-to-r2.sh --dry-run # preview what would change (combine with either mode)
 
 set -euo pipefail
 
@@ -42,16 +43,26 @@ if [ ! -d "$LOCAL" ]; then
   exit 1
 fi
 
+MODE="copy"
 DRY_RUN=""
-if [ "${1:-}" = "--dry-run" ]; then
-  DRY_RUN="--dry-run"
-  echo "=== DRY RUN — no files will be changed ==="
-fi
 
-echo "Syncing $LOCAL → ${REMOTE}:${BUCKET}"
+for arg in "$@"; do
+  case "$arg" in
+    --sync)    MODE="sync" ;;
+    --dry-run) DRY_RUN="--dry-run" ;;
+  esac
+done
+
+if [ "$MODE" = "sync" ]; then
+  echo "Mode: SYNC (files deleted locally will also be deleted from R2)"
+else
+  echo "Mode: COPY (new/changed files uploaded; nothing deleted from R2)"
+fi
+[ -n "$DRY_RUN" ] && echo "=== DRY RUN — no files will be changed ==="
+echo "Pushing $LOCAL → ${REMOTE}:${BUCKET}"
 echo ""
 
-rclone sync "$LOCAL" "${REMOTE}:${BUCKET}" \
+rclone "$MODE" "$LOCAL" "${REMOTE}:${BUCKET}" \
   --exclude "_thumbs/**" \
   --progress \
   --transfers 8 \
