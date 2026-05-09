@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-09T02:26:22+00:00",
+  "generated": "2026-05-09T04:09:28+00:00",
   "baseUrl": "https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev",
   "hero": [
     {
@@ -535,6 +535,38 @@
                 "aperture": "f/4.5",
                 "shutter_speed": "1/125s",
                 "iso": "ISO 400"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "places",
+      "name": "Places",
+      "flat": false,
+      "cover": "",
+      "albums": [
+        {
+          "id": "New York City",
+          "folder": "places/New York City",
+          "title": "New York City",
+          "date": "",
+          "location": "",
+          "cover": "",
+          "photos": [
+            {
+              "filename": "L1000714.jpg",
+              "width": 3000,
+              "height": 1997,
+              "caption": "",
+              "exif": {
+                "camera": "LEICA Q3",
+                "lens": "SUMMILUX 1:1.7/28 ASPH.",
+                "focal_length": "28mm",
+                "aperture": "f/4",
+                "shutter_speed": "1/125s",
+                "iso": "ISO 640"
               }
             }
           ]
