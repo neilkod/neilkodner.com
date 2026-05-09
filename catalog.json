@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-09T04:18:37+00:00",
+  "generated": "2026-05-09T04:20:40+00:00",
   "baseUrl": "https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev",
   "hero": [
     {
@@ -581,6 +581,20 @@
                 "aperture": "f/4",
                 "shutter_speed": "1/125s",
                 "iso": "ISO 640"
+              }
+            },
+            {
+              "filename": "L1000716.jpg",
+              "width": 1997,
+              "height": 3000,
+              "caption": "oculus caption",
+              "exif": {
+                "camera": "LEICA Q3",
+                "lens": "SUMMILUX 1:1.7/28 ASPH.",
+                "focal_length": "28mm",
+                "aperture": "f/4",
+                "shutter_speed": "1/125s",
+                "iso": "ISO 500"
               }
             }
           ]
