@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-11T02:38:14+00:00",
+  "generated": "2026-05-11T06:33:48+00:00",
   "baseUrl": "https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev",
   "hero": [
     {
@@ -595,6 +595,30 @@
                 "aperture": "f/4",
                 "shutter_speed": "1/125s",
                 "iso": "ISO 500"
+              }
+            }
+          ]
+        },
+        {
+          "id": "Seattle",
+          "folder": "places/Seattle",
+          "title": "Seattle",
+          "date": "",
+          "location": "",
+          "cover": "",
+          "photos": [
+            {
+              "filename": "DSC09890.jpg",
+              "width": 3000,
+              "height": 2000,
+              "caption": "Ferry Passenger",
+              "exif": {
+                "camera": "ILCE-1M2",
+                "lens": "FE 24-70mm F2.8 GM II",
+                "focal_length": "24mm",
+                "aperture": "f/2.8",
+                "shutter_speed": "1/160s",
+                "iso": "ISO 12800"
               }
             }
           ]
