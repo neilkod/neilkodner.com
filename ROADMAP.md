@@ -58,23 +58,23 @@ overall whitespace/typography.
 - [x] **Generate `_resized/1200/` and `_resized/2000/` variants** in the same loop
       (original already in memory) and write `photo.sizes[]` to the catalog — this lights
       up the existing `buildPswpSrcset()` with zero frontend changes. Finding #4.
-- [ ] **Resize hero images** (~2560px long edge, e.g. `_resized/hero/`) and point
-      `hero.js` at them. Depends on Phase 1's lazy slideshow landing first so the win compounds.
-      🚧 In flight (batch 2).
+- [x] **Resize hero images** (~2560px long edge, `_resized/hero/`) and point
+      `hero.js` at them. Heroes ≤2560px keep their original; entries gain a `resized`
+      path that `hero.js` prefers via the lazy-load scheme. Finding #1 (compounds).
 
 ## Phase 4 — Social previews & SEO (build-time generation)
 
-- [ ] **Inject a real `og:image`** into `index.html` from the Action (script edits the
-      tag between markers, commits alongside `catalog.json`). Finding #5.
-      🚧 In flight (batch 2).
+- [x] **Inject a real `og:image`** into `index.html` from the Action: `build_seo.py`
+      rewrites the tag between `<!-- og:image:start/end -->` markers (prefers the
+      resized hero), committed alongside `catalog.json`. Finding #5.
 - [ ] **Generate static per-album stub pages** (`/photography/<cat>/<album>/index.html`)
       with correct `og:title`/`og:image`/JSON-LD that hand off to the existing JS album
       page. Optionally per-photo stubs later.
       ⏸ Deferred — routing/sitemap-canonicalization decision; wants a deliberate call.
 - [x] **Generate `sitemap.xml`** (with image-sitemap entries) **and `robots.txt`** from
       the catalog. (New `scripts/build_seo.py`, wired into the Action.) Finding #6.
-- [ ] **Alt-text fallback** in the catalog: `caption or f"{album title}, photo {n}"`.
-      🚧 In flight (batch 2).
+- [x] **Alt-text fallback** (done frontend-side in `gallery.js` rather than the catalog):
+      `photo.caption || \`${pageTitle}, photo ${i + 1}\``. Finding #6.
 
 ## Phase 5 — Presentation craft (design decisions, take slowly)
 

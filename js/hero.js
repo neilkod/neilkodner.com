@@ -51,7 +51,10 @@ export async function initHero() {
     if (h.height) img.height = h.height;
 
     // Stash the eventual URL; assigned lazily via ensureSrc().
-    img.dataset.heroSrc = fullUrl(catalog.baseUrl, `_hero/${h.filename}`);
+    // Prefer the 2560 px resized hero when the catalog provides one; fall back
+    // to the full original for heroes already small enough to skip resizing.
+    const heroPath = h.resized || `_hero/${h.filename}`;
+    img.dataset.heroSrc = fullUrl(catalog.baseUrl, heroPath);
 
     div.appendChild(img);
     return { div, img };

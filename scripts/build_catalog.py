@@ -52,6 +52,12 @@ THUMB_QUALITY   = 75         # WebP quality for thumbnails
 RESIZED_WIDTHS  = (1200, 2000)
 RESIZED_QUALITY = 82
 
+# Hero slideshow variants. Camera originals are far larger than any screen
+# needs as a backdrop, so serve a 2560 px long-edge JPEG instead. JPEG (not
+# WebP) for broad social/scraper compatibility.
+HERO_LONG_EDGE  = 2560
+HERO_QUALITY    = 82
+
 # Override display names for category folders whose folder name alone
 # doesn't reflect what you want shown on the site.
 CATEGORY_NAMES = {
@@ -301,6 +307,15 @@ def make_resized(data: bytes, long_edge: int) -> tuple[bytes, int]:
     return buf.getvalue(), img.width
 
 
+def make_hero(data: bytes) -> bytes:
+    """HERO_LONG_EDGE px long-edge JPEG for the fullscreen hero slideshow."""
+    img = Image.open(io.BytesIO(data)).convert("RGB")
+    img = _resize_to_long_edge(img, HERO_LONG_EDGE)
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG", quality=HERO_QUALITY, optimize=True)
+    return buf.getvalue()
+
+
 # ── Bucket tree parser ────────────────────────────────────────────────────────
 
 def parse_bucket(keys: list[str]) -> tuple[list[str], dict, dict]:
@@ -472,17 +487,52 @@ def build():
     hero_files, cat_tree, flat_photos = parse_bucket(all_keys)
 
     # ── Hero images ───────────────────────────────────────────────────────────
+    # Heroes are served as 2560 px long-edge JPEGs (see HERO_LONG_EDGE) rather
+    # than full camera originals. Each entry carries:
+    #   filename, width, height  — ORIGINAL dims (aspect-ratio reservation)
+    #   resized: "_resized/hero/{filename}"  — present only when a smaller
+    #            variant actually exists; absent for originals already ≤ 2560 px
+    #            on the long edge (the frontend then falls back to _hero/...).
+    #
+    # We download the original only when genuinely needed: a hero is preserved
+    # from the old catalog (cached dims, no download) UNLESS its expected
+    # resized variant is missing from R2 or its dimensions are unknown.
     hero_entries = []
     for filename in hero_files:
-        if filename in old_hero:
-            hero_entries.append(old_hero[filename])
-            continue
-        key = f"_hero/{filename}"
+        key          = f"_hero/{filename}"
+        resized_key  = f"_resized/hero/{filename}"
+        prev         = old_hero.get(filename)
+
+        # Fast path: cached dims + the variant situation is already settled.
+        # Settled means either the resized variant exists, OR the original is
+        # small enough that no variant is expected (long edge <= HERO_LONG_EDGE,
+        # which the preserved entry signals by lacking a `resized` path).
+        if prev and prev.get("width") and prev.get("height"):
+            w, h = prev["width"], prev["height"]
+            orig_long = max(w, h)
+            if orig_long <= HERO_LONG_EDGE:
+                # No variant needed; serve the original.
+                hero_entries.append({"filename": filename, "width": w, "height": h})
+                continue
+            if resized_key in keys_set:
+                hero_entries.append({"filename": filename, "width": w, "height": h,
+                                     "resized": resized_key})
+                continue
+            # Variant expected but missing — fall through to download + generate.
+
+        # Download the original: new hero, unknown dims, or variant to (re)build.
         print(f"  Hero  {key}")
         try:
             data = get_bytes(s3, bucket, key)
             w, h = image_dimensions(data)
-            hero_entries.append({"filename": filename, "width": w, "height": h})
+            entry = {"filename": filename, "width": w, "height": h}
+            if max(w, h) > HERO_LONG_EDGE:
+                if resized_key not in keys_set:
+                    print(f"    → hero resized  {resized_key}")
+                    put_bytes(s3, bucket, resized_key, make_hero(data),
+                              content_type="image/jpeg")
+                entry["resized"] = resized_key
+            hero_entries.append(entry)
         except Exception as exc:
             print(f"  WARN  could not process {key}: {exc}")
 

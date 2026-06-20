@@ -309,7 +309,7 @@ export async function renderAlbumPage() {
 
     const img = document.createElement('img');
     setThumb(img, catalog.baseUrl, path);
-    img.alt      = photo.caption || '';
+    img.alt      = photo.caption || `${pageTitle}, photo ${i + 1}`;
     img.loading  = i === 0 ? 'eager' : 'lazy';
     img.decoding = 'async';
     // Reserve space before image loads; guard against missing dimensions
