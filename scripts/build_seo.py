@@ -30,7 +30,12 @@ SITE_ORIGIN = "https://neilkodner.com"
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CATALOG_PATH = os.path.join(REPO_ROOT, "catalog.json")
 SITEMAP_PATH = os.path.join(REPO_ROOT, "sitemap.xml")
+FEED_PATH = os.path.join(REPO_ROOT, "feed.xml")
 INDEX_PATH = os.path.join(REPO_ROOT, "index.html")
+
+# Deterministic fallback <updated> for albums with no date — keeps feed.xml
+# from churning. (Real album dates override it once set in a manifest.)
+FEED_FALLBACK_UPDATED = "2026-01-01T00:00:00Z"
 
 # Markers in index.html between which the og:image tag is rewritten. The
 # content between them is fully replaced each run so it stays in sync with the
@@ -435,6 +440,77 @@ def write_album_pages(catalog):
     return count
 
 
+# ── Atom feed of latest albums ──────────────────────────────────────────────
+
+def _rfc3339(date):
+    """Album date ('YYYY' / 'YYYY-MM' / 'YYYY-MM-DD') → RFC3339, or None."""
+    if not date:
+        return None
+    s = str(date).strip()
+    if re.fullmatch(r"\d{4}", s):
+        return f"{s}-01-01T00:00:00Z"
+    m = re.fullmatch(r"(\d{4})-(\d{2})", s)
+    if m and 1 <= int(m.group(2)) <= 12:
+        return f"{s}-01T00:00:00Z"
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", s):
+        return f"{s}T00:00:00Z"
+    return None
+
+
+def generate_feed(catalog):
+    """Write feed.xml — an Atom feed of the newest albums. Deterministic: the
+    feed <updated> is the max entry date (not build time), so it only changes
+    when album content changes."""
+    items = [
+        (cat, album)
+        for cat in catalog.get("categories", [])
+        for album in cat.get("albums", [])
+        if album.get("id") is not None
+    ]
+    items.sort(key=lambda ca: (ca[1].get("date") or ""), reverse=True)
+    items = items[:20]
+
+    entries = []
+    entry_updates = []
+    for cat, album in items:
+        url = f"{SITE_ORIGIN}{album_pretty_path(cat['id'], album['id'])}"
+        title = (cat.get("name") if cat.get("flat") else album.get("title")) or album["id"]
+        updated = _rfc3339(album.get("date")) or FEED_FALLBACK_UPDATED
+        entry_updates.append(updated)
+        summary = " · ".join(
+            b for b in (cat.get("name"), _format_date(album.get("date")),
+                        album.get("location")) if b
+        ) or title
+        entries += [
+            "  <entry>",
+            f"    <title>{escape(str(title))}</title>",
+            f'    <link href="{escape(url)}"/>',
+            f"    <id>{escape(url)}</id>",
+            f"    <updated>{updated}</updated>",
+            f"    <summary>{escape(summary)}</summary>",
+        ]
+        og = album_og_image(catalog, album)
+        if og:
+            entries.append(f'    <link rel="enclosure" type="image/jpeg" href="{escape(og)}"/>')
+        entries.append("  </entry>")
+
+    feed_updated = max(entry_updates) if entry_updates else FEED_FALLBACK_UPDATED
+    lines = [
+        '<?xml version="1.0" encoding="utf-8"?>',
+        '<feed xmlns="http://www.w3.org/2005/Atom">',
+        "  <title>Photography by Neil Kodner</title>",
+        "  <subtitle>Latest photo albums</subtitle>",
+        f'  <link href="{SITE_ORIGIN}/"/>',
+        f'  <link rel="self" type="application/atom+xml" href="{SITE_ORIGIN}/feed.xml"/>',
+        f"  <id>{SITE_ORIGIN}/</id>",
+        f"  <updated>{feed_updated}</updated>",
+        "  <author><name>Neil Kodner</name></author>",
+    ] + entries + ["</feed>", ""]
+
+    _write_if_changed(FEED_PATH, "\n".join(lines))
+    return len(items)
+
+
 def main():
     with open(CATALOG_PATH, encoding="utf-8") as f:
         catalog = json.load(f)
@@ -505,6 +581,9 @@ def main():
 
     pages = write_album_pages(catalog)
     print(f"Generated {pages} static per-album pages under photography/.")
+
+    feed_count = generate_feed(catalog)
+    print(f"Wrote {FEED_PATH}: {feed_count} albums.")
 
 
 if __name__ == "__main__":

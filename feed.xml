@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Photography by Neil Kodner</title>
+  <subtitle>Latest photo albums</subtitle>
+  <link href="https://neilkodner.com/"/>
+  <link rel="self" type="application/atom+xml" href="https://neilkodner.com/feed.xml"/>
+  <id>https://neilkodner.com/</id>
+  <updated>2026-01-01T00:00:00Z</updated>
+  <author><name>Neil Kodner</name></author>
+  <entry>
+    <title>Other</title>
+    <link href="https://neilkodner.com/photography/aviation/other/"/>
+    <id>https://neilkodner.com/photography/aviation/other/</id>
+    <updated>2026-01-01T00:00:00Z</updated>
+    <summary>Aviation</summary>
+    <link rel="enclosure" type="image/jpeg" href="https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/_resized/2000/aviation/Other/DJI_20260427193101_0006_D.jpg"/>
+  </entry>
+  <entry>
+    <title>Usaf Thunderbirds</title>
+    <link href="https://neilkodner.com/photography/aviation/usaf-thunderbirds/"/>
+    <id>https://neilkodner.com/photography/aviation/usaf-thunderbirds/</id>
+    <updated>2026-01-01T00:00:00Z</updated>
+    <summary>Aviation</summary>
+    <link rel="enclosure" type="image/jpeg" href="https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/_resized/2000/aviation/USAF%20Thunderbirds/DSC01295.jpg"/>
+  </entry>
+  <entry>
+    <title>Select Images</title>
+    <link href="https://neilkodner.com/photography/hockey/select-images/"/>
+    <id>https://neilkodner.com/photography/hockey/select-images/</id>
+    <updated>2026-01-01T00:00:00Z</updated>
+    <summary>Hockey</summary>
+    <link rel="enclosure" type="image/jpeg" href="https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/cover.JPG"/>
+  </entry>
+  <entry>
+    <title>New York City</title>
+    <link href="https://neilkodner.com/photography/places/new-york-city/"/>
+    <id>https://neilkodner.com/photography/places/new-york-city/</id>
+    <updated>2026-01-01T00:00:00Z</updated>
+    <summary>Places</summary>
+    <link rel="enclosure" type="image/jpeg" href="https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/_resized/2000/places/New%20York%20City/L1000632.jpg"/>
+  </entry>
+  <entry>
+    <title>Seattle</title>
+    <link href="https://neilkodner.com/photography/places/seattle/"/>
+    <id>https://neilkodner.com/photography/places/seattle/</id>
+    <updated>2026-01-01T00:00:00Z</updated>
+    <summary>Places</summary>
+    <link rel="enclosure" type="image/jpeg" href="https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/_resized/2000/places/Seattle/DSC09890.jpg"/>
+  </entry>
+</feed>
