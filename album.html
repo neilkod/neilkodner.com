@@ -4,181 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
+  <meta name="robots" content="noindex">
 
-  <!-- Warm up the connection to the R2 image origin -->
-  <link rel="preconnect" href="https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev" crossorigin>
-  <link rel="dns-prefetch" href="https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev">
+  <title>Redirecting… — Neil Kodner</title>
 
-  <title>Album — Neil Kodner</title>
-  <meta name="description" content="Photo album by Neil Kodner.">
-
-  <!-- Open Graph (title and image updated by JS) -->
-  <meta property="og:type"        content="website">
-  <meta property="og:title"       content="Album — Neil Kodner">
-  <meta property="og:description" content="Photo album by Neil Kodner.">
-  <meta property="og:site_name"   content="Photography by Neil Kodner">
+  <!-- Albums now live at pretty URLs: /photography/<cat>/<album>/ .
+       This page preserves old /album.html?cat=&album= links (and any #photo
+       hash) by redirecting before render. The slug() below MUST match
+       slugify() in js/app.js and scripts/build_seo.py. -->
+  <script>
+    (function () {
+      var p = new URLSearchParams(location.search);
+      var cat = p.get('cat'), album = p.get('album');
+      function slug(s) {
+        return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      }
+      if (cat && album) {
+        location.replace('/photography/' + slug(cat) + '/' + slug(album) + '/' + location.hash);
+      }
+    })();
+  </script>
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/tokens.css">
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/print.css" media="print">
-  <link rel="stylesheet" href="/vendor/photoswipe/photoswipe.css">
-
-  <style>
-    /* ── PhotoSwipe counter ──────────────────────────── */
-    .pswp__counter {
-      font-family: var(--font-ui);
-      font-size: var(--text-sm);
-      font-weight: 400;
-      color: rgba(240,237,232,0.75);
-      letter-spacing: 0.06em;
-      padding: 0 var(--gutter, 1.5rem);
-      display: flex;
-      align-items: center;
-      height: 44px;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    /* ── Info panel: sits in the 200px bottom padding zone ── */
-    .pswp-info {
-      position: absolute;
-      bottom: 0;
-      inset-inline: 0;
-      height: 200px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      padding: 12px var(--gutter, 1.5rem) 16px;
-      pointer-events: none;
-    }
-
-    .pswp-caption {
-      font-family: var(--font-ui);
-      font-size: var(--text-sm);
-      font-weight: 400;
-      color: rgba(240,237,232,0.85);
-      text-align: center;
-      margin: 0;
-    }
-
-    /* Two-column label / value table */
-    .pswp-exif-table {
-      display: grid;
-      grid-template-columns: auto auto;
-      column-gap: 1.25rem;
-      row-gap: 5px;
-      margin: 0;
-    }
-
-    .pswp-exif-table dt {
-      font-family: var(--font-ui);
-      font-size: var(--text-xs);
-      font-weight: 500;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-      color: rgba(240,237,232,0.38);
-      text-align: right;
-    }
-
-    .pswp-exif-table dd {
-      font-family: var(--font-ui);
-      font-size: var(--text-xs);
-      font-weight: 400;
-      color: rgba(240,237,232,0.72);
-      margin: 0;
-      white-space: nowrap;
-    }
-
-    /* ── Share button ────────────────────────────────── */
-    .pswp__button--share-button svg {
-      display: block;
-      color: rgba(240,237,232,0.75);
-      transition: color 0.2s ease;
-    }
-    .pswp__button--share-button:hover svg,
-    .pswp__button--share-button:focus-visible svg {
-      color: rgba(240,237,232,1);
-    }
-    .pswp__button--share-button[title="Copied!"] svg {
-      color: var(--color-accent);
-    }
-  </style>
 </head>
 <body>
-
-  <a href="#main-content" class="skip-link">Skip to content</a>
-
-  <!-- ── Navigation ─────────────────────────────────────── -->
-  <nav class="site-nav" aria-label="Primary">
-    <div class="container">
-      <a href="/" class="nav-brand">Photography by Neil Kodner</a>
-      <ul class="nav-links" role="list">
-        <li><a href="/">Home</a></li>
-        <li><a href="/photography/" aria-current="page">Photography</a></li>
-        <li><a href="/about/">About</a></li>
-      </ul>
-    </div>
-  </nav>
-  <div class="nav-offset" aria-hidden="true"></div>
-
-  <main id="main-content">
-    <div class="container">
-
-      <!-- ── Breadcrumb ──────────────────────────────────── -->
-      <nav class="album-breadcrumb" aria-label="Breadcrumb" style="padding-block:var(--space-6) 0">
-        <ol style="display:flex;gap:var(--space-2);list-style:none;font-size:var(--text-xs);
-                   letter-spacing:0.06em;color:var(--color-text-muted)">
-          <li><a href="/photography/" style="transition:color var(--transition)"
-                 onmouseover="this.style.color='var(--color-accent)'"
-                 onmouseout="this.style.color='var(--color-text-muted)'">Photography</a></li>
-          <li aria-hidden="true" style="opacity:0.4">/</li>
-          <li><a id="breadcrumb-cat" href="/photography/"
-                 style="transition:color var(--transition)"
-                 onmouseover="this.style.color='var(--color-accent)'"
-                 onmouseout="this.style.color='var(--color-text-muted)'">Category</a></li>
-          <li aria-hidden="true" style="opacity:0.4">/</li>
-          <li style="color:var(--color-text)" aria-current="page" id="album-title-crumb">Album</li>
-        </ol>
-      </nav>
-
-      <!-- ── Album header ────────────────────────────────── -->
-      <header class="page-header" style="margin-top:var(--space-4)">
-        <h1 id="album-title">Loading…</h1>
-        <p id="album-meta" class="label" style="margin-top:var(--space-2)"></p>
-      </header>
-
-      <!-- ── States ─────────────────────────────────────── -->
-      <p id="album-loading" style="color:var(--color-text-muted);padding-block:var(--space-8)">
-        Loading photos…
-      </p>
-      <p id="album-error" hidden
-         style="color:var(--color-text-muted);padding-block:var(--space-8)">
-        Could not load album.
-      </p>
-
-      <!-- ── Photo grid (populated by gallery.js) ────────── -->
-      <div class="album-grid" id="photo-grid" style="padding-bottom:var(--space-16)">
-        <!-- <a href=full data-pswp-width data-pswp-height><img src=thumb></a> -->
-      </div>
-
+  <main id="main-content" class="not-found">
+    <div class="not-found-inner">
+      <h1>Redirecting…</h1>
+      <p>If you are not redirected, browse the <a href="/photography/">photography</a>.</p>
     </div>
   </main>
-
-  <!-- ── Footer ─────────────────────────────────────────── -->
-  <footer class="site-footer">
-    <div class="container">
-      <p>&copy; 2026 Neil Kodner</p>
-    </div>
-  </footer>
-
-  <script type="module">
-    import { renderAlbumPage } from '/js/gallery.js';
-    renderAlbumPage();
-  </script>
-
 </body>
 </html>

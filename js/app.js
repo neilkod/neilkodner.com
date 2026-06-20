@@ -47,6 +47,21 @@ export function setThumb(img, base, path) {
   }, { once: true });
 }
 
+/**
+ * Slugify a category or album id for a pretty URL path segment.
+ *
+ * CONTRACT (must match scripts/build_seo.py `slugify`): lowercase, every run
+ * of non-alphanumeric chars → a single hyphen, trimmed. So the hrefs built
+ * here resolve to the static per-album pages that build_seo.py generates under
+ * /photography/<cat-slug>/<album-slug>/.
+ */
+export const slugify = (s) =>
+  String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+/** Pretty canonical album URL: /photography/<cat-slug>/<album-slug>/ */
+export const albumPath = (catId, albumId) =>
+  `/photography/${slugify(catId)}/${slugify(albumId)}/`;
+
 // ─── Image loading ────────────────────────────────────────────
 
 /** Add .loaded class (triggers CSS opacity fade) once the image paints. */
@@ -68,7 +83,7 @@ export function renderCategoryGrid(catalog, container, { showLabel = false } = {
   container.innerHTML = '';
   for (const cat of catalog.categories) {
     const href = cat.flat
-      ? `/album.html?cat=${cat.id}&album=${cat.id}`
+      ? albumPath(cat.id, cat.id)
       : `/photography/?cat=${cat.id}`;
 
     const a = document.createElement('a');
@@ -119,7 +134,7 @@ export function formatDate(str) {
 function makeAlbumTile(album, catId, catName, baseUrl) {
   const a = document.createElement('a');
   a.className = 'album-tile';
-  a.href = `/album.html?cat=${catId}&album=${album.id}`;
+  a.href = albumPath(catId, album.id);
 
   const cover = document.createElement('div');
   cover.className = 'album-tile-cover';

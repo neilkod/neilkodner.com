@@ -13,7 +13,7 @@
     <loc>https://neilkodner.com/photography/?cat=aviation</loc>
   </url>
   <url>
-    <loc>https://neilkodner.com/album.html?cat=aviation&amp;album=Other</loc>
+    <loc>https://neilkodner.com/photography/aviation/other/</loc>
     <image:image>
       <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/Other/DJI_20260427193101_0006_D.jpg</image:loc>
     </image:image>
@@ -26,25 +26,25 @@
     </image:image>
   </url>
   <url>
-    <loc>https://neilkodner.com/album.html?cat=aviation&amp;album=USAF Thunderbirds</loc>
+    <loc>https://neilkodner.com/photography/aviation/usaf-thunderbirds/</loc>
     <image:image>
-      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/USAF Thunderbirds/DSC01295.jpg</image:loc>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/USAF%20Thunderbirds/DSC01295.jpg</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/USAF Thunderbirds/DSC01330.jpg</image:loc>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/USAF%20Thunderbirds/DSC01330.jpg</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/USAF Thunderbirds/DSC01346.jpg</image:loc>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/USAF%20Thunderbirds/DSC01346.jpg</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/USAF Thunderbirds/DSC01583.jpg</image:loc>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/USAF%20Thunderbirds/DSC01583.jpg</image:loc>
     </image:image>
   </url>
   <url>
     <loc>https://neilkodner.com/photography/?cat=hockey</loc>
   </url>
   <url>
-    <loc>https://neilkodner.com/album.html?cat=hockey&amp;album=select-images</loc>
+    <loc>https://neilkodner.com/photography/hockey/select-images/</loc>
     <image:image>
       <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC02559.JPG</image:loc>
     </image:image>
@@ -110,21 +110,21 @@
     <loc>https://neilkodner.com/photography/?cat=places</loc>
   </url>
   <url>
-    <loc>https://neilkodner.com/album.html?cat=places&amp;album=New York City</loc>
+    <loc>https://neilkodner.com/photography/places/new-york-city/</loc>
     <image:image>
-      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/places/New York City/L1000632.jpg</image:loc>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/places/New%20York%20City/L1000632.jpg</image:loc>
       <image:caption>baking bagels(caption)</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/places/New York City/L1000714.jpg</image:loc>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/places/New%20York%20City/L1000714.jpg</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/places/New York City/L1000716.jpg</image:loc>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/places/New%20York%20City/L1000716.jpg</image:loc>
       <image:caption>oculus caption</image:caption>
     </image:image>
   </url>
   <url>
-    <loc>https://neilkodner.com/album.html?cat=places&amp;album=Seattle</loc>
+    <loc>https://neilkodner.com/photography/places/seattle/</loc>
     <image:image>
       <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/places/Seattle/DSC09890.jpg</image:loc>
       <image:caption>Ferry Passenger</image:caption>

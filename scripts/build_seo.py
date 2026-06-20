@@ -13,7 +13,15 @@ import json
 import os
 import re
 import sys
+from urllib.parse import quote
 from xml.sax.saxutils import escape
+
+
+def media_url(base, path):
+    """Join an R2 base origin and an object path into a fetchable URL,
+    percent-encoding path segments (R2 keys can contain spaces, e.g.
+    "USAF Thunderbirds/img.jpg") so scrapers and sitemaps resolve them."""
+    return f"{base.rstrip('/')}/{quote(str(path).lstrip('/'), safe='/')}"
 
 SITE_ORIGIN = "https://neilkodner.com"
 
@@ -90,7 +98,7 @@ def og_image_url(catalog):
         if not filename:
             return None
         path = f"_hero/{filename}"
-    return f"{base_url}/{path}"
+    return media_url(base_url, path)
 
 
 def update_og_image(catalog):
@@ -135,6 +143,298 @@ def update_og_image(catalog):
         print(f"og:image already up to date: {url}")
 
 
+# ── Static per-album pages (pretty canonical URLs) ──────────────────────────
+
+PHOTOGRAPHY_DIR = os.path.join(REPO_ROOT, "photography")
+# Identifies files this script generates, so cleanup never touches the
+# hand-written photography/index.html or anything else.
+STUB_MARKER = "<!-- generated-album-stub -->"
+
+_MONTHS = ["January", "February", "March", "April", "May", "June", "July",
+           "August", "September", "October", "November", "December"]
+
+
+def slugify(value):
+    """Lowercase; every run of non-alphanumeric chars → a single hyphen; trim.
+
+    CONTRACT: must match slugify() in js/app.js (and the inline slug() in
+    album.html) so generated directory names line up with the hrefs the
+    frontend builds. "USAF Thunderbirds" → "usaf-thunderbirds".
+    """
+    return re.sub(r"[^a-z0-9]+", "-", str(value).lower()).strip("-")
+
+
+def album_pretty_path(cat_id, album_id):
+    """Canonical album URL path: /photography/<cat-slug>/<album-slug>/"""
+    return f"/photography/{slugify(cat_id)}/{slugify(album_id)}/"
+
+
+def _attr(value):
+    """Escape a string for use inside an HTML double-quoted attribute."""
+    return escape(str(value), {'"': "&quot;"})
+
+
+def _format_date(value):
+    """'2024-07' → 'July 2024', '2024' → '2024' (mirrors app.js formatDate)."""
+    if not value:
+        return ""
+    parts = str(value).split("-")
+    year = parts[0]
+    if len(parts) < 2:
+        return year
+    try:
+        month = int(parts[1])
+        if 1 <= month <= 12:
+            return f"{_MONTHS[month - 1]} {year}"
+    except ValueError:
+        pass
+    return year
+
+
+def album_og_image(catalog, album):
+    """Best og:image for an album: the cover, else the first photo's largest
+    resized variant (a ~2000px JPEG — safely under social size limits), else
+    the first photo full-res, else the site hero."""
+    base = catalog.get("baseUrl", "").rstrip("/")
+    if not base:
+        return og_image_url(catalog)
+
+    cover = album.get("cover")
+    if cover:
+        return media_url(base, cover)
+
+    photos = album.get("photos") or []
+    if photos:
+        first = photos[0]
+        sizes = first.get("sizes") or []
+        if sizes:
+            return media_url(base, sizes[-1].get("path", ""))
+        filename = first.get("filename")
+        if filename:
+            return media_url(base, f"{album.get('folder', '')}/{filename}")
+
+    return og_image_url(catalog)
+
+
+def render_album_stub(catalog, cat, album):
+    """Return the full HTML for a static per-album page.
+
+    The head carries real og/Twitter/JSON-LD metadata (so scrapers get a
+    preview); the body mirrors the legacy album.html shell and boots gallery.js
+    with the album's real cat/album ids.
+    """
+    base = catalog.get("baseUrl", "").rstrip("/")
+    cat_id = cat.get("id")
+    album_id = album.get("id")
+    folder = album.get("folder", "")
+    page_url = f"{SITE_ORIGIN}{album_pretty_path(cat_id, album_id)}"
+
+    title = (cat.get("name") if cat.get("flat") else album.get("title")) or album_id
+    location = album.get("location") or ""
+    description = f"{title} — photography by Neil Kodner."
+    if location:
+        description = f"{title} — photography by Neil Kodner. {location}."
+
+    meta_bits = [b for b in (_format_date(album.get("date")), location) if b]
+    meta_line = " · ".join(meta_bits)
+    cat_name = cat.get("name") or cat_id
+    og_image = album_og_image(catalog, album) or ""
+
+    # JSON-LD ImageGallery.
+    image_urls = [
+        media_url(base, f"{folder}/{p['filename']}")
+        for p in album.get("photos", []) if p.get("filename")
+    ]
+    ld = {
+        "@context": "https://schema.org",
+        "@type": "ImageGallery",
+        "name": title,
+        "url": page_url,
+        "description": description,
+        "author": {"@type": "Person", "name": "Neil Kodner"},
+    }
+    if og_image:
+        ld["image"] = og_image
+    if image_urls:
+        ld["associatedMedia"] = [
+            {"@type": "ImageObject", "contentUrl": u} for u in image_urls[:50]
+        ]
+    json_ld = json.dumps(ld, ensure_ascii=False, indent=2).replace("<", "\\u003c")
+
+    image_tags = ""
+    if og_image:
+        image_tags = (
+            f'  <meta property="og:image"       content="{_attr(og_image)}">\n'
+            f'  <meta name="twitter:image"      content="{_attr(og_image)}">\n'
+        )
+
+    preconnect = ""
+    if base:
+        preconnect = (
+            f'  <link rel="preconnect" href="{_attr(base)}" crossorigin>\n'
+            f'  <link rel="dns-prefetch" href="{_attr(base)}">\n'
+        )
+
+    cat_json = json.dumps(cat_id, ensure_ascii=False)
+    album_json = json.dumps(album_id, ensure_ascii=False)
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  {STUB_MARKER}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+
+{preconnect}
+  <title>{escape(title)} — Neil Kodner</title>
+  <meta name="description" content="{_attr(description)}">
+  <link rel="canonical" href="{_attr(page_url)}">
+
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="{_attr(page_url)}">
+  <meta property="og:title"       content="{_attr(title)} — Neil Kodner">
+  <meta property="og:description" content="{_attr(description)}">
+  <meta property="og:site_name"   content="Photography by Neil Kodner">
+  <meta name="twitter:card"       content="summary_large_image">
+  <meta name="twitter:title"      content="{_attr(title)} — Neil Kodner">
+  <meta name="twitter:description" content="{_attr(description)}">
+{image_tags}
+  <script type="application/ld+json">
+{json_ld}
+  </script>
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/print.css" media="print">
+  <link rel="stylesheet" href="/vendor/photoswipe/photoswipe.css">
+  <link rel="stylesheet" href="/css/lightbox.css">
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <nav class="site-nav" aria-label="Primary">
+    <div class="container">
+      <a href="/" class="nav-brand">Photography by Neil Kodner</a>
+      <ul class="nav-links" role="list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/photography/" aria-current="page">Photography</a></li>
+        <li><a href="/about/">About</a></li>
+      </ul>
+    </div>
+  </nav>
+  <div class="nav-offset" aria-hidden="true"></div>
+
+  <main id="main-content">
+    <div class="container">
+
+      <nav class="album-breadcrumb" aria-label="Breadcrumb" style="padding-block:var(--space-6) 0">
+        <ol style="display:flex;gap:var(--space-2);list-style:none;font-size:var(--text-xs);letter-spacing:0.06em;color:var(--color-text-muted)">
+          <li><a href="/photography/">Photography</a></li>
+          <li aria-hidden="true" style="opacity:0.4">/</li>
+          <li><a id="breadcrumb-cat" href="/photography/?cat={escape(str(cat_id))}">{escape(str(cat_name))}</a></li>
+          <li aria-hidden="true" style="opacity:0.4">/</li>
+          <li style="color:var(--color-text)" aria-current="page" id="album-title-crumb">{escape(title)}</li>
+        </ol>
+      </nav>
+
+      <header class="page-header" style="margin-top:var(--space-4)">
+        <h1 id="album-title">{escape(title)}</h1>
+        <p id="album-meta" class="label" style="margin-top:var(--space-2)">{escape(meta_line)}</p>
+      </header>
+
+      <p id="album-loading" style="color:var(--color-text-muted);padding-block:var(--space-8)">Loading photos…</p>
+      <p id="album-error" hidden style="color:var(--color-text-muted);padding-block:var(--space-8)">Could not load album.</p>
+
+      <div class="album-grid" id="photo-grid" style="padding-bottom:var(--space-16)"></div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 Neil Kodner</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import {{ renderAlbumPage }} from '/js/gallery.js';
+    renderAlbumPage({cat_json}, {album_json});
+  </script>
+
+</body>
+</html>
+"""
+
+
+def _write_if_changed(path, content):
+    """Write content only when it differs — keeps the git diff quiet."""
+    try:
+        with open(path, encoding="utf-8") as f:
+            if f.read() == content:
+                return False
+    except FileNotFoundError:
+        pass
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(content)
+    return True
+
+
+def write_album_pages(catalog):
+    """Generate /photography/<cat>/<album>/index.html for every album and prune
+    generated stubs for albums that no longer exist. Returns the page count."""
+    generated = set()
+    count = 0
+    for cat in catalog.get("categories", []):
+        cat_id = cat.get("id")
+        if cat_id is None:
+            continue
+        for album in cat.get("albums", []):
+            album_id = album.get("id")
+            if album_id is None:
+                continue
+            cat_slug, album_slug = slugify(cat_id), slugify(album_id)
+            out_dir = os.path.join(PHOTOGRAPHY_DIR, cat_slug, album_slug)
+            os.makedirs(out_dir, exist_ok=True)
+            _write_if_changed(
+                os.path.join(out_dir, "index.html"),
+                render_album_stub(catalog, cat, album),
+            )
+            generated.add((cat_slug, album_slug))
+            count += 1
+
+    # Prune stale generated stubs (album renamed/removed). Only delete files
+    # that carry STUB_MARKER, so the hand-written photography/index.html and
+    # any non-generated content are always safe.
+    if os.path.isdir(PHOTOGRAPHY_DIR):
+        for cat_slug in os.listdir(PHOTOGRAPHY_DIR):
+            cat_dir = os.path.join(PHOTOGRAPHY_DIR, cat_slug)
+            if not os.path.isdir(cat_dir):
+                continue
+            for album_slug in os.listdir(cat_dir):
+                album_dir = os.path.join(cat_dir, album_slug)
+                index = os.path.join(album_dir, "index.html")
+                if (cat_slug, album_slug) in generated or not os.path.isfile(index):
+                    continue
+                with open(index, encoding="utf-8") as f:
+                    if STUB_MARKER not in f.read(2048):
+                        continue
+                os.remove(index)
+                try:
+                    os.rmdir(album_dir)
+                except OSError:
+                    pass
+            try:
+                os.rmdir(cat_dir)  # remove now-empty category dir
+            except OSError:
+                pass
+
+    return count
+
+
 def main():
     with open(CATALOG_PATH, encoding="utf-8") as f:
         catalog = json.load(f)
@@ -175,7 +475,7 @@ def main():
             if album_id is None:
                 continue
 
-            loc = f"{SITE_ORIGIN}/album.html?cat={cat_id}&album={album_id}"
+            loc = f"{SITE_ORIGIN}{album_pretty_path(cat_id, album_id)}"
             lastmod = normalize_lastmod(album.get("date"))
 
             images = []
@@ -183,7 +483,7 @@ def main():
                 filename = photo.get("filename")
                 if not filename:
                     continue
-                img_loc = f"{base_url}/{folder}/{filename}"
+                img_loc = media_url(base_url, f"{folder}/{filename}")
                 images.append((img_loc, photo.get("caption") or None))
                 image_count += 1
 
@@ -202,6 +502,9 @@ def main():
     )
 
     update_og_image(catalog)
+
+    pages = write_album_pages(catalog)
+    print(f"Generated {pages} static per-album pages under photography/.")
 
 
 if __name__ == "__main__":
