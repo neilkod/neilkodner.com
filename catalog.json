@@ -1,5 +1,5 @@
 {
-  "generated": "2026-06-20T02:48:57+00:00",
+  "generated": "2026-06-20T03:53:04+00:00",
   "baseUrl": "https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev",
   "hero": [
     {
@@ -145,7 +145,17 @@
                 "aperture": "f/2.8",
                 "shutter_speed": "1/40s",
                 "iso": "ISO 100"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/aviation/Other/DJI_20260427193101_0006_D.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/aviation/Other/DJI_20260427193101_0006_D.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC00933.JPG",
@@ -159,7 +169,17 @@
                 "aperture": "f/6.3",
                 "shutter_speed": "1/3200s",
                 "iso": "ISO 250"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/aviation/Other/DSC00933.JPG"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/aviation/Other/DSC00933.JPG"
+                }
+              ]
             },
             {
               "filename": "L1000632.jpg",
@@ -173,7 +193,17 @@
                 "aperture": "f/5",
                 "shutter_speed": "1/125s",
                 "iso": "ISO 800"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/aviation/Other/L1000632.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/aviation/Other/L1000632.jpg"
+                }
+              ]
             }
           ]
         },
@@ -197,7 +227,17 @@
                 "aperture": "f/6.3",
                 "shutter_speed": "1/6400s",
                 "iso": "ISO 250"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/aviation/USAF Thunderbirds/DSC01295.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/aviation/USAF Thunderbirds/DSC01295.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC01330.jpg",
@@ -211,7 +251,17 @@
                 "aperture": "f/6.3",
                 "shutter_speed": "1/6400s",
                 "iso": "ISO 250"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/aviation/USAF Thunderbirds/DSC01330.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/aviation/USAF Thunderbirds/DSC01330.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC01346.jpg",
@@ -225,7 +275,17 @@
                 "aperture": "f/6.3",
                 "shutter_speed": "1/6400s",
                 "iso": "ISO 320"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/aviation/USAF Thunderbirds/DSC01346.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/aviation/USAF Thunderbirds/DSC01346.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC01583.jpg",
@@ -239,7 +299,17 @@
                 "aperture": "f/6.3",
                 "shutter_speed": "1/6400s",
                 "iso": "ISO 320"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/aviation/USAF Thunderbirds/DSC01583.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/aviation/USAF Thunderbirds/DSC01583.jpg"
+                }
+              ]
             }
           ]
         }
@@ -249,7 +319,7 @@
       "id": "hockey",
       "name": "Hockey",
       "flat": false,
-      "cover": "hockey/cover.jpg",
+      "cover": "hockey/cover.JPG",
       "albums": [
         {
           "id": "select-images",
@@ -257,7 +327,7 @@
           "title": "Select Images",
           "date": "",
           "location": "",
-          "cover": "hockey/select-images/cover.jpg",
+          "cover": "hockey/select-images/cover.JPG",
           "photos": [
             {
               "filename": "DSC02559.JPG",
@@ -271,7 +341,17 @@
                 "aperture": "f/3.2",
                 "shutter_speed": "1/500s",
                 "iso": "ISO 640"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/hockey/select-images/DSC02559.JPG"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/hockey/select-images/DSC02559.JPG"
+                }
+              ]
             },
             {
               "filename": "DSC02573.JPG",
@@ -285,7 +365,17 @@
                 "aperture": "f/3.2",
                 "shutter_speed": "1/500s",
                 "iso": "ISO 800"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/hockey/select-images/DSC02573.JPG"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/hockey/select-images/DSC02573.JPG"
+                }
+              ]
             },
             {
               "filename": "DSC02899.JPG",
@@ -299,7 +389,17 @@
                 "aperture": "f/3.2",
                 "shutter_speed": "1/800s",
                 "iso": "ISO 1600"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 800,
+                  "path": "_resized/1200/hockey/select-images/DSC02899.JPG"
+                },
+                {
+                  "w": 1333,
+                  "path": "_resized/2000/hockey/select-images/DSC02899.JPG"
+                }
+              ]
             },
             {
               "filename": "DSC04243.jpg",
@@ -313,7 +413,17 @@
                 "aperture": "f/3.5",
                 "shutter_speed": "1/1000s",
                 "iso": "ISO 800"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/hockey/select-images/DSC04243.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/hockey/select-images/DSC04243.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC04254.jpg",
@@ -327,7 +437,17 @@
                 "aperture": "f/3.5",
                 "shutter_speed": "1/1000s",
                 "iso": "ISO 800"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 800,
+                  "path": "_resized/1200/hockey/select-images/DSC04254.jpg"
+                },
+                {
+                  "w": 1333,
+                  "path": "_resized/2000/hockey/select-images/DSC04254.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC04314.jpg",
@@ -341,7 +461,17 @@
                 "aperture": "f/3.5",
                 "shutter_speed": "1/1000s",
                 "iso": "ISO 2000"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 800,
+                  "path": "_resized/1200/hockey/select-images/DSC04314.jpg"
+                },
+                {
+                  "w": 1333,
+                  "path": "_resized/2000/hockey/select-images/DSC04314.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC04319.jpg",
@@ -355,7 +485,17 @@
                 "aperture": "f/3.5",
                 "shutter_speed": "1/1000s",
                 "iso": "ISO 2500"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/hockey/select-images/DSC04319.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/hockey/select-images/DSC04319.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC04377.jpg",
@@ -369,7 +509,17 @@
                 "aperture": "f/3.5",
                 "shutter_speed": "1/800s",
                 "iso": "ISO 1600"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/hockey/select-images/DSC04377.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/hockey/select-images/DSC04377.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC04388.jpg",
@@ -383,7 +533,17 @@
                 "aperture": "f/3.5",
                 "shutter_speed": "1/800s",
                 "iso": "ISO 800"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 800,
+                  "path": "_resized/1200/hockey/select-images/DSC04388.jpg"
+                },
+                {
+                  "w": 1333,
+                  "path": "_resized/2000/hockey/select-images/DSC04388.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC04395.jpg",
@@ -397,7 +557,17 @@
                 "aperture": "f/3.5",
                 "shutter_speed": "1/800s",
                 "iso": "ISO 500"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/hockey/select-images/DSC04395.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/hockey/select-images/DSC04395.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC04429.jpg",
@@ -411,7 +581,17 @@
                 "aperture": "f/3.5",
                 "shutter_speed": "1/800s",
                 "iso": "ISO 800"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/hockey/select-images/DSC04429.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/hockey/select-images/DSC04429.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC04505.jpg",
@@ -425,7 +605,17 @@
                 "aperture": "f/3.5",
                 "shutter_speed": "1/800s",
                 "iso": "ISO 1000"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/hockey/select-images/DSC04505.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/hockey/select-images/DSC04505.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC04674.jpg",
@@ -439,7 +629,17 @@
                 "aperture": "f/4",
                 "shutter_speed": "1/800s",
                 "iso": "ISO 1600"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 800,
+                  "path": "_resized/1200/hockey/select-images/DSC04674.jpg"
+                },
+                {
+                  "w": 1334,
+                  "path": "_resized/2000/hockey/select-images/DSC04674.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC05875.jpg",
@@ -453,7 +653,17 @@
                 "aperture": "f/3.2",
                 "shutter_speed": "1/1000s",
                 "iso": "ISO 1000"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/hockey/select-images/DSC05875.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/hockey/select-images/DSC05875.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC05881.jpg",
@@ -467,7 +677,17 @@
                 "aperture": "f/3.2",
                 "shutter_speed": "1/1000s",
                 "iso": "ISO 1000"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/hockey/select-images/DSC05881.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/hockey/select-images/DSC05881.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC05897.jpg",
@@ -481,7 +701,17 @@
                 "aperture": "f/3.2",
                 "shutter_speed": "1/1000s",
                 "iso": "ISO 1000"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/hockey/select-images/DSC05897.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/hockey/select-images/DSC05897.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC06009.jpg",
@@ -495,7 +725,17 @@
                 "aperture": "f/3.2",
                 "shutter_speed": "1/1000s",
                 "iso": "ISO 1000"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/hockey/select-images/DSC06009.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/hockey/select-images/DSC06009.jpg"
+                }
+              ]
             },
             {
               "filename": "DSC06027.jpg",
@@ -509,7 +749,17 @@
                 "aperture": "f/3.2",
                 "shutter_speed": "1/1000s",
                 "iso": "ISO 1000"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/hockey/select-images/DSC06027.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/hockey/select-images/DSC06027.jpg"
+                }
+              ]
             },
             {
               "filename": "DSCF0880.JPG",
@@ -522,7 +772,17 @@
                 "aperture": "f/4.5",
                 "shutter_speed": "1/500s",
                 "iso": "ISO 1250"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/hockey/select-images/DSCF0880.JPG"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/hockey/select-images/DSCF0880.JPG"
+                }
+              ]
             },
             {
               "filename": "DSCF0958.JPG",
@@ -535,7 +795,17 @@
                 "aperture": "f/4.5",
                 "shutter_speed": "1/125s",
                 "iso": "ISO 400"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/hockey/select-images/DSCF0958.JPG"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/hockey/select-images/DSCF0958.JPG"
+                }
+              ]
             }
           ]
         }
@@ -567,7 +837,17 @@
                 "aperture": "f/5",
                 "shutter_speed": "1/125s",
                 "iso": "ISO 800"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/places/New York City/L1000632.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/places/New York City/L1000632.jpg"
+                }
+              ]
             },
             {
               "filename": "L1000714.jpg",
@@ -581,7 +861,17 @@
                 "aperture": "f/4",
                 "shutter_speed": "1/125s",
                 "iso": "ISO 640"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/places/New York City/L1000714.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/places/New York City/L1000714.jpg"
+                }
+              ]
             },
             {
               "filename": "L1000716.jpg",
@@ -595,7 +885,17 @@
                 "aperture": "f/4",
                 "shutter_speed": "1/125s",
                 "iso": "ISO 500"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 799,
+                  "path": "_resized/1200/places/New York City/L1000716.jpg"
+                },
+                {
+                  "w": 1331,
+                  "path": "_resized/2000/places/New York City/L1000716.jpg"
+                }
+              ]
             }
           ]
         },
@@ -619,7 +919,17 @@
                 "aperture": "f/2.8",
                 "shutter_speed": "1/160s",
                 "iso": "ISO 12800"
-              }
+              },
+              "sizes": [
+                {
+                  "w": 1200,
+                  "path": "_resized/1200/places/Seattle/DSC09890.jpg"
+                },
+                {
+                  "w": 2000,
+                  "path": "_resized/2000/places/Seattle/DSC09890.jpg"
+                }
+              ]
             }
           ]
         }
