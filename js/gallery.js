@@ -3,7 +3,7 @@
  */
 
 import PhotoSwipeLightbox from 'https://cdn.jsdelivr.net/npm/photoswipe@5/dist/photoswipe-lightbox.esm.min.js';
-import { fetchCatalog, fullUrl, thumbUrl, fadeInOnLoad, formatDate } from '/js/app.js';
+import { fetchCatalog, fullUrl, setThumb, fadeInOnLoad, formatDate } from '/js/app.js';
 
 // ─── Lightbox ─────────────────────────────────────────────────
 
@@ -30,13 +30,22 @@ export function initLightbox(galleryEl) {
 
     // Reserve space for toolbar (top) and info panel (bottom).
     // Collapse the bottom panel on short viewports (landscape mobile) so
-    // the photo isn't squeezed to a sliver.
-    paddingFn: (viewportSize) => ({
-      top:    44,
-      bottom: viewportSize.y < 500 ? 80 : 200,
-      left:   0,
-      right:  0,
-    }),
+    // the photo isn't squeezed to a sliver. Also collapse it (to match the
+    // top) when the current slide has neither a caption nor EXIF, so the
+    // photo isn't pushed up to reserve space for an empty info panel.
+    paddingFn: (viewportSize, itemData) => {
+      const elem    = itemData?.element;
+      const caption = elem?.getAttribute('data-pswp-caption') || '';
+      const exif    = elem?.getAttribute('data-pswp-exif')    || '';
+      const hasInfo = Boolean(caption || exif);
+
+      let bottom;
+      if (!hasInfo)                  bottom = 44;  // no info — match the top
+      else if (viewportSize.y < 500) bottom = 80;  // short viewport
+      else                           bottom = 200; // full info panel
+
+      return { top: 44, bottom, left: 0, right: 0 };
+    },
   });
 
   lightbox.on('uiRegister', () => {
@@ -84,6 +93,12 @@ export function initLightbox(galleryEl) {
           }
 
           el.innerHTML = captionHtml + exifHtml;
+
+          // Collapse the bottom info panel when there's nothing to show.
+          // paddingFn already consults the same data per-slide; this class
+          // hides the empty panel element itself (CSS in style.css).
+          const hasInfo = Boolean(captionHtml || exifHtml);
+          pswp.element?.classList.toggle('pswp--no-info', !hasInfo);
         };
 
         pswp.on('change', refresh);
@@ -293,7 +308,7 @@ export async function renderAlbumPage() {
     }
 
     const img = document.createElement('img');
-    img.src      = thumbUrl(catalog.baseUrl, path);
+    setThumb(img, catalog.baseUrl, path);
     img.alt      = photo.caption || '';
     img.loading  = i === 0 ? 'eager' : 'lazy';
     img.decoding = 'async';

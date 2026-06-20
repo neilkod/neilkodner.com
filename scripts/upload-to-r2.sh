@@ -65,6 +65,7 @@ echo ""
 rclone "$MODE" "$LOCAL" "${REMOTE}:${BUCKET}" \
   --exclude "_thumbs/**" \
   --exclude ".DS_Store" \
+  --header-upload "Cache-Control: public, max-age=31536000, immutable" \
   --progress \
   --transfers 8 \
   $DRY_RUN

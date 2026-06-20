@@ -27,14 +27,14 @@ overall whitespace/typography.
 
 ---
 
-## Phase 1 — Stop the bleeding (pure code, ~1 session)
+## Phase 1 — Stop the bleeding (pure code, ~1 session) ✅ COMPLETE
 
-- [ ] **Hero lazy slideshow** (`js/hero.js`): create `<img>` without `src`; assign `src`
+- [x] **Hero lazy slideshow** (`js/hero.js`): create `<img>` without `src`; assign `src`
       only for the active slide and preload one ahead each cycle. Fixes finding #1.
-- [ ] **Fix cover case bug** (`scripts/build_catalog.py`): build cover URL from the
+- [x] **Fix cover case bug** (`scripts/build_catalog.py`): build cover URL from the
       preserved `cover_file` / actual key, not literal `cover.jpg`. Finding #9.
-- [ ] **`preconnect` to the image host** in `<head>` of all pages.
-- [ ] **Collapse empty lightbox info panel** (`js/gallery.js` `paddingFn` + panel CSS). Finding #8.
+- [x] **`preconnect` to the image host** in `<head>` of all pages.
+- [x] **Collapse empty lightbox info panel** (`js/gallery.js` `paddingFn` + panel CSS). Finding #8.
 
 ## Phase 2 — CDN & caching (one dashboard step + code)
 
@@ -42,31 +42,39 @@ overall whitespace/typography.
       (e.g. `img.neilkodner.com`) to the R2 bucket; add a Cache Rule with long edge TTL.
       Then update the `R2_PUBLIC_BASE_URL` GitHub secret — `catalog.json` picks it up on
       the next 30-min run; no frontend change needed.
-- [ ] **`Cache-Control` headers**: `CacheControl="public, max-age=31536000, immutable"`
+      ⚠️ Still TODO — only Neil can do this in the Cloudflare dashboard.
+- [x] **`Cache-Control` headers**: `CacheControl="public, max-age=31536000, immutable"`
       in `put_bytes()` for generated thumbs; `--header-upload "Cache-Control: …"` in
       `scripts/upload-to-r2.sh` for originals. Filenames are content-stable, so immutable is safe.
+      (Code in place; headers apply only to objects written *after* this change.)
 
 ## Phase 3 — Modern image pipeline (Python only; frontend already ready)
 
-- [ ] **WebP thumbnails, 800px long edge, q≈75** in `make_thumbnail()`. New `.webp` keys
+- [x] **WebP thumbnails, 800px long edge, q≈75** in `make_thumbnail()`. New `.webp` keys
       miss the existence check, so the first run regenerates all thumbs — that *is* the
-      migration. Update `thumbUrl()` (or store thumb path in catalog). Finding #3.
-- [ ] **Generate `_resized/1200/` and `_resized/2000/` variants** in the same loop
+      migration. `thumbUrl()` now swaps the extension to `.webp` (contract mirrored in
+      `thumb_key_for()`); frontend `setThumb()` falls back to the legacy JPEG thumb during
+      the migration window. Finding #3.
+- [x] **Generate `_resized/1200/` and `_resized/2000/` variants** in the same loop
       (original already in memory) and write `photo.sizes[]` to the catalog — this lights
       up the existing `buildPswpSrcset()` with zero frontend changes. Finding #4.
 - [ ] **Resize hero images** (~2560px long edge, e.g. `_resized/hero/`) and point
       `hero.js` at them. Depends on Phase 1's lazy slideshow landing first so the win compounds.
+      🚧 In flight (batch 2).
 
 ## Phase 4 — Social previews & SEO (build-time generation)
 
 - [ ] **Inject a real `og:image`** into `index.html` from the Action (script edits the
       tag between markers, commits alongside `catalog.json`). Finding #5.
+      🚧 In flight (batch 2).
 - [ ] **Generate static per-album stub pages** (`/photography/<cat>/<album>/index.html`)
       with correct `og:title`/`og:image`/JSON-LD that hand off to the existing JS album
       page. Optionally per-photo stubs later.
-- [ ] **Generate `sitemap.xml`** (with image-sitemap entries) **and `robots.txt`** from
-      the catalog. Finding #6.
+      ⏸ Deferred — routing/sitemap-canonicalization decision; wants a deliberate call.
+- [x] **Generate `sitemap.xml`** (with image-sitemap entries) **and `robots.txt`** from
+      the catalog. (New `scripts/build_seo.py`, wired into the Action.) Finding #6.
 - [ ] **Alt-text fallback** in the catalog: `caption or f"{album title}, photo {n}"`.
+      🚧 In flight (batch 2).
 
 ## Phase 5 — Presentation craft (design decisions, take slowly)
 

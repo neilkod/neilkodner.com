@@ -37,8 +37,10 @@ export async function initHero() {
     const div = document.createElement('div');
     div.className = 'hero-slide';
 
+    // Build each img WITHOUT a src — only the active slide (and the one
+    // preloaded ahead) ever gets a src, so we don't download all ~23
+    // hero originals on load. Width/height still reserve layout space.
     const img = document.createElement('img');
-    img.src          = fullUrl(catalog.baseUrl, `_hero/${h.filename}`);
     img.alt          = '';
     img.fetchpriority = i === 0 ? 'high' : 'low';
     img.loading       = i === 0 ? 'eager' : 'lazy';
@@ -48,11 +50,25 @@ export async function initHero() {
     if (h.width)  img.width  = h.width;
     if (h.height) img.height = h.height;
 
+    // Stash the eventual URL; assigned lazily via ensureSrc().
+    img.dataset.heroSrc = fullUrl(catalog.baseUrl, `_hero/${h.filename}`);
+
     div.appendChild(img);
     return { div, img };
   });
 
   slides.forEach(({ div }) => container.appendChild(div));
+
+  // Assign a slide's src only when needed (idempotent — never reassign).
+  const ensureSrc = (i) => {
+    const { img } = slides[i];
+    if (!img.src && img.dataset.heroSrc) img.src = img.dataset.heroSrc;
+  };
+
+  // First slide loads eagerly (fetchpriority high already set above).
+  ensureSrc(0);
+  // Preload the next slide so the first crossfade target is cached.
+  if (slides.length > 1) ensureSrc(1 % slides.length);
 
   // Show first slide only once its image has loaded — no blank flash
   const { div: firstDiv, img: firstImg } = slides[0];
@@ -70,6 +86,10 @@ export async function initHero() {
   function advance() {
     slides[current].div.classList.remove('is-active');
     current = (current + 1) % slides.length;
+    // Make sure the slide we're about to show has its src,
+    // and preload the one after it for the following crossfade.
+    ensureSrc(current);
+    ensureSrc((current + 1) % slides.length);
     slides[current].div.classList.add('is-active');
     setTimeout(advance, randMs(8000, 12000));
   }

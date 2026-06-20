@@ -16,7 +16,36 @@ export async function fetchCatalog() {
 // ─── URL helpers ──────────────────────────────────────────────
 
 export const fullUrl  = (base, path) => `${base}/${path}`;
-export const thumbUrl = (base, path) => `${base}/_thumbs/${path}`;
+
+/**
+ * Map a source image path to its generated thumbnail URL.
+ *
+ * CONTRACT (must match scripts/build_catalog.py `thumb_key_for`):
+ * thumbnails are WebP at `_thumbs/{path-with-extension-swapped-to-.webp}`.
+ * Cover fields in the catalog carry the real original key (e.g.
+ * "aviation/Cover.JPG"); we swap only the final extension to ".webp".
+ */
+export const thumbUrl = (base, path) => {
+  const webpPath = path.replace(/\.[^./]+$/, '.webp');
+  return `${base}/_thumbs/${webpPath}`;
+};
+
+/**
+ * Point an <img> at its WebP thumbnail, falling back ONCE to the legacy
+ * JPEG thumb (original extension) if the WebP isn't there.
+ *
+ * This covers the one-time WebP migration window: after this code deploys,
+ * the frontend asks for `.webp` thumbs, but R2 only has them once the catalog
+ * Action has regenerated. Until then (or if a regen lags/fails) the original
+ * `_thumbs/{path}` JPEG still serves, so nothing breaks.
+ */
+export function setThumb(img, base, path) {
+  img.src = thumbUrl(base, path);
+  img.addEventListener('error', () => {
+    const legacy = `${base}/_thumbs/${path}`;
+    if (img.src !== legacy) img.src = legacy;   // try the pre-WebP thumb once
+  }, { once: true });
+}
 
 // ─── Image loading ────────────────────────────────────────────
 
@@ -61,7 +90,7 @@ export function renderCategoryGrid(catalog, container, { showLabel = false } = {
 
     if (cat.cover) {
       const img = document.createElement('img');
-      img.src      = thumbUrl(catalog.baseUrl, cat.cover);
+      setThumb(img, catalog.baseUrl, cat.cover);
       img.alt      = cat.name;
       img.loading  = 'lazy';
       img.decoding = 'async';
@@ -106,7 +135,7 @@ function makeAlbumTile(album, catId, catName, baseUrl) {
 
   if (album.cover) {
     const img = document.createElement('img');
-    img.src      = thumbUrl(baseUrl, album.cover);
+    setThumb(img, baseUrl, album.cover);
     img.alt      = album.title || album.id;
     img.loading  = 'lazy';
     img.decoding = 'async';

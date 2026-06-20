@@ -22,7 +22,8 @@ Rules
 -----
 - Folders beginning with _draft- are skipped entirely.
 - _thumbs/ is a system folder written by this script; its contents are skipped.
-- Thumbnails (~500 px long edge) are generated for every photo that lacks one.
+- Thumbnails (WebP, ~800 px long edge) are generated for every photo that lacks one.
+- Resized JPEG variants (_resized/1200, _resized/2000) feed the lightbox srcset.
 - manifest.json overrides title / date / location for an album.
 - Existing catalog entries are preserved (captions, dimensions of unchanged photos).
 - Entries for paths that no longer exist in R2 are removed.
@@ -43,8 +44,13 @@ from PIL import Image, IptcImagePlugin
 # ── Constants ─────────────────────────────────────────────────────────────────
 
 CATALOG_PATH    = "catalog.json"
-THUMB_LONG_EDGE = 500
-THUMB_QUALITY   = 90
+THUMB_LONG_EDGE = 800        # grid/cover thumbnails, WebP
+THUMB_QUALITY   = 75         # WebP quality for thumbnails
+
+# Full-res-ish responsive variants served to the lightbox (photo.sizes[]).
+# JPEG for broad <img srcset> compatibility. Long edge → quality.
+RESIZED_WIDTHS  = (1200, 2000)
+RESIZED_QUALITY = 82
 
 # Override display names for category folders whose folder name alone
 # doesn't reflect what you want shown on the site.
@@ -79,8 +85,18 @@ def get_bytes(s3, bucket: str, key: str) -> bytes:
     return s3.get_object(Bucket=bucket, Key=key)["Body"].read()
 
 
-def put_bytes(s3, bucket: str, key: str, data: bytes):
-    s3.put_object(Bucket=bucket, Key=key, Body=data, ContentType="image/jpeg")
+def put_bytes(s3, bucket: str, key: str, data: bytes,
+              content_type: str = "image/jpeg"):
+    # Filenames are content-stable (originals never change once uploaded;
+    # derived keys embed dimensions/format), so long-lived immutable caching
+    # is safe and lets CDN/browser hold derived assets effectively forever.
+    s3.put_object(
+        Bucket=bucket,
+        Key=key,
+        Body=data,
+        ContentType=content_type,
+        CacheControl="public, max-age=31536000, immutable",
+    )
 
 
 # ── Image helpers ─────────────────────────────────────────────────────────────
@@ -234,17 +250,55 @@ def extract_caption(img: Image.Image) -> str:
     return ""
 
 
-def make_thumbnail(data: bytes) -> bytes:
-    img = Image.open(io.BytesIO(data)).convert("RGB")
+def _resize_to_long_edge(img: Image.Image, long_edge: int) -> Image.Image:
+    """Return img scaled so its longer side == long_edge (never upscales)."""
     w, h = img.size
+    if max(w, h) <= long_edge:
+        return img
     if w >= h:
-        new_size = (THUMB_LONG_EDGE, max(1, int(h * THUMB_LONG_EDGE / w)))
+        new_size = (long_edge, max(1, round(h * long_edge / w)))
     else:
-        new_size = (max(1, int(w * THUMB_LONG_EDGE / h)), THUMB_LONG_EDGE)
-    img = img.resize(new_size, Image.LANCZOS)
+        new_size = (max(1, round(w * long_edge / h)), long_edge)
+    return img.resize(new_size, Image.LANCZOS)
+
+
+def thumb_key_for(folder: str, filename: str) -> str:
+    """
+    Derive the thumbnail object key for a source filename.
+
+    KEY SCHEME / FRONTEND CONTRACT
+    ------------------------------
+    Thumbs are WebP and live at `_thumbs/{folder}/{stem}.webp`, where {stem}
+    is the source filename with its extension swapped to `.webp`.
+
+    js/app.js `thumbUrl()` MUST mirror this exactly: it takes a source path
+    (e.g. an album `cover` field carrying the real original key, or a photo
+    path) and produces `_thumbs/{path-with-.webp}`. So the rule both sides
+    obey is: lowercase-swap the final extension to `.webp`, prefix `_thumbs/`.
+    """
+    stem = filename.rsplit(".", 1)[0]
+    return f"_thumbs/{folder}/{stem}.webp"
+
+
+def make_thumbnail(data: bytes) -> bytes:
+    """800 px long-edge WebP thumbnail (grid tiles + covers)."""
+    img = Image.open(io.BytesIO(data)).convert("RGB")
+    img = _resize_to_long_edge(img, THUMB_LONG_EDGE)
     buf = io.BytesIO()
-    img.save(buf, format="JPEG", quality=THUMB_QUALITY, optimize=True)
+    img.save(buf, format="WEBP", quality=THUMB_QUALITY, method=6)
     return buf.getvalue()
+
+
+def make_resized(data: bytes, long_edge: int) -> tuple[bytes, int]:
+    """
+    Render a JPEG variant scaled to `long_edge` (never upscaled).
+    Returns (jpeg_bytes, actual_width_px).
+    """
+    img = Image.open(io.BytesIO(data)).convert("RGB")
+    img = _resize_to_long_edge(img, long_edge)
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG", quality=RESIZED_QUALITY, optimize=True)
+    return buf.getvalue(), img.width
 
 
 # ── Bucket tree parser ────────────────────────────────────────────────────────
@@ -356,6 +410,40 @@ def folder_to_title(folder_id: str) -> str:
     return folder_id.replace("-", " ").title()
 
 
+def ensure_resized_variants(s3, bucket: str, keys_set: set, folder: str,
+                            filename: str, data: bytes,
+                            orig_w: int, orig_h: int) -> list[dict]:
+    """
+    Generate `_resized/{long_edge}/{folder}/{filename}` JPEG variants
+    (uploading any that don't already exist) and return the catalog `sizes`
+    array, ascending by pixel width:
+        [{"w": <actual width px>, "path": "_resized/.../file.jpg"}, ...]
+
+    `w` is the variant's actual pixel WIDTH (what <img srcset> wants), derived
+    from the original aspect ratio so it's correct for both orientations and
+    doesn't require re-reading an already-uploaded variant.
+
+    A variant is skipped when the original's long edge is already <= that
+    target (no point shipping an upscaled / identical copy).
+    """
+    orig_long = max(orig_w, orig_h)
+    sizes: list[dict] = []
+    for long_edge in RESIZED_WIDTHS:
+        if orig_long <= long_edge:
+            continue
+        # actual pixel width of the variant after scaling longer side → long_edge
+        actual_w = (long_edge if orig_w >= orig_h
+                    else max(1, round(orig_w * long_edge / orig_h)))
+        variant_key = f"_resized/{long_edge}/{folder}/{filename}"
+        if variant_key not in keys_set:
+            print(f"    → resized  {variant_key}")
+            jpeg, _ = make_resized(data, long_edge)
+            put_bytes(s3, bucket, variant_key, jpeg, content_type="image/jpeg")
+        sizes.append({"w": actual_w, "path": variant_key})
+    sizes.sort(key=lambda s: s["w"])
+    return sizes
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def build():
@@ -420,16 +508,21 @@ def build():
             photos = []
             for filename in sorted(info["files"]):
                 photo_key = f"{folder}/{filename}"
-                thumb_key = f"_thumbs/{folder}/{filename}"
+                thumb_key = thumb_key_for(folder, filename)
                 prev_photo = old_photos.get(photo_key)
 
-                if prev_photo and thumb_key in keys_set:
+                # Fast path: unchanged photo whose thumb AND every expected
+                # resized variant already exist. Carry `sizes` forward so the
+                # lightbox srcset survives incremental builds.
+                if prev_photo and thumb_key in keys_set and prev_photo.get("sizes") \
+                        and all(s["path"] in keys_set for s in prev_photo["sizes"]):
                     photos.append({
                         "filename": filename,
                         "width":    prev_photo["width"],
                         "height":   prev_photo["height"],
                         "caption":  prev_photo.get("caption", ""),
                         "exif":     prev_photo.get("exif", {}),
+                        "sizes":    prev_photo["sizes"],
                     })
                     continue
 
@@ -442,7 +535,11 @@ def build():
 
                     if thumb_key not in keys_set:
                         print(f"    → thumb  {thumb_key}")
-                        put_bytes(s3, bucket, thumb_key, make_thumbnail(data))
+                        put_bytes(s3, bucket, thumb_key, make_thumbnail(data),
+                                  content_type="image/webp")
+
+                    sizes = ensure_resized_variants(
+                        s3, bucket, keys_set, folder, filename, data, w, h)
 
                     photos.append({
                         "filename": filename,
@@ -450,18 +547,23 @@ def build():
                         "height":   h,
                         "caption":  prev_photo.get("caption", "") if prev_photo else extract_caption(img),
                         "exif":     exif,
+                        "sizes":    sizes,
                     })
                 except Exception as exc:
                     print(f"  WARN  could not process {photo_key}: {exc}")
 
-            # Single implicit album — id and folder both equal cat_id
+            # Single implicit album — id and folder both equal cat_id.
+            # `cover` carries the REAL original key (actual case preserved by
+            # parse_bucket), e.g. "{folder}/Cover.JPG". The frontend derives the
+            # thumb via thumbUrl() (extension → .webp), which matches the lowercase
+            # `.webp` thumb key we generate below. See thumb_key_for() for the contract.
             album_entries.append({
                 "id":       cat_id,
                 "folder":   folder,
                 "title":    CATEGORY_NAMES.get(cat_id) or folder_to_title(cat_id),
                 "date":     prev.get("date", ""),
                 "location": prev.get("location", ""),
-                "cover":    f"{folder}/cover.jpg" if info["has_cover"] else "",
+                "cover":    f"{folder}/{info['cover_file']}" if info["has_cover"] else "",
                 "photos":   photos,
             })
 
@@ -490,22 +592,26 @@ def build():
                 photos = []
                 for filename in sorted(info["files"]):
                     photo_key = f"{folder}/{filename}"
-                    thumb_key = f"_thumbs/{folder}/{filename}"
+                    thumb_key = thumb_key_for(folder, filename)
 
                     prev_photo = old_photos.get(photo_key)
 
-                    if prev_photo and thumb_key in keys_set:
-                        # Preserve existing entry — no download needed
+                    # Fast path: unchanged photo whose thumb AND every expected
+                    # resized variant already exist. Carry `sizes` forward so the
+                    # lightbox srcset survives incremental builds.
+                    if prev_photo and thumb_key in keys_set and prev_photo.get("sizes") \
+                            and all(s["path"] in keys_set for s in prev_photo["sizes"]):
                         photos.append({
                             "filename": filename,
                             "width":    prev_photo["width"],
                             "height":   prev_photo["height"],
                             "caption":  prev_photo.get("caption", ""),
                             "exif":     prev_photo.get("exif", {}),
+                            "sizes":    prev_photo["sizes"],
                         })
                         continue
 
-                    # New photo or missing thumbnail — download original
+                    # New photo, missing thumbnail, or missing variants — download original
                     print(f"  Photo  {photo_key}")
                     try:
                         data = get_bytes(s3, bucket, photo_key)
@@ -515,7 +621,11 @@ def build():
 
                         if thumb_key not in keys_set:
                             print(f"    → thumb  {thumb_key}")
-                            put_bytes(s3, bucket, thumb_key, make_thumbnail(data))
+                            put_bytes(s3, bucket, thumb_key, make_thumbnail(data),
+                                      content_type="image/webp")
+
+                        sizes = ensure_resized_variants(
+                            s3, bucket, keys_set, folder, filename, data, w, h)
 
                         photos.append({
                             "filename": filename,
@@ -523,20 +633,26 @@ def build():
                             "height":   h,
                             "caption":  prev_photo.get("caption", "") if prev_photo else extract_caption(img),
                             "exif":     exif,
+                            "sizes":    sizes,
                         })
                     except Exception as exc:
                         print(f"  WARN  could not process {photo_key}: {exc}")
 
                 # ── Cover thumbnail ───────────────────────────────────────
-                cover_thumb_key = f"_thumbs/{folder}/cover.jpg"
-                if info["has_cover"] and cover_thumb_key not in keys_set:
-                    cover_key = f"{folder}/{info['cover_file']}"  # actual case
-                    print(f"  Cover thumb  {cover_key}")
-                    try:
-                        data = get_bytes(s3, bucket, cover_key)
-                        put_bytes(s3, bucket, cover_thumb_key, make_thumbnail(data))
-                    except Exception as exc:
-                        print(f"  WARN  {cover_key}: {exc}")
+                # Thumb key derives from the real-cased cover filename so it
+                # stays in sync with what the frontend requests via thumbUrl()
+                # (cover field below carries the real original key).
+                if info["has_cover"]:
+                    cover_thumb_key = thumb_key_for(folder, info["cover_file"])
+                    if cover_thumb_key not in keys_set:
+                        cover_key = f"{folder}/{info['cover_file']}"  # actual case
+                        print(f"  Cover thumb  {cover_key}")
+                        try:
+                            data = get_bytes(s3, bucket, cover_key)
+                            put_bytes(s3, bucket, cover_thumb_key, make_thumbnail(data),
+                                      content_type="image/webp")
+                        except Exception as exc:
+                            print(f"  WARN  {cover_key}: {exc}")
 
                 album_entries.append({
                     "id":       album_id,
@@ -544,7 +660,8 @@ def build():
                     "title":    title,
                     "date":     date,
                     "location": location,
-                    "cover":    f"{folder}/cover.jpg" if info["has_cover"] else "",
+                    # Real original key (actual case); frontend swaps ext → .webp.
+                    "cover":    f"{folder}/{info['cover_file']}" if info["has_cover"] else "",
                     "photos":   photos,
                 })
 
@@ -552,21 +669,28 @@ def build():
             album_entries.sort(key=lambda a: a["date"] or "", reverse=True)
 
         # ── Category cover thumbnail ──────────────────────────────────────
-        cat_cover_thumb_key = f"_thumbs/{cat_id}/cover.jpg"
-        actual_cat_cover    = find_key(f"{cat_id}/cover.jpg")  # handles .JPG etc.
-        if actual_cat_cover and cat_cover_thumb_key not in keys_set:
-            print(f"  Cat cover thumb  {actual_cat_cover}")
-            try:
-                data = get_bytes(s3, bucket, actual_cat_cover)
-                put_bytes(s3, bucket, cat_cover_thumb_key, make_thumbnail(data))
-            except Exception as exc:
-                print(f"  WARN  {actual_cat_cover}: {exc}")
+        # actual_cat_cover is the real-cased key, e.g. "aviation/Cover.JPG".
+        # Thumb key + the `cover` field both derive from it so the frontend's
+        # thumbUrl() (ext → .webp) resolves to the thumb we actually write.
+        actual_cat_cover = find_key(f"{cat_id}/cover.jpg")  # handles .JPG etc.
+        if actual_cat_cover:
+            cat_cover_filename = actual_cat_cover.split("/")[-1]
+            cat_cover_thumb_key = thumb_key_for(cat_id, cat_cover_filename)
+            if cat_cover_thumb_key not in keys_set:
+                print(f"  Cat cover thumb  {actual_cat_cover}")
+                try:
+                    data = get_bytes(s3, bucket, actual_cat_cover)
+                    put_bytes(s3, bucket, cat_cover_thumb_key, make_thumbnail(data),
+                              content_type="image/webp")
+                except Exception as exc:
+                    print(f"  WARN  {actual_cat_cover}: {exc}")
 
         category_entries.append({
             "id":     cat_id,
             "name":   CATEGORY_NAMES.get(cat_id) or folder_to_title(cat_id),
             "flat":   is_flat,
-            "cover":  f"{cat_id}/cover.jpg" if actual_cat_cover else "",
+            # Real original key (actual case); frontend swaps ext → .webp.
+            "cover":  actual_cat_cover if actual_cat_cover else "",
             "albums": album_entries,
         })
 

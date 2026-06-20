@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://neilkodner.com/</loc>
+  </url>
+  <url>
+    <loc>https://neilkodner.com/photography/</loc>
+  </url>
+  <url>
+    <loc>https://neilkodner.com/about/</loc>
+  </url>
+  <url>
+    <loc>https://neilkodner.com/photography/?cat=aviation</loc>
+  </url>
+  <url>
+    <loc>https://neilkodner.com/album.html?cat=aviation&amp;album=Other</loc>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/Other/DJI_20260427193101_0006_D.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/Other/DSC00933.JPG</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/Other/L1000632.jpg</image:loc>
+      <image:caption>baking bagels(caption)</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://neilkodner.com/album.html?cat=aviation&amp;album=USAF Thunderbirds</loc>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/USAF Thunderbirds/DSC01295.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/USAF Thunderbirds/DSC01330.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/USAF Thunderbirds/DSC01346.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/aviation/USAF Thunderbirds/DSC01583.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://neilkodner.com/photography/?cat=hockey</loc>
+  </url>
+  <url>
+    <loc>https://neilkodner.com/album.html?cat=hockey&amp;album=select-images</loc>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC02559.JPG</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC02573.JPG</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC02899.JPG</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC04243.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC04254.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC04314.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC04319.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC04377.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC04388.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC04395.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC04429.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC04505.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC04674.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC05875.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC05881.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC05897.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC06009.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSC06027.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSCF0880.JPG</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/hockey/select-images/DSCF0958.JPG</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://neilkodner.com/photography/?cat=places</loc>
+  </url>
+  <url>
+    <loc>https://neilkodner.com/album.html?cat=places&amp;album=New York City</loc>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/places/New York City/L1000632.jpg</image:loc>
+      <image:caption>baking bagels(caption)</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/places/New York City/L1000714.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/places/New York City/L1000716.jpg</image:loc>
+      <image:caption>oculus caption</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://neilkodner.com/album.html?cat=places&amp;album=Seattle</loc>
+    <image:image>
+      <image:loc>https://pub-e751dcdd2c40484386a7c1ceea7b69ea.r2.dev/places/Seattle/DSC09890.jpg</image:loc>
+      <image:caption>Ferry Passenger</image:caption>
+    </image:image>
+  </url>
+</urlset>

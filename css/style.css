@@ -885,3 +885,12 @@ a.photo-nav-btn:hover {
   color: var(--color-text-muted);
   letter-spacing: 0.06em;
 }
+
+/* ── PhotoSwipe: empty info panel ──────────────────────────
+   When a slide has neither caption nor EXIF, gallery.js adds
+   `pswp--no-info` to the lightbox root. paddingFn already shrinks the
+   reserved bottom space; this hides the (empty) caption element so it
+   can't catch pointer events or render stray box. */
+.pswp--no-info .pswp__caption.pswp-info {
+  display: none;
+}
