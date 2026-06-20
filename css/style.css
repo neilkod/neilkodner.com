@@ -1,5 +1,5 @@
-@import url('tokens.css');
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
+/* tokens.css (design tokens + self-hosted @font-face) is now loaded via a
+   <link> in each page <head>, before this file — no @import chain. */
 
 /* ─── Reset ───────────────────────────────────────────────── */
 
@@ -562,34 +562,31 @@ h4 { font-size: var(--text-xl); }
   letter-spacing: 0.06em;
 }
 
-/* ─── Album grid (placeholder) ────────────────────────────── */
+/* ─── Album grid (justified rows) ─────────────────────────────
+   Flexbox justified layout: gallery.js sets each item's flex-grow and
+   flex-basis from its aspect ratio, so every row fills the full width at a
+   uniform height and photos keep their curated left-to-right sequence
+   (CSS `columns` reordered them top-to-bottom per column — finding #7). */
 
 .album-grid {
-  columns: 3;
-  column-gap: 3px;
-}
-
-@media (max-width: 900px) {
-  .album-grid { columns: 2; }
-}
-
-@media (max-width: 480px) {
-  .album-grid { columns: 1; }
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
 }
 
 .album-grid-item {
-  break-inside: avoid;
-  margin-bottom: 3px;
   position: relative;
   overflow: hidden;
   background-color: var(--color-surface);
   cursor: pointer;
   display: block;
+  flex-grow: 1;          /* fallback; gallery.js overrides with aspect ratio */
+  flex-basis: 240px;
 }
 
 .album-grid-item img {
   width: 100%;
-  height: auto; /* let aspect-ratio drive height; never override to fixed px */
+  height: auto; /* aspect ratio + uniform row height drive the rendered size */
   display: block;
   opacity: 0;
   transition: opacity 0.4s ease, filter var(--transition);

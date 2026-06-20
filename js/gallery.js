@@ -2,7 +2,7 @@
  * gallery.js — PhotoSwipe v5 lightbox + album page rendering
  */
 
-import PhotoSwipeLightbox from 'https://cdn.jsdelivr.net/npm/photoswipe@5/dist/photoswipe-lightbox.esm.min.js';
+import PhotoSwipeLightbox from '/vendor/photoswipe/photoswipe-lightbox.esm.min.js';
 import { fetchCatalog, fullUrl, setThumb, fadeInOnLoad, formatDate } from '/js/app.js';
 
 // ─── Lightbox ─────────────────────────────────────────────────
@@ -15,11 +15,11 @@ import { fetchCatalog, fullUrl, setThumb, fadeInOnLoad, formatDate } from '/js/a
  *   data-pswp-height   — full image height (px)
  *   data-pswp-caption  — optional caption text
  */
-export function initLightbox(galleryEl) {
+export function initLightbox(galleryEl, ctx = {}) {
   const lightbox = new PhotoSwipeLightbox({
     gallery:   galleryEl,
     children:  'a[data-pswp-width]',
-    pswpModule: () => import('https://cdn.jsdelivr.net/npm/photoswipe@5/dist/photoswipe.esm.min.js'),
+    pswpModule: () => import('/vendor/photoswipe/photoswipe.esm.min.js'),
 
     // Preload one slide ahead and one behind
     preload: [1, 2],
@@ -149,10 +149,12 @@ export function initLightbox(galleryEl) {
           const anchor   = pswp.currSlide?.data?.element;
           const href     = anchor?.getAttribute('href') || '';
           const filename = href.split('/').pop();
+          // On pretty album URLs (/photography/<cat>/<album>/) there are no
+          // query params, so fall back to the cat/album passed in via ctx.
           const sp       = new URLSearchParams(location.search);
           const photoUrl = new URL('/photo/', location.origin);
-          photoUrl.searchParams.set('cat',   sp.get('cat')   || '');
-          photoUrl.searchParams.set('album', sp.get('album') || '');
+          photoUrl.searchParams.set('cat',   ctx.catId   || sp.get('cat')   || '');
+          photoUrl.searchParams.set('album', ctx.albumId || sp.get('album') || '');
           photoUrl.searchParams.set('photo', filename);
           const url = photoUrl.toString();
 
@@ -208,10 +210,12 @@ function buildPswpSrcset(baseUrl, photo, fullPath) {
  * Reads ?cat= and ?album= from the URL, fetches catalog.json,
  * then builds the photo grid and attaches the lightbox.
  */
-export async function renderAlbumPage() {
+export async function renderAlbumPage(catIdArg, albumIdArg) {
+  // catId/albumId come either from explicit args (static per-album pages call
+  // renderAlbumPage(cat, album)) or from ?cat=&album= (legacy album.html).
   const params  = new URLSearchParams(location.search);
-  const catId   = params.get('cat');
-  const albumId = params.get('album');
+  const catId   = catIdArg   || params.get('cat');
+  const albumId = albumIdArg || params.get('album');
 
   const loadingEl = document.getElementById('album-loading');
   const errorEl   = document.getElementById('album-error');
@@ -295,6 +299,12 @@ export async function renderAlbumPage() {
 
     const a = document.createElement('a');
     a.className = 'album-grid-item';
+    // Justified-row layout: each item's width grows in proportion to its
+    // aspect ratio, so every row fills the container at a uniform height while
+    // photos stay in their curated left-to-right order (see .album-grid CSS).
+    const ar = (photo.width && photo.height) ? photo.width / photo.height : 1.5;
+    a.style.flexGrow  = ar;
+    a.style.flexBasis = `${ar * 240}px`;
     // href = full-res URL (PhotoSwipe fallback if srcset is unsupported)
     a.href = fullUrl(catalog.baseUrl, path);
     // Dimensions are always the full-res size; PhotoSwipe uses them for
@@ -322,7 +332,7 @@ export async function renderAlbumPage() {
     grid.appendChild(a);
   }
 
-  const lb = initLightbox(grid);
+  const lb = initLightbox(grid, { catId, albumId });
 
   // If the URL contains a filename hash (e.g. #IMG_0042), open directly to that photo
   const hash = location.hash.slice(1);
