@@ -4,6 +4,10 @@ Date: 2026-08-09
 Scope: publishing workflow, upload UX, catalog pipeline, hosting/CDN, cost
 Status: analysis and plan only. No code written, no existing files edited.
 
+> **Implementing this?** See [`IMPLEMENTATION.md`](IMPLEMENTATION.md) — the phases below
+> are broken into self-contained tasks with exact file paths, contracts, and verification
+> steps, written to be executed without re-deriving any of the reasoning here.
+
 ---
 
 ## 1. The short version
