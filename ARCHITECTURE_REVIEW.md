@@ -272,8 +272,8 @@ no-build-step property. D1's free tier is generous (5 GB, 5 M row reads/day) and
 would work fine. It's just a worse trade at your scale.
 
 **What would change my answer:** 10,000+ photos (where `catalog.json` genuinely can't be
-a monolith), multiple contributors, or the multi-tenant framework direction actually
-being pursued. At that point D1 is right and the migration is contained.
+a monolith) or multiple contributors. At that point D1 is right and the migration is
+contained.
 
 ### E — Give up and use a hosted service
 
@@ -525,43 +525,28 @@ even if you post aggressively, unless you decide to archive every full-res origi
 
 ---
 
-## 9. Generalizability
+## 9. Generalizability — dropped
 
-Let it influence exactly two decisions now, and nothing else.
+**Decided 2026-08-09: this is a non-goal.** It was in the original brief as a "design for
+it, don't build it" constraint. It is now out of scope entirely, and nothing in the plan
+below is shaped by it.
 
-1. **Extract site identity into `site.config.json` at the repo root.** Right now
-   `CATEGORY_NAMES = {"travel": "Places"}` sits in `build_catalog.py`,
-   `SITE_ORIGIN = "https://neilkodner.com"` in `build_seo.py`, and the site name is
-   hardcoded in every HTML `<title>`, nav brand, and OG tag. One JSON file holding site
-   name, origin, tagline, and category display-name overrides, read by both scripts, is
-   about an hour of work. It's also just better code today, independent of any framework
-   ambition.
-2. **Keep the Worker's bucket name, key prefix, public base URL, password, and signing
-   secret as environment bindings** rather than literals. This is the natural way to write
-   it anyway.
+The one thing it was buying — `site.config.json`, pulling `CATEGORY_NAMES` out of
+`build_catalog.py` and `SITE_ORIGIN` out of `build_seo.py` — is gone with it. Two
+constants in two files is not a configuration problem, and the refactor only ever paid off
+against a second user who isn't coming. Phase 5 is removed from §11 and task T1 is removed
+from `IMPLEMENTATION.md`.
 
-That's the whole list. Specifically **do not**, in this pass: build a plugin system, add
-an abstraction layer over R2, build a theme engine, introduce a tenant identifier into
-paths, or make the catalog schema "extensible." Every one of those costs real complexity
-now against a product that doesn't exist, and none of them are the thing that would
-actually be hard later.
+Nothing else changes. The Worker still takes its bucket name, public base URL, password,
+and signing secret as environment bindings, because secrets can't be literals in a repo
+and that's how you write a Worker regardless.
 
-**What would genuinely have to change for multi-tenancy**, stated plainly so it's not a
-surprise: a tenant key in every R2 path (`{tenant}/{category}/{album}/`), real
-authentication replacing the shared password (accounts, email verification, password
-reset — this is the big one, and it's most of the work), `catalog.json` replaced by D1
-because you can't ship one JSON file per tenant to a static host, and a signup/billing
-flow. Those are rewrites of *specific components*. The architecture recommended here —
-static frontend, R2 storage, Worker for writes, derived metadata — survives all of them
-intact. That's the only guarantee worth buying in advance, and A/B/C buy it for free.
-
-**One disagreement with the framing.** The reason a generalized version is hard isn't
-technical, it's that other photographers have different curation models — you can't know
-which of your assumptions (flat vs. album, `_draft-`, cover-per-album, EXIF panel) are
-universal and which are yours until you've lived with this workflow for a year without
-friction. Solving your own case completely is the *prerequisite* to knowing what to
-generalize, not a detour from it. Building for a hypothetical second user right now would
-mean designing around guesses.
+Worth noting so it isn't a surprise later: the recommended architecture — static
+frontend, R2 storage, a Worker for authenticated writes, derived metadata — doesn't
+foreclose anything. If the idea ever comes back, what would have to change are specific
+components (a tenant key in R2 paths, real accounts replacing the shared password, D1
+replacing `catalog.json`), not the shape of the system. That property came for free; no
+part of the plan is paying to preserve it.
 
 ---
 
@@ -686,13 +671,7 @@ Only after Phase 3. Genuinely optional — Phase 2 already removed the pipeline'
 - [ ] One-time delete of `_thumbs/` and `_resized/` from R2.
 - [ ] Watch the transformation counter for a month before trusting the free tier.
 
-### Phase 5 — Generalization hooks (1 hour)
-
-- [ ] `site.config.json` with site name, origin, tagline, category display-name overrides.
-- [ ] Read it in `build_catalog.py` (replacing `CATEGORY_NAMES`), `build_seo.py`
-      (replacing `SITE_ORIGIN`), and the album-stub template.
-
-Nothing else. See §9.
+*(Phase 5 was "generalization hooks." Cut — see §9. The plan ends at Phase 4.)*
 
 ---
 
@@ -724,7 +703,7 @@ I didn't edit it. Here's how the two documents reconcile:
 These need your answer before implementation, roughly in the order they'd block work.
 
 1. **Will you move `neilkodner.com`'s nameservers from Namecheap to Cloudflare?** Phases 3
-   and 4 depend entirely on it; Phases 0, 1, 2, and 5 don't touch DNS at all. Related and
+   and 4 depend entirely on it; Phases 0, 1, and 2 don't touch DNS at all. Related and
    more important: **is there mail on this domain?** If there are MX records, the cutover
    needs care and a rollback plan.
 

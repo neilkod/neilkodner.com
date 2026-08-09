@@ -52,7 +52,6 @@ anything.**
 | Task | What | Who | Effort | Depends on |
 |---|---|---|---|---|
 | **T0** | Fix `catalog.json` commit churn | 🤖 Agent | 30 min | — |
-| **T1** | Extract `site.config.json` | 🤖 Agent | 1 h | — |
 | **T2** | HEIC decode spike on a real iPhone | 👤 **Neil** | 15 min | — |
 | **T3** | Create Worker, R2 CORS, secrets | 👤 **Neil** | 30 min | — |
 | **T4** | Worker: auth routes | 🤖 Agent | 1–2 h | T3 |
@@ -65,8 +64,14 @@ anything.**
 | **T11** | Upload page: transfer + progress | 🤖 Agent | 2–3 h | T5, T10 |
 | **T12** | Browser-generated derivatives | 🤖 Agent | 1–2 h | T11 |
 
-**T0, T1, and T7 are standalone.** They touch nothing else and can be done immediately, in
-any order, before any of the upload work starts. Start there.
+**T0 and T7 are standalone.** They touch nothing else and can be done immediately, in
+either order, before any of the upload work starts. Start there.
+
+**T1 no longer exists.** It was a `site.config.json` extraction that existed only to serve
+the generalizability goal, which was dropped on 2026-08-09. Task numbers were not
+renumbered — the gap is intentional, so that references in `ARCHITECTURE_REVIEW.md` and
+in any notes written before that date still point at the right tasks. Do not recreate T1,
+and do not renumber T2–T12.
 
 ### Not delegated — do not attempt these
 
@@ -186,78 +191,6 @@ build_catalog.py rewrote `generated` on every run, so the workflow's
 repo change nothing else, each triggering a Pages rebuild. Compare the
 serialized catalog with `generated` excluded and skip the write when the
 content is otherwise identical. Nothing reads the field.
-```
-
----
-
-## T1 — Extract `site.config.json`
-
-**Who:** Agent · **Depends on:** nothing · **Files:** `site.config.json` (new),
-`scripts/build_catalog.py`, `scripts/build_seo.py`
-
-Site identity is currently hardcoded in two Python files. Pull it into one JSON file. This
-is a pure refactor: **the generated output must not change by a single byte.**
-
-### Create `site.config.json` at the repo root
-
-```json
-{
-  "siteName": "Photography by Neil Kodner",
-  "siteOrigin": "https://neilkodner.com",
-  "authorName": "Neil Kodner",
-  "tagline": "Los Gatos, California",
-  "categoryNames": {
-    "travel": "Places"
-  }
-}
-```
-
-### Wire it up
-
-- `scripts/build_catalog.py`: replace the module-level `CATEGORY_NAMES` dict (currently
-  `{"travel": "Places"}`) with a load of `categoryNames` from the config. Keep the
-  variable name `CATEGORY_NAMES` so the two `CATEGORY_NAMES.get(cat_id) or …` call sites
-  don't change.
-- `scripts/build_seo.py`: replace the `SITE_ORIGIN = "https://neilkodner.com"` constant
-  with `siteOrigin` from the config. Keep the name `SITE_ORIGIN`.
-- Both scripts resolve the config relative to the repo root, matching how `build_seo.py`
-  already computes `REPO_ROOT` via `os.path.dirname(os.path.dirname(os.path.abspath(__file__)))`.
-- If the file is missing or malformed, **exit with a clear error**. Do not fall back to
-  defaults — silent fallback would make a typo in the config invisible.
-
-### Verify
-
-```bash
-# Snapshot the generated artifacts, re-run the SEO build, confirm zero drift.
-mkdir -p /tmp/seo-before
-cp sitemap.xml feed.xml index.html /tmp/seo-before/
-cp -r photography /tmp/seo-before/photography
-python3 scripts/build_seo.py
-diff -r /tmp/seo-before/photography photography && \
-  diff /tmp/seo-before/sitemap.xml sitemap.xml && \
-  diff /tmp/seo-before/feed.xml feed.xml && \
-  diff /tmp/seo-before/index.html index.html && \
-  echo "OK: no output drift"
-```
-
-Expected: `OK: no output drift`. Any diff means the refactor changed behavior — fix it.
-
-### Do NOT
-
-- Introduce a config loader module, a schema validator, or a settings class. Two
-  `json.load()` calls.
-- Move `siteName`/`tagline` into the HTML templates in this task. The HTML is static and
-  hand-edited; templating it is a separate, larger change nobody has asked for.
-- Add keys beyond the five above.
-
-### Commit
-
-```
-Extract site identity into site.config.json
-
-CATEGORY_NAMES lived in build_catalog.py and SITE_ORIGIN in build_seo.py.
-One config file at the repo root, loaded by both. Pure refactor — generated
-sitemap, feed, index og:image, and album stubs are byte-identical.
 ```
 
 ---
