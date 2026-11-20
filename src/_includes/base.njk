@@ -30,7 +30,7 @@
 
   {%- if page.url == "/" %}
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"Person","name":"{{ site.name }}","jobTitle":"Photographer","url":"{{ site.url }}","email":"mailto:{{ site.email }}","address":{"@type":"PostalAddress","addressLocality":"Los Gatos","addressRegion":"CA","addressCountry":"US"},"sameAs":[{% if site.instagram %}"https://www.instagram.com/{{ site.instagram }}/",{% endif %}"{{ site.linkedin }}"]}
+  {"@context":"https://schema.org","@type":"Person","name":"{{ site.name }}","jobTitle":"Photographer","url":"{{ site.url }}","email":"mailto:{{ site.email }}","address":{"@type":"PostalAddress","addressLocality":"Los Gatos","addressRegion":"CA","addressCountry":"US"},"sameAs":["{{ site.linkedin }}"]}
   </script>
   {%- endif %}
 </head>
@@ -59,7 +59,6 @@
       <p class="f-id">{{ site.name }}, photographer. {{ site.location }}.</p>
       <ul class="f-links">
         <li><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
-        {%- if site.instagram %}<li><a href="https://www.instagram.com/{{ site.instagram }}/">Instagram</a></li>{% endif %}
         <li><a href="{{ site.linkedin }}">LinkedIn</a></li>
         <li><a href="/elsewhere/">Elsewhere</a></li>
       </ul>
