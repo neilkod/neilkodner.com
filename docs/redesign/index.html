@@ -1,0 +1,944 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>NeilKodner.com Redesign</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Schibsted+Grotesk:wght@400..700&family=Big+Shoulders+Display:wght@700;800&family=Barlow:wght@400;500&display=swap">
+<style>
+/* Layout concept: the proposal is set in the recommended "Dateline" system itself.
+   A 12-column page with a 3-column margin rail for labels; mockups are container-query frames
+   drawn at true proportions with Neil's real photographs. Single light theme on purpose:
+   the site it describes has one graded ground, so the proposal shows that ground. */
+:root{
+  color-scheme: light;
+  --paper:#ECEDEA;      /* main ground: neutral, faintly green-grey, matte-print paper */
+  --paper-2:#E0E2DE;    /* alternate band */
+  --ink:#161718;        /* primary text */
+  --ink-2:#54575A;      /* secondary text, captions */
+  --rule:#C6C9C5;       /* hairlines, non-text */
+  --blueline:#1D3E70;   /* the one accent: links on hover, focus, current nav */
+  --plate:#D6D8D4;      /* image placeholder ground */
+  --serif:"Newsreader", "Iowan Old Style", "Charter", Georgia, serif;
+  --sans:"Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --gut:24px;
+}
+html{background:var(--paper)}
+body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:18px;line-height:1.55;font-optical-sizing:auto;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));}
+*,*::before,*::after{box-sizing:border-box}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration-line:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:var(--ink-2)}
+a:hover{text-decoration-color:var(--blueline);text-decoration-thickness:2px;color:var(--blueline)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--blueline);outline-offset:3px}
+.wrap{max-width:1240px;margin:0 auto}
+.sans{font-family:var(--sans)}
+.muted{color:var(--ink-2)}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* masthead */
+.mast{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gut);padding-block:28px 0;align-items:baseline;font-family:var(--sans);font-size:14px}
+.mast .wm{grid-column:1/5;font-weight:600;font-size:17px}
+.mast .wm span{font-weight:400;color:var(--ink-2);margin-left:10px}
+.mast .meta{grid-column:6/13;color:var(--ink-2)}
+.toc{grid-column:6/13;display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:6px}
+.toc a{text-decoration:none;color:var(--ink-2)}
+.toc a:hover{color:var(--blueline);text-decoration:underline}
+
+.opener{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gut);margin-top:72px;align-items:end}
+.opener h1{grid-column:1/6;font-weight:340;font-size:clamp(40px,6vw,76px);line-height:.98;letter-spacing:-.02em;margin:0;text-wrap:balance;font-variation-settings:"opsz" 72}
+.opener .lede{grid-column:7/13;font-size:clamp(19px,1.9vw,23px);line-height:1.42;margin:0;font-variation-settings:"opsz" 24}
+.opener figure{grid-column:1/13;margin:40px 0 0}
+
+/* section scaffolding: margin rail label + body */
+section.s{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gut);padding-top:120px}
+section.s > .rail{grid-column:1/4;font-family:var(--sans);font-size:14px;line-height:1.4;color:var(--ink-2);padding-top:12px}
+section.s > .rail b{display:block;color:var(--ink);font-weight:600;font-size:15px;margin-bottom:2px}
+section.s > .body{grid-column:4/13;min-width:0}
+section.s > .full{grid-column:1/13;min-width:0}
+h2{font-weight:360;font-size:clamp(30px,3.4vw,44px);line-height:1.04;letter-spacing:-.015em;margin:0 0 20px;text-wrap:balance;font-variation-settings:"opsz" 60}
+h3{font-weight:500;font-size:22px;line-height:1.2;margin:48px 0 10px;font-variation-settings:"opsz" 24}
+h4{font-family:var(--sans);font-weight:600;font-size:15px;margin:28px 0 6px}
+p{margin:0 0 14px;max-width:38em}
+.body ul,.body ol{padding-left:1.1em;margin:0 0 16px;max-width:38em}
+.body li{margin-bottom:6px}
+.small{font-family:var(--sans);font-size:14px;line-height:1.5}
+.note{font-family:var(--sans);font-size:14px;line-height:1.5;color:var(--ink-2);max-width:44em}
+hr.thin{border:0;border-top:1px solid var(--rule);margin:40px 0}
+
+/* tables */
+.tbl{overflow-x:auto;margin:8px 0 24px}
+table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14px;line-height:1.45}
+th{text-align:left;font-weight:600;padding:8px 14px 8px 0;border-bottom:1px solid var(--ink);vertical-align:bottom}
+td{padding:9px 14px 9px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+td.n,th.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+td img{width:72px}
+
+/* figure captions inside the doc */
+figcaption{font-family:var(--sans);font-size:13.5px;line-height:1.45;color:var(--ink-2);margin-top:10px;max-width:60em}
+figcaption b{color:var(--ink);font-weight:600}
+
+/* contact sheet of current material */
+.sheet{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 8px}
+.sheet img{height:92px;width:auto}
+.sheet.lg img{height:120px}
+
+/* references */
+.refs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr));gap:40px var(--gut);margin-top:24px}
+.ref{min-width:0}
+.ref .shot{border:1px solid var(--rule);overflow:hidden;aspect-ratio:16/10;background:#fff}
+.ref .shot img{width:100%;height:100%;object-fit:cover;object-position:top}
+.ref h4{margin:12px 0 4px}
+.ref h4 a{font-weight:600}
+.ref p{font-size:16px;line-height:1.5;margin-bottom:8px}
+.ref .tag{font-family:var(--sans);font-size:13px;color:var(--ink-2)}
+
+/* directions */
+.dir{border-top:1px solid var(--ink);padding-top:22px;margin-top:56px}
+.dir .head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;margin-bottom:6px}
+.dir .head h3{margin:0;font-size:28px}
+.dir .verdict{font-family:var(--sans);font-size:14px;color:var(--ink-2)}
+.dgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px var(--gut);margin-top:16px}
+.dgrid > div{min-width:0}
+.swatches{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px}
+.sw{font-family:var(--sans);font-size:12px;line-height:1.3;width:96px}
+.sw i{display:block;height:44px;border:1px solid rgba(0,0,0,.12);margin-bottom:4px}
+
+/* ============ Mockup frames ============ */
+.screens{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:32px;align-items:start;margin:22px 0 10px}
+.screens.one{grid-template-columns:minmax(0,1fr)}
+.frame{min-width:0}
+.frame .lbl{font-family:var(--sans);font-size:13px;color:var(--ink-2);margin-bottom:8px}
+.scr{container-type:inline-size;background:var(--paper);border:1px solid #B9BCB8;overflow:hidden;position:relative}
+.scr.ph{border-radius:22px;border-width:6px;border-color:#2A2B2D}
+/* desktop design width 1440 => 1cqw = 14.4px. mobile 390 => 1cqw = 3.9px */
+.d{--u:calc(100cqw / 1440)}
+.m{--u:calc(100cqw / 390)}
+.mk{font-family:var(--serif);color:var(--ink);background:var(--paper)}
+.mk .hd{display:grid;grid-template-columns:repeat(12,1fr);column-gap:calc(24*var(--u));padding:calc(30*var(--u)) calc(64*var(--u)) 0;align-items:baseline;font-family:var(--sans);font-size:calc(15*var(--u))}
+.mk .hd .w{grid-column:1/5;font-weight:600;font-size:calc(19*var(--u));white-space:nowrap}
+.mk .hd .w span{font-weight:400;color:var(--ink-2);margin-left:calc(12*var(--u))}
+.mk .hd nav{grid-column:5/13;display:flex;gap:calc(28*var(--u))}
+.mk .hd nav .on{text-decoration:underline;text-decoration-color:var(--blueline);text-decoration-thickness:calc(2*var(--u));text-underline-offset:calc(8*var(--u))}
+.mk .g{display:grid;grid-template-columns:repeat(12,1fr);column-gap:calc(24*var(--u));padding:0 calc(64*var(--u))}
+.mk .cap{font-family:var(--sans);font-size:calc(13.5*var(--u));line-height:1.45;color:var(--ink-2);margin-top:calc(10*var(--u))}
+.mk .cap b{color:var(--ink);font-weight:600}
+.mk .pn{font-family:var(--sans);font-variant-numeric:tabular-nums;font-size:calc(13.5*var(--u));color:var(--ink-2)}
+.mk img{width:100%;height:auto;display:block}
+.mk .ft{background:var(--paper-2);padding:calc(28*var(--u)) calc(64*var(--u));font-family:var(--sans);font-size:calc(13*var(--u));color:var(--ink-2);display:flex;justify-content:space-between;gap:calc(24*var(--u))}
+
+/* mobile mockup internals */
+.m .hd{display:block;padding:calc(18*var(--u)) calc(18*var(--u)) 0}
+.m .hd .w{font-size:calc(17*var(--u))}
+.m .hd nav{gap:calc(20*var(--u));margin-top:calc(10*var(--u));font-size:calc(15*var(--u))}
+.m .in{padding:0 calc(18*var(--u))}
+.m .cap{font-size:calc(13*var(--u))}
+.m .ft{display:block;padding:calc(22*var(--u)) calc(18*var(--u));font-size:calc(13*var(--u))}
+
+/* direction thumbnails (smaller sketches) */
+.dsk{container-type:inline-size;border:1px solid #B9BCB8;overflow:hidden}
+.dsk .d{--u:calc(100cqw / 1440)}
+
+/* print-like plate list */
+.plates{counter-reset:p}
+.stack > * + *{margin-top:14px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--gut)}
+.two > *{min-width:0}
+.kv{display:grid;grid-template-columns:minmax(120px,190px) minmax(0,1fr);gap:6px 18px;font-family:var(--sans);font-size:14.5px;line-height:1.5;margin:10px 0 20px}
+.kv dt{color:var(--ink-2)}
+.kv dd{margin:0}
+.spec{font-family:var(--sans);font-size:14px}
+.typeline{border-top:1px solid var(--rule);padding:16px 0 18px;display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:18px;align-items:baseline}
+.typeline > *{min-width:0}
+.typeline .m2{font-family:var(--sans);font-size:13px;color:var(--ink-2);line-height:1.45}
+.check li{list-style:none;position:relative;padding-left:26px}
+.check li::before{content:"";position:absolute;left:0;top:.45em;width:12px;height:12px;border:1.5px solid var(--ink)}
+.copybox{display:inline-flex;gap:10px;align-items:center;font-family:var(--sans);font-size:14px}
+button.copy{font:inherit;font-family:var(--sans);font-size:13px;background:transparent;border:1px solid var(--ink-2);color:var(--ink);padding:4px 10px;cursor:pointer}
+button.copy:hover{border-color:var(--blueline);color:var(--blueline)}
+footer.end{margin-top:140px;padding-block:28px 48px;border-top:1px solid var(--ink);font-family:var(--sans);font-size:14px;color:var(--ink-2);display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+
+@media (max-width: 900px){
+  .mast .wm,.mast .meta,.toc{grid-column:1/13}
+  .opener h1,.opener .lede{grid-column:1/13}
+  section.s{padding-top:88px}
+  section.s > .rail{grid-column:1/13;padding-top:0}
+  section.s > .body{grid-column:1/13}
+  .dgrid,.two{grid-template-columns:minmax(0,1fr)}
+  .screens{grid-template-columns:minmax(0,1fr)}
+  .screens .frame.mob{max-width:300px}
+  .typeline{grid-template-columns:minmax(0,1fr)}
+  :root{--gut:16px}
+}
+@media (prefers-reduced-motion: no-preference){ html{scroll-behavior:smooth} }
+</style>
+</head>
+<body style="margin:0">
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="wm">Neil Kodner<span>Photographer</span></div>
+  <div class="meta">Website redesign proposal. Art direction, design system, architecture and roadmap. 20 November 2026.</div>
+  <nav class="toc" aria-label="Sections">
+    <a href="#assessment">Assessment</a><a href="#material">The photographs</a><a href="#research">Research</a><a href="#directions">Three directions</a><a href="#recommendation">Recommendation</a><a href="#system">Design system</a><a href="#ia">Structure</a><a href="#pages">Pages</a><a href="#sequencing">Sequencing</a><a href="#tech">Technology</a><a href="#keep">Keep / remove</a><a href="#roadmap">Roadmap</a><a href="#content">Content needed</a><a href="#checklist">Checklist</a><a href="#review">Design review</a>
+  </nav>
+</header>
+
+<div class="opener">
+  <h1>A photographer’s site, set like a sports page.</h1>
+  <p class="lede">The recommendation in one paragraph: a quiet grey ground tuned for white ice, a newspaper serif for the voice and a newsroom grotesk for captions, galleries sequenced by hand with real datelines, four links in the navigation, and a static site built from photos in the repository. Hockey leads. Street work gets its own slower page. Aviation and wildlife sit in a smaller third room. The R2 catalog pipeline, slideshow, lightbox and upload-portal plans go away.</p>
+  <figure>
+    <img src="img/h-04395.webp" alt="A San Jose State player in blue shoots; the puck is in the air on its way to a Santa Clara goaltender in the foreground" width="800" height="533" style="width:100%">
+    <figcaption><b>Proposed opening plate.</b> San Jose State vs. Santa Clara, SAP Center, San Jose. (Caption wording and date for Neil to confirm. Every caption in this document identifies teams from jerseys only.)</figcaption>
+  </figure>
+</div>
+
+<!-- ============================================================ 1 -->
+<section class="s" id="assessment">
+  <div class="rail"><b>1. Project assessment</b>What exists today and what should change</div>
+  <div class="body">
+    <h2>The site has a careful image pipeline and almost no design.</h2>
+    <p>The repository is a static site on GitHub Pages that renders everything in the browser from <span class="sans">catalog.json</span>. A GitHub Action scans a Cloudflare R2 bucket every six hours, makes WebP thumbnails and resized copies with Pillow, writes the catalog, generates album pages, a sitemap and an Atom feed, and commits the result. The engineering is disciplined. The architecture review from August found the weak points: of roughly 1,083 commits, about 1,033 are the bot rewriting a timestamp, no photo was added after 20 June, no album has a date or location, and images come off the rate-limited <span class="sans">r2.dev</span> endpoint with no edge cache.</p>
+    <p>The live homepage shows the cost. A slideshow of 23 images (aviation, ducks, Golden Gate, hockey) sits behind a white headline with a drop shadow. Below it, two of the three category tiles render blank because their covers are missing, and the “Latest Albums” strip sorts on empty dates. Space Grotesk carries every line of type. Nothing on the first screen says sports is the focus. An editor arriving from an introduction sees a Thunderbirds formation and a generic hero.</p>
+    <figure>
+      <div class="two">
+        <img src="img/cur-desk.webp" alt="Screenshot of the current neilkodner.com homepage on desktop: Thunderbirds hero with large headline, then a Categories row with two blank tiles" width="900" height="600">
+        <img src="img/cur-mob.webp" alt="Screenshot of the current homepage on a phone: dark hero photo with headline over it, then a blank Categories tile" width="300" height="600" style="max-width:260px">
+      </div>
+      <figcaption><b>neilkodner.com today,</b> captured 20 Nov 2026 at 1440 and 390 pixels wide.</figcaption>
+    </figure>
+    <h3>What the previous plans got right and wrong</h3>
+    <div class="tbl"><table>
+      <tr><th>Earlier idea</th><th>Verdict</th><th>Reason</th></tr>
+      <tr><td>Static hosting, no server, no database (README, ROADMAP)</td><td>Keep</td><td>Cheap, fast, durable. Right for a portfolio of 30 to 60 photographs.</td></tr>
+      <tr><td>R2 bucket + scheduled catalog build (README)</td><td>Remove</td><td>Built for an archive that grows weekly. A curated portfolio changes a few times a year. The schedule produced 1,000+ empty commits.</td></tr>
+      <tr><td>Password-gated upload page on a Worker, nameserver move, Cloudflare image transforms (ARCHITECTURE_REVIEW, IMPLEMENTATION)</td><td>Cancel</td><td>Solves posting from a phone, an Instagram-style goal. The new brief is a curated portfolio published by hand. None of it serves that.</td></tr>
+      <tr><td>Flat vs. album categories, manifests, cover.jpg rules</td><td>Remove</td><td>The schema nobody filled in. Three hand-ordered galleries replace it.</td></tr>
+      <tr><td>Hero slideshow filtered by orientation</td><td>Replace</td><td>A rotating mix of subjects says “hobbyist with many interests.” One chosen photograph says “photographer.”</td></tr>
+      <tr><td>PhotoSwipe lightbox with EXIF table, /photo/ permalinks</td><td>Remove</td><td>Images will display at up to viewport height. Plate anchors (<span class="sans">/hockey/#7</span>) replace permalinks.</td></tr>
+      <tr><td>Justified-row grid preserving curated order (Phase 5)</td><td>Keep the principle</td><td>Order matters. Used again for the small index strip and the Elsewhere page.</td></tr>
+      <tr><td>GPS stripping, alt-text fallback, aspect-ratio reservation, preconnect, sitemap</td><td>Keep</td><td>Good practice, carried into the new build.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<!-- ============================================================ 2 -->
+<section class="s" id="material">
+  <div class="rail"><b>2. The photographs</b>All 54 images in the R2 bucket, reviewed before any design decision</div>
+  <div class="body">
+    <h2>Two bodies of work, one strong and one stronger than it looks.</h2>
+    <h3>Hockey: 20 frames</h3>
+    <div class="sheet">
+      <img src="img/h-04395.webp" alt="" width="800" height="533"><img src="img/h-04674.webp" alt="" width="534" height="800"><img src="img/h-02573.webp" alt="" width="800" height="533"><img src="img/h-04314.webp" alt="" width="533" height="800"><img src="img/h-04319.webp" alt="" width="800" height="533"><img src="img/h-04254.webp" alt="" width="533" height="800"><img src="img/h-05875.webp" alt="" width="800" height="533"><img src="img/h-05897.webp" alt="" width="800" height="533"><img src="img/h-04505.webp" alt="" width="800" height="533"><img src="img/h-02899.webp" alt="" width="533" height="800"><img src="img/h-04243.webp" alt="" width="800" height="533"><img src="img/h-04388.webp" alt="" width="533" height="800"><img src="img/h-04429.webp" alt="" width="800" height="533"><img src="img/h-04377.webp" alt="" width="800" height="533"><img src="img/h-05881.webp" alt="" width="800" height="533"><img src="img/h-06009.webp" alt="" width="800" height="533"><img src="img/h-06027.webp" alt="" width="800" height="533"><img src="img/h-02559.webp" alt="" width="800" height="533"><img src="img/h-0880.webp" alt="" width="800" height="534"><img src="img/h-0958.webp" alt="" width="800" height="533">
+    </div>
+    <p class="note">Contact sheet of the <span class="sans">hockey/select-images</span> album, in catalog order.</p>
+    <ul>
+      <li>18 frames come from San Jose State club games (blue and gold), several against Santa Clara, most of them at SAP Center. Sony A7R IV, 70–200mm f/2.8, 1/500 to 1/1000 s, ISO 640 to 1600. Two frames are from a Sharks game in the stands, on a Fujifilm X100VI.</li>
+      <li>Ice fills 40 to 60 percent of most frames. The pictures are high-key, cool white with saturated royal blue and gold. On a pure white page the ice bleeds into the background and the photograph loses its edge. This single fact drives the choice of background colour.</li>
+      <li>Strongest frames: the puck in the air between shooter and goalie (04395), the clean slapshot follow-through (04674), the Santa Clara player looking away while San Jose State celebrates behind him (04314), the goal embrace (05875), and the arena from the upper deck (DSCF0958).</li>
+      <li>Weak spots an editor will notice: the same San Jose State No. 21 appears in five frames, sponsor boards dominate several backgrounds, and there are no goaltender close-ups, faceoffs, bench or tunnel moments, warm-ups, or tight peak-action crops. The set reads as two or three games from one program. Section 13 lists what to shoot next.</li>
+    </ul>
+    <h3>Street and places: about 20 frames, mostly Leica Q3</h3>
+    <div class="sheet">
+      <img src="img/s-chinatown.webp" alt="" width="900" height="720"><img src="img/s-pier.webp" alt="" width="720" height="900"><img src="img/s-baybridge.webp" alt="" width="900" height="600"><img src="img/s-pike.webp" alt="" width="900" height="600"><img src="img/s-ferry.webp" alt="" width="800" height="533"><img src="img/s-chicago.webp" alt="" width="597" height="900"><img src="img/s-cta.webp" alt="" width="900" height="597"><img src="img/s-tube.webp" alt="" width="900" height="599"><img src="img/s-wrigley.webp" alt="" width="900" height="599"><img src="img/s-bagels.webp" alt="" width="800" height="533"><img src="img/s-oculus.webp" alt="" width="533" height="800"><img src="img/s-red.webp" alt="" width="900" height="599"><img src="img/s-sunset.webp" alt="" width="900" height="600"><img src="img/h-fan.webp" alt="" width="900" height="597">
+    </div>
+    <ul>
+      <li>This is a consistent voice: single figures against architecture, silhouettes, motion blur on trains, night signage, a few black-and-white frames. San Francisco, Seattle, Chicago, New York, and a platform that looks like the London Underground (to confirm).</li>
+      <li>The black-and-white frame of a fan filming a hockey game from the stands (L1000452) belongs to both bodies of work. It becomes the last plate of the hockey sequence and the hinge between the two galleries.</li>
+      <li>Travel work overlaps with street. The Golden Gate frames are well made but familiar. There is not enough distinct travel work for its own section.</li>
+    </ul>
+    <h3>Aviation, wildlife, coast: about 12 frames</h3>
+    <div class="sheet">
+      <img src="img/e-tbirds.webp" alt="" width="900" height="600"><img src="img/e-tbirds2.webp" alt="" width="800" height="533"><img src="img/e-cockpit.webp" alt="" width="800" height="533"><img src="img/e-cormorant.webp" alt="" width="900" height="600"><img src="img/e-duck.webp" alt="" width="900" height="600"><img src="img/e-locks.webp" alt="" width="720" height="900"><img src="img/e-foam.webp" alt="" width="900" height="599"><img src="img/e-pier.webp" alt="" width="900" height="597"><img src="img/e-courts.webp" alt="" width="800" height="600">
+    </div>
+    <p>Good craft, small numbers. Enough for one modest page, too few for separate Aviation and Wildlife sections.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 3 -->
+<section class="s" id="research">
+  <div class="rail"><b>3. Visual research</b>14 sites captured at 1440 and 390 pixels, with inner gallery pages where they mattered</div>
+  <div class="body">
+    <h2>What the good ones do, specifically.</h2>
+    <p>Each site was loaded in a real browser at desktop and phone widths and scrolled through. The notes say what each one does, so the lessons transfer. Four of the most useful photographer sites (Iooss, Schutmaat, Finke, Powell) run on Squarespace with the template stripped down, which matters for the platform decision in section 10.</p>
+    <div class="refs">
+      <div class="ref"><div class="shot"><img src="img/r-iooss.webp" alt="Walter Iooss baseball portfolio page: condensed IOOSS logotype, three staggered columns of photos with captions" loading="lazy"></div>
+        <h4><a href="https://www.walteriooss.com/baseball">Walter Iooss</a> <span class="tag">sports</span></h4>
+        <p>Every photo carries a caption in one fixed form: subject, place, year (“Willie Mays, Milwaukee, WI, 1966”). That consistency is what makes a sports archive look professional. Portfolios are split by sport. The condensed logotype IOOSS is the only loud element.</p>
+        <p class="tag">Borrow: the caption discipline. Avoid: the uniform three-column stagger for a 12-image sequence.</p></div>
+      <div class="ref"><div class="shot"><img src="img/r-schutmaat.webp" alt="Bryan Schutmaat County Road page: one black-and-white image at a time, centred in a wide white page" loading="lazy"></div>
+        <h4><a href="https://www.bryanschutmaat.co/work/county-road">Bryan Schutmaat</a> <span class="tag">documentary</span></h4>
+        <p>One image per screen, about 40 percent of the width, with large equal gaps. Projects are indexed by roman numerals I to VIII. The Information page is a plain list: contact, galleries, books, clients, education. Garamond at small sizes, nothing else.</p>
+        <p class="tag">Borrow: the slow pacing for Street, the facts list for About. Avoid: images this small for sports action.</p></div>
+      <div class="ref"><div class="shot"><img src="img/r-finke.webp" alt="Brian Finke stories page: images of different sizes placed at offsets left and right, with small captions" loading="lazy"></div>
+        <h4><a href="https://www.brianfinke.com/stories">Brian Finke</a> <span class="tag">sports as documentary</span></h4>
+        <p>Images at three or four different sizes, offset left and right, so the page has a rhythm without a visible grid. Cheerleaders and football players treated as documentary subjects. Captions sit tight under the photo in small type.</p>
+        <p class="tag">Borrow: scale changes and offsets placed on purpose. This is the closest model for the hockey page.</p></div>
+      <div class="ref"><div class="shot"><img src="img/r-victory.webp" alt="Victory Journal story on women's hockey: full-width photo opener of a player in a cage helmet, then a text column on light grey" loading="lazy"></div>
+        <h4><a href="https://victoryjournal.com/stories/shattering-ice-ceiling/">Victory Journal</a> <span class="tag">sports publication</span></h4>
+        <p>Sport written about with literary seriousness. A serif text face (Hoefler Text) on a light grey ground (#F3F3F3), not white, so photographs sit like prints. Story pages open on one full-width picture, then a 60-character text column.</p>
+        <p class="tag">Borrow: serif for sport, grey ground. Avoid: the newsletter pop-up and display type laid over the photo.</p></div>
+      <div class="ref"><div class="shot"><img src="img/r-racquet.webp" alt="Racquet magazine homepage: wide-spaced capital logotype, large cover image, row of story tiles" loading="lazy"></div>
+        <h4><a href="https://racquetmag.com">Racquet</a> <span class="tag">sports culture magazine</span></h4>
+        <p>Tennis as culture: PT Serif headlines, warm off-white ground, art-led imagery. Proof that a sports site does not need to look like a broadcaster.</p>
+        <p class="tag">Avoid: commerce chrome (Subscribe, Log in, pill buttons) crowding the masthead.</p></div>
+      <div class="ref"><div class="shot"><img src="img/r-mundial.webp" alt="Mundial magazine homepage: condensed headline type and product photos in ruled boxes" loading="lazy"></div>
+        <h4><a href="https://mundialmag.com">Mundial</a> <span class="tag">football magazine</span></h4>
+        <p>A strong condensed display face and a boxed grid. Identity is clear, but the homepage is a shop. It shows the sports-merchandise register Neil’s site should stay away from.</p></div>
+      <div class="ref"><div class="shot"><img src="img/r-kawauchi.webp" alt="Rinko Kawauchi homepage: pale blue-grey ground, small serif navigation on the left, one large photograph of birds" loading="lazy"></div>
+        <h4><a href="https://www.rinkokawauchi.com">Rinko Kawauchi</a> <span class="tag">photographer</span></h4>
+        <p>The ground is a pale blue-grey (#EAEEEE) chosen to suit her pale, luminous pictures. Navigation is a short serif list in a fixed left column. One image fills the rest.</p>
+        <p class="tag">Borrow: tint the neutral to the work. Here that means a grey that makes ice read as white.</p></div>
+      <div class="ref"><div class="shot"><img src="img/r-stuart.webp" alt="Matt Stuart photographs page: spaced capital name, a uniform two-column grid of colourful street photos" loading="lazy"></div>
+        <h4><a href="https://mattstuart.com/photographs">Matt Stuart</a> <span class="tag">street</span></h4>
+        <p>Brilliant pictures in a uniform two-column grid of equal crops. Every frame gets the same size, so none of them leads. On a phone they shrink to stamps.</p>
+        <p class="tag">Lesson: the uniform grid is the thing to avoid for Street.</p></div>
+      <div class="ref"><div class="shot"><img src="img/r-powell.webp" alt="Gus Powell homepage: a loose collage of photographs, book covers and a video at mixed sizes" loading="lazy"></div>
+        <h4><a href="https://guspowell.com">Gus Powell</a> <span class="tag">street</span></h4>
+        <p>A loose wall of photos, book covers and video at mixed scale. Personality comes from sequencing and humour. Navigation is almost absent.</p>
+        <p class="tag">Lesson: mixed scale works when the order is intentional. Random scale reads as a mood board.</p></div>
+      <div class="ref"><div class="shot"><img src="img/r-meyerowitz.webp" alt="Joel Meyerowitz homepage: name and a long list of navigation links in a left column, one photograph to the right" loading="lazy"></div>
+        <h4><a href="https://www.joelmeyerowitz.com">Joel Meyerowitz</a> <span class="tag">street</span></h4>
+        <p>A left column with fifteen navigation items next to a single image. Shows how a navigation list grows when every project becomes a link.</p>
+        <p class="tag">Lesson: keep the navigation to four words.</p></div>
+      <div class="ref"><div class="shot"><img src="img/r-soth.webp" alt="Alec Soth homepage: orange band with a first-person introduction, then a plain navigation line" loading="lazy"></div>
+        <h4><a href="https://alecsoth.com">Alec Soth</a> <span class="tag">photographer</span></h4>
+        <p>Opens with “My name is Alec Soth (rhymes with ‘both’). I live in Minnesota.” A plain sentence in his own voice does more than any tagline.</p>
+        <p class="tag">Borrow: the plain, factual introduction.</p></div>
+      <div class="ref"><div class="shot"><img src="img/r-aperture.webp" alt="Aperture homepage: lead story image with headline in a dark panel, then a row of essays with small images" loading="lazy"></div>
+        <h4><a href="https://aperture.org">Aperture</a> <span class="tag">photography publisher</span></h4>
+        <p>Custom serif and sans pair with a clear ladder: section label, headline, standfirst. Small sans labels identify the kind of story without shouting.</p>
+        <p class="tag">Borrow: the two-family hierarchy. Avoid: the institutional density.</p></div>
+      <div class="ref"><div class="shot"><img src="img/r-blind.webp" alt="Blind Magazine homepage: huge bold UNSEEN STORIES headline in black and orange, generic feature blocks below" loading="lazy"></div>
+        <h4><a href="https://www.blindmagazine.com">Blind Magazine</a> <span class="tag">counter-example</span></h4>
+        <p>“UNSEEN STORIES.” in heavy Inter with an orange full stop, a grey subtitle, then blocks titled “Cultural Shift” and “Modern Mindset.” A photography magazine whose homepage has no photograph. This is the generated-template look the brief warns about.</p></div>
+      <div class="ref"><div class="shot"><img src="img/r-walt-mob.webp" alt="Walter Iooss baseball page on a phone: two columns of photos with captions" loading="lazy" style="object-fit:contain;background:var(--paper-2)"></div>
+        <h4>Phone layouts across the set</h4>
+        <p>Iooss and Finke keep two columns on a phone, which shrinks action photos too far. Schutmaat and Victory Journal go to one column with generous gaps and hold up best. Every reference site hides its navigation behind a menu icon on phones, even with four or fewer links.</p></div>
+    </div>
+    <p class="note" style="margin-top:28px">Also attempted but blocked for automated capture: Simon Bruty, Brad Mangin, Stephen Shore, Todd Hido, Gregory Halpern, and Cargo’s template gallery. They are not used as evidence here. Established NHL photographers (Bruce Bennett, Dave Sandford) publish through Getty and the Hockey Hall of Fame rather than personal sites, so there is no hockey photographer’s personal site to imitate. That is an opening for Neil.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 4 -->
+<section class="s" id="directions">
+  <div class="rail"><b>4. Three art directions</b>Different structures, not different colour schemes</div>
+  <div class="body">
+    <h2>Wire, Plate, Night Game.</h2>
+    <p>Each direction starts from a different idea of who opens the link. Wire is for the photo desk. Plate is for someone who loves photobooks. Night Game is for a fan.</p>
+
+    <!-- A -->
+    <div class="dir">
+      <div class="head"><h3>A. Wire</h3><span class="verdict">Credible and efficient. Cold. Treats street work as coverage.</span></div>
+      <div class="dsk"><div class="d" style="background:#fff;font-family:var(--sans);color:#0E0E0E">
+        <div style="display:flex;justify-content:space-between;padding:calc(28*var(--u)) calc(56*var(--u));font-size:calc(15*var(--u));border-bottom:calc(1*var(--u)) solid #DADADA"><b style="font-size:calc(20*var(--u))">NEIL KODNER PHOTO</b><span>Hockey&nbsp;&nbsp;&nbsp;Street&nbsp;&nbsp;&nbsp;Info</span></div>
+        <div style="display:grid;grid-template-columns:8fr 4fr;gap:calc(24*var(--u));padding:calc(32*var(--u)) calc(56*var(--u))">
+          <img src="img/h-04395.webp" alt="" style="width:100%">
+          <div style="font-size:calc(14*var(--u));line-height:1.5"><div style="font-variant-numeric:tabular-nums;color:#5A5A5A">001 / 020 · 24 JAN 2026 · 21:14</div><p style="margin:calc(8*var(--u)) 0;font-size:calc(14*var(--u))"><b>SAN JOSE, CA</b>: San Jose State forward No. 21 shoots against Santa Clara at SAP Center.</p><div style="color:#5A5A5A">ILCE-7RM4 · 200mm · f/3.2 · 1/1000 · ISO 800</div></div>
+        </div>
+        <div style="display:flex;gap:calc(8*var(--u));padding:0 calc(56*var(--u)) calc(32*var(--u))">
+          <img src="img/h-04674.webp" alt="" style="height:calc(110*var(--u));width:auto"><img src="img/h-02573.webp" alt="" style="height:calc(110*var(--u));width:auto"><img src="img/h-04314.webp" alt="" style="height:calc(110*var(--u));width:auto"><img src="img/h-04319.webp" alt="" style="height:calc(110*var(--u));width:auto"><img src="img/h-0958.webp" alt="" style="height:calc(110*var(--u));width:auto"><img src="img/h-05875.webp" alt="" style="height:calc(110*var(--u));width:auto"><img src="img/h-04505.webp" alt="" style="height:calc(110*var(--u));width:auto">
+        </div></div></div>
+      <div class="dgrid">
+        <div><h4>Thesis</h4><p>The site behaves like a photo desk’s selects. Every image numbered, datelined and captioned to the wire standard, a filmstrip of the take beneath the lead image. It answers the editor’s questions before they ask.</p>
+          <h4>Typography</h4><p class="small">Schibsted Grotesk for everything: 600 for the wordmark and datelines, 400 for captions and body, tabular figures for plate numbers and times. One family, the way a wire service runs one family.</p>
+          <h4>Colour</h4><div class="swatches"><div class="sw"><i style="background:#FFFFFF"></i>#FFFFFF ground</div><div class="sw"><i style="background:#F2F2F2"></i>#F2F2F2 alt</div><div class="sw"><i style="background:#0E0E0E"></i>#0E0E0E text</div><div class="sw"><i style="background:#5A5A5A"></i>#5A5A5A secondary</div><div class="sw"><i style="background:#DADADA"></i>#DADADA rules</div></div><p class="small">No accent. Secondary text 6.9:1 on white.</p></div>
+        <div><h4>Layout</h4><p class="small">Strict 12 columns. Image always cols 1–8, caption block cols 9–12, filmstrip below. Mobile stacks image, caption, strip. EXIF visible.</p>
+          <h4>Homepage and portfolio</h4><p class="small">Homepage is the hockey lead image plus a strip of 8 frames. Galleries repeat the same lead-plus-caption unit for every image.</p>
+          <h4>Impression</h4><p class="small">Getty’s editorial browser, a newspaper photo desk. Sits alongside AP Images and a sports wire.</p>
+          <h4>Why not</h4><p class="small">Every image gets the same treatment, which flattens sequence. Pure white makes ice bleed. The chinatown walker captioned like a news event is absurd. It reads as a stringer’s archive, and Neil wants to read as a photographer.</p></div>
+      </div>
+    </div>
+
+    <!-- B -->
+    <div class="dir">
+      <div class="head"><h3>B. Plate</h3><span class="verdict">Beautiful and calm. Too slow for a sports editor.</span></div>
+      <div class="dsk"><div class="d" style="background:#F4F4F1;font-family:var(--serif);color:#1A1A1A">
+        <div style="display:flex;justify-content:space-between;padding:calc(36*var(--u)) calc(72*var(--u));font-size:calc(17*var(--u))"><span>Neil Kodner</span><span style="color:#6A6A66">I &nbsp; II &nbsp; III &nbsp;&nbsp; Information</span></div>
+        <div style="display:grid;grid-template-columns:1fr;justify-items:center;padding:calc(60*var(--u)) 0 calc(40*var(--u))">
+          <img src="img/h-04674.webp" alt="" style="width:calc(360*var(--u))">
+          <div style="font-style:italic;font-size:calc(15*var(--u));color:#6A6A66;margin-top:calc(16*var(--u))">Plate 2</div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:calc(80*var(--u));padding-bottom:calc(48*var(--u))">
+          <img src="img/s-pier.webp" alt="" style="width:calc(220*var(--u))"><img src="img/s-baybridge.webp" alt="" style="width:calc(300*var(--u));align-self:end">
+        </div></div></div>
+      <div class="dgrid">
+        <div><h4>Thesis</h4><p>The site as a photobook. One image per screen in generous margins, plates numbered, captions collected in a plate list at the end of each gallery, three bodies of work indexed I, II, III.</p>
+          <h4>Typography</h4><p class="small">Newsreader only. Display at opsz 72 weight 300, body at opsz 16, captions in italic 15px. A single serif family, like a book.</p>
+          <h4>Colour</h4><div class="swatches"><div class="sw"><i style="background:#F4F4F1"></i>#F4F4F1 ground</div><div class="sw"><i style="background:#E9E9E4"></i>#E9E9E4 alt</div><div class="sw"><i style="background:#1A1A1A"></i>#1A1A1A text</div><div class="sw"><i style="background:#6A6A66"></i>#6A6A66 secondary</div><div class="sw"><i style="background:#D6D6D1"></i>#D6D6D1 rules</div></div><p class="small">No accent. Secondary 4.9:1.</p></div>
+        <div><h4>Layout</h4><p class="small">Centred single column, images at most 560px wide on desktop, gaps of 200px or more. Mobile is the same at full width.</p>
+          <h4>Homepage and portfolio</h4><p class="small">Homepage is a cover: name, one image, a three-line contents. Galleries are pure sequence with no captions on the page.</p>
+          <h4>Impression</h4><p class="small">MACK or Loose Joints books, Schutmaat’s site, Aperture’s print annuals.</p>
+          <h4>Why not</h4><p class="small">A slapshot at 360px wide loses its force. Editors scroll twelve screens to see twelve frames and never learn who the teams were. Roman numerals hide the word “Hockey,” which is the word Neil needs an editor to read.</p></div>
+      </div>
+    </div>
+
+    <!-- C -->
+    <div class="dir">
+      <div class="head"><h3>C. Night Game</h3><span class="verdict">Energetic. Becomes a team marketing site. Fights the street work.</span></div>
+      <div class="dsk"><div class="d" style="background:#121314;font-family:'Barlow',sans-serif;color:#E8E8E4">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:calc(28*var(--u)) calc(56*var(--u));font-size:calc(15*var(--u))"><span style="font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:calc(30*var(--u));letter-spacing:.02em">KODNER</span><span style="color:#9A9C9E">Hockey &nbsp; Street &nbsp; About</span></div>
+        <div style="position:relative"><img src="img/h-04319.webp" alt="" style="width:100%;height:calc(560*var(--u));object-fit:cover">
+          <div style="position:absolute;left:calc(56*var(--u));bottom:calc(40*var(--u));font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:calc(120*var(--u));line-height:.85">HOCKEY<br>2024–26</div></div>
+        <div style="display:flex;gap:calc(4*var(--u));padding:calc(4*var(--u)) 0"><img src="img/h-04674.webp" alt="" style="height:calc(220*var(--u));width:auto"><img src="img/h-05875.webp" alt="" style="height:calc(220*var(--u));width:auto"><img src="img/h-0958.webp" alt="" style="height:calc(220*var(--u));width:auto"><img src="img/h-04505.webp" alt="" style="height:calc(220*var(--u));width:auto"></div></div></div>
+      <div class="dgrid">
+        <div><h4>Thesis</h4><p>The arena at night: a dark ground like the stands when the house lights go down, condensed scoreboard type, full-bleed images edge to edge, horizontal energy.</p>
+          <h4>Typography</h4><p class="small">Big Shoulders Display 800 (a Chicago-made condensed face with sign-painting roots) for titles, Barlow 400/500 for text and captions.</p>
+          <h4>Colour</h4><div class="swatches"><div class="sw"><i style="background:#121314"></i>#121314 ground</div><div class="sw"><i style="background:#1C1E20"></i>#1C1E20 alt</div><div class="sw"><i style="background:#E8E8E4"></i>#E8E8E4 text</div><div class="sw"><i style="background:#9A9C9E"></i>#9A9C9E secondary</div><div class="sw"><i style="background:#D7E6F0"></i>#D7E6F0 ice accent</div></div><p class="small">Secondary 6.8:1 on the dark ground.</p></div>
+        <div><h4>Layout</h4><p class="small">Full-bleed opener with type over the photo, then edge-to-edge filmstrips with 4px gaps. Mobile: full-bleed stacks.</p>
+          <h4>Homepage and portfolio</h4><p class="small">Homepage is a cover image with giant title. Galleries are continuous full-width images.</p>
+          <h4>Impression</h4><p class="small">A team’s season-review microsite, Nike’s sport pages.</p>
+          <h4>Why not</h4><p class="small">White ice on near-black glares, and the eye adapts to the page instead of the photo. Type over images is the move the brief lists as generic. The street pictures, many already dark, sink into the ground. Five years from now it looks like 2026.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 5 -->
+<section class="s" id="recommendation">
+  <div class="rail"><b>5. Recommendation</b>One direction, built from two</div>
+  <div class="body">
+    <h2>Dateline: Plate’s pacing, Wire’s captions.</h2>
+    <p>Dateline takes the photobook’s respect for sequence, scale and white space from Plate, and the photo desk’s discipline from Wire: every hockey picture says who, where and when, in a consistent form an editor recognises from Getty and AP. Night Game contributes nothing except a warning about type over images.</p>
+    <p>The combination fixes each parent’s failure. Plate was too slow and too coy for editors, so Dateline uses large images on the hockey page, puts the word Hockey first in the navigation, and shows teams and venues in captions. Wire flattened every image to the same unit, so Dateline varies scale and position by hand, image by image. The result is credible to a media relations director and still feels like a photographer made it.</p>
+    <h3>Why it wins</h3>
+    <div class="tbl"><table>
+      <tr><th>Criterion</th><th>Wire</th><th>Plate</th><th>Night Game</th><th>Dateline</th></tr>
+      <tr><td>Hockey images shown at real size</td><td>Yes</td><td>No</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Editor learns teams, venue, date</td><td>Yes</td><td>No</td><td>Partly</td><td>Yes</td></tr>
+      <tr><td>Street work feels equal in seriousness</td><td>No</td><td>Yes</td><td>No</td><td>Yes</td></tr>
+      <tr><td>Ice holds its edge against the page</td><td>No</td><td>Partly</td><td>Glare</td><td>Yes</td></tr>
+      <tr><td>Will look right in 2031</td><td>Yes</td><td>Yes</td><td>No</td><td>Yes</td></tr>
+      <tr><td>Maintenance: one gallery file to edit</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+    </table></div>
+    <p><b>The bold move</b> is the caption system, and it is functional. Plate numbers in tabular figures, a short factual line, and the dateline in semibold. Nobody else in the reference set does this for personal work, and it tells an editor in one glance that Neil knows how photographs get filed.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 6 -->
+<section class="s" id="system">
+  <div class="rail"><b>6. Design system</b>Small enough to fit on one page</div>
+  <div class="body">
+    <h2>Two typefaces, six colours, five row types.</h2>
+
+    <h3>Typefaces</h3>
+    <p><b>Newsreader</b> (Production Type, 2020, SIL Open Font License, Google Fonts) carries the voice: introductions, titles, the About text. It was designed for reading news on screens and has an optical-size axis from 6 to 72, so the 72px gallery title is drawn with finer contrast than the 19px body text. It looks like a newspaper without looking like Times.</p>
+    <p><b>Schibsted Grotesk</b> (Bakken &amp; Bæck for Schibsted, the Norwegian newspaper group, OFL, Google Fonts) does the working jobs: wordmark, navigation, captions, plate numbers, footer. It is a newsroom grotesk with tabular figures (<span class="sans">tnum</span>, checked in the font file) and a slightly narrow build that suits long captions.</p>
+    <p class="note">Both are variable fonts. Self-host Latin subsets as WOFF2: Newsreader roman about 75 KB, Schibsted about 40 KB. Preload the Schibsted file (it renders the header) and Newsreader roman. Load Newsreader italic only on About. No all-caps anywhere on the site.</p>
+
+    <div class="typeline"><div style="font-family:var(--sans);font-weight:600;font-size:19px">Neil Kodner <span style="font-weight:400;color:var(--ink-2);margin-left:10px">Photographer</span></div><div class="m2">Wordmark. Schibsted 600 / 400, 19px, line 1, tracking −0.005em. Mobile 17px.</div></div>
+    <div class="typeline"><div style="font-family:var(--sans);font-size:15px;display:flex;gap:28px"><span style="text-decoration:underline;text-decoration-color:var(--blueline);text-decoration-thickness:2px;text-underline-offset:8px">Hockey</span><span>Street</span><span>About</span><span>Contact</span></div><div class="m2">Navigation. Schibsted 450, 15px, line 1.2. Current page: 2px underline in Blueline, offset 8px. Same size on mobile.</div></div>
+    <div class="typeline"><div style="font-weight:340;font-size:clamp(44px,6vw,72px);line-height:.98;letter-spacing:-.02em;font-variation-settings:'opsz' 72">Hockey</div><div class="m2">Gallery title, H1. Newsreader opsz 72, wght 340, 72px / 0.98, −0.02em. Tablet 56px. Mobile 44px / 1.0.</div></div>
+    <div class="typeline"><div style="font-weight:380;font-size:clamp(24px,2.6vw,34px);line-height:1.22;letter-spacing:-.01em;font-variation-settings:'opsz' 36;max-width:20em">Neil Kodner is a photographer in Los Gatos, California. He photographs hockey, and the cities he passes through.</div><div class="m2">Homepage lede. Newsreader opsz 36, wght 380, 34px / 1.22, −0.01em, max 20em. Mobile 25px / 1.28.</div></div>
+    <div class="typeline"><div style="font-size:21px;line-height:1.45;font-variation-settings:'opsz' 20;max-width:28em">College and NHL games at SAP Center in San Jose, 2024 to 2026.</div><div class="m2">Standfirst. Newsreader opsz 20, wght 400, 21px / 1.45, max 28em. Mobile 18px.</div></div>
+    <div class="typeline"><div style="font-weight:400;font-size:30px;line-height:1.1;font-variation-settings:'opsz' 36">Street</div><div class="m2">Section title on home, H2. Newsreader opsz 36, wght 400, 30px / 1.1. Mobile 26px.</div></div>
+    <div class="typeline"><div style="font-size:19px;line-height:1.55;font-variation-settings:'opsz' 16;max-width:34em">Away from the rink I photograph cities and the people in them, usually with a small camera.</div><div class="m2">Body text. Newsreader opsz 16, wght 400, 19px / 1.55, max 34em (about 64 characters). Mobile 17px.</div></div>
+    <div class="typeline"><div style="font-family:var(--sans);font-size:13.5px;line-height:1.45;color:var(--ink-2);max-width:34em"><span class="tnum" style="margin-right:14px">04–05</span>A Santa Clara player looks away as San Jose State celebrates a goal. <b style="color:var(--ink);font-weight:600">SAP Center, San Jose. January 2026.</b></div><div class="m2">Caption. Schibsted 400, 13.5px / 1.45, Ink 2. Dateline in 600, Ink. Plate number 500, tabular figures, 14px gap. Mobile 13px.</div></div>
+    <div class="typeline"><div style="font-family:var(--sans);font-size:13px;color:var(--ink-2)">Neil Kodner, photographer. Los Gatos, California.</div><div class="m2">Footer and small utility. Schibsted 400, 13px / 1.4.</div></div>
+
+    <h3>Colour</h3>
+    <div class="swatches" style="gap:14px">
+      <div class="sw" style="width:130px"><i style="background:#ECEDEA;height:64px"></i><b>Paper</b> #ECEDEA<br>Main ground</div>
+      <div class="sw" style="width:130px"><i style="background:#E0E2DE;height:64px"></i><b>Paper 2</b> #E0E2DE<br>Footer, contact band</div>
+      <div class="sw" style="width:130px"><i style="background:#161718;height:64px"></i><b>Ink</b> #161718<br>Text, rules under headings</div>
+      <div class="sw" style="width:130px"><i style="background:#54575A;height:64px"></i><b>Ink 2</b> #54575A<br>Captions, secondary</div>
+      <div class="sw" style="width:130px"><i style="background:#C6C9C5;height:64px"></i><b>Rule</b> #C6C9C5<br>Hairlines only</div>
+      <div class="sw" style="width:130px"><i style="background:#1D3E70;height:64px"></i><b>Blueline</b> #1D3E70<br>Focus, hover, current page</div>
+    </div>
+    <p>Paper is a neutral grey with a faint green bias, the colour of matte photo paper or rink boards under arena light. Against it, ice reads as white and keeps its edge. It is cooler and darker than the cream grounds common on generated portfolios, on purpose. Blueline takes its name from the painted lines on a rink and appears only where something is interactive. The photographs supply all the other colour.</p>
+    <div class="tbl"><table>
+      <tr><th>Pair</th><th class="n">Contrast</th><th>Use</th></tr>
+      <tr><td>Ink on Paper</td><td class="n">15.3 : 1</td><td>All primary text</td></tr>
+      <tr><td>Ink 2 on Paper</td><td class="n">6.2 : 1</td><td>Captions, standfirst metadata (AA at any size)</td></tr>
+      <tr><td>Ink 2 on Paper 2</td><td class="n">5.6 : 1</td><td>Footer text</td></tr>
+      <tr><td>Blueline on Paper</td><td class="n">9.1 : 1</td><td>Hover text, focus ring (well above the 3:1 needed for focus indicators)</td></tr>
+      <tr><td>Rule on Paper</td><td class="n">1.4 : 1</td><td>Decorative hairlines only, never the sole boundary of a control</td></tr>
+    </table></div>
+    <p class="note">No dark mode. The photographs are judged against one ground, and a second ground would change how every picture reads. The page sets <span class="sans">color-scheme: light</span>.</p>
+
+    <h3>Grid and spacing</h3>
+    <div class="tbl"><table>
+      <tr><th>Width</th><th>Columns</th><th>Gutter</th><th>Side margin</th><th>Content max</th></tr>
+      <tr><td>≥ 1100px desktop</td><td class="n">12</td><td class="n">24px</td><td class="n">clamp(24px, 4.4vw, 72px)</td><td class="n">1520px</td></tr>
+      <tr><td>700–1099px tablet</td><td class="n">8</td><td class="n">20px</td><td class="n">40px</td><td>fluid</td></tr>
+      <tr><td>&lt; 700px phone</td><td class="n">4</td><td class="n">16px</td><td class="n">18px (horizontal photos bleed to 0)</td><td>fluid</td></tr>
+    </table></div>
+    <p class="small">Spacing scale (px): <span class="tnum">4 · 8 · 12 · 16 · 24 · 32 · 48 · 72 · 112 · 168 · 240</span>. Hockey rows are 112 apart on desktop and 72 on phones. Street rows are 168 and 96, slower on purpose. Homepage sections are 168 and 96. Header to first content: 72 desktop, 32 phone.</p>
+    <p class="small">Image sizing: never cropped, never rounded, never shadowed, never bordered. No image is taller than the viewport: <span class="sans">max-height: 88vh</span> on desktop, width follows the ratio. Every image has width and height attributes so the layout does not move while loading. Placeholder ground is <span class="sans">#D6D8D4</span> or, better, the photo’s average colour computed at build time.</p>
+
+    <h3>Components</h3>
+    <dl class="kv">
+      <dt>Header</dt><dd>Not sticky; photographs get the whole viewport. Desktop: 84px tall, wordmark from column 1, navigation starting at column 5 so it lines up with the left edge of the homepage’s opening photograph. Phone: wordmark on line one, the four links on line two, about 96px total. No hamburger, because four short words fit at 360px.</dd>
+      <dt>Wordmark</dt><dd>Type only: “Neil Kodner” in Schibsted 600 with “Photographer” in 400 Ink 2. No logo, no monogram. The favicon is “NK” in Schibsted 600, Ink on Paper.</dd>
+      <dt>Lede</dt><dd>Homepage only. Newsreader 34px, beside the opening photograph and aligned to its bottom edge.</dd>
+      <dt>Gallery header</dt><dd>H1 at columns 1–5, standfirst at columns 7–11 aligned to the H1’s baseline, then one small Schibsted line: “12 photographs · Index · Contact for assignments”.</dd>
+      <dt>Plate</dt><dd>One figure: picture element, plate number, caption. Anchor id is the number (<span class="sans">#7</span>) so anyone can link to a single frame.</dd>
+      <dt>Row types</dt><dd><b>Full</b> (cols 1–12) · <b>Wide</b> (cols 1–9 or 4–12, caption in the remaining 3 columns, bottom-aligned) · <b>Upright</b> (a vertical in cols 5–8 or 8–11, caption beside it) · <b>Pair</b> (two photos at equal height across cols 1–12, one shared caption, only for images from one moment) · <b>Coda</b> (cols 3–10, last plate). Section 9 shows each.</dd>
+      <dt>Index</dt><dd>End of each gallery: every plate as a 96px-tall thumbnail at its true ratio, in a single wrapping row, numbered, linking to its anchor. The only place thumbnails appear.</dd>
+      <dt>Assignment line</dt><dd>Paper 2 band at the end of Hockey and on the homepage: Newsreader 30px, “For assignments and editorial work” and the email address as a large link. A copy-address button sits beside it.</dd>
+      <dt>Footer</dt><dd>Paper 2, 13px Schibsted, three groups: name and location; email, Instagram, LinkedIn; “© 2026 Neil Kodner. Photographs may not be reproduced without permission.”</dd>
+    </dl>
+
+    <h3>Interaction</h3>
+    <ul class="small">
+      <li>Text links: 1px underline in Ink 2, offset 3px. Hover: underline turns Blueline and 2px, text turns Blueline. No transition longer than 120ms.</li>
+      <li>Focus: 2px solid Blueline outline, offset 3px, on every link and button, including index thumbnails.</li>
+      <li>Linked images (homepage teasers, index): no zoom, no dimming. The caption link underlines on hover of the figure.</li>
+      <li>Anchor jumps scroll smoothly only when reduced motion is off. <span class="sans">scroll-margin-top: 24px</span>.</li>
+      <li>No scroll animations, no fades on load, no parallax, no lightbox, no carousel. The site reads the same with JavaScript off. The single script copies the email address.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ 7 -->
+<section class="s" id="ia">
+  <div class="rail"><b>7. Information architecture</b>Four links and one quiet room</div>
+  <div class="body">
+    <h2>Hockey, Street, About, Contact.</h2>
+    <div class="tbl"><table>
+      <tr><th>URL</th><th>Page</th><th>In navigation</th><th>Launch content</th></tr>
+      <tr><td class="n">/</td><td>Home</td><td>Wordmark</td><td>Opening plate, lede, hockey and street previews, Elsewhere strip, assignment line</td></tr>
+      <tr><td class="n">/hockey/</td><td>Hockey</td><td>First</td><td>12 plates</td></tr>
+      <tr><td class="n">/street/</td><td>Street</td><td>Second</td><td>13 plates</td></tr>
+      <tr><td class="n">/elsewhere/</td><td>Elsewhere: aviation, birds, the coast</td><td>No. Linked from home and footer</td><td>9 plates</td></tr>
+      <tr><td class="n">/about/</td><td>About</td><td>Third</td><td>Short text, facts list, optional portrait</td></tr>
+      <tr><td class="n">/contact/</td><td>Contact</td><td>Fourth</td><td>Email, social, location</td></tr>
+    </table></div>
+    <p>The navigation says “Hockey” instead of “Sports” because hockey is all the sports work there is. Calling it Sports promises range the portfolio does not have yet. When Neil adds another sport, the link becomes “Sports” and Hockey becomes the first sequence inside it. A section named “Work” would hide the one word an editor scans for.</p>
+    <p>Travel does not get a section. Its best pictures are street pictures and go there. Aviation and wildlife go to Elsewhere, outside the main navigation, which keeps the hierarchy honest: hockey first, street second, other interests present but smaller.</p>
+    <p>Old URLs redirect: <span class="sans">/photography/hockey/select-images/</span> to <span class="sans">/hockey/</span>, <span class="sans">/photography/places/*</span> to <span class="sans">/street/</span>, <span class="sans">/photography/aviation/*</span> to <span class="sans">/elsewhere/</span>, <span class="sans">/photography/</span> and <span class="sans">/album.html</span> to <span class="sans">/</span>. GitHub Pages has no server redirects, so each is a small static page with a meta refresh and a canonical link.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 8 -->
+<section class="s" id="pages">
+  <div class="rail"><b>8. Pages and wireframes</b>Drawn at true proportions with the real photographs. Desktop at 1440, phone at 390.</div>
+  <div class="body">
+    <h2>Home.</h2>
+    <p class="note">All copy in these mockups is draft. Years, dates, places and the availability line are placeholders for Neil to confirm or replace.</p>
+    <p>The first screen reads like the opening spread of a magazine’s sports section: a large hockey photograph on the right two-thirds, and on the left, aligned to its bottom edge, one plain sentence saying who this is. The navigation starts on the same column line as the photograph. Below, Hockey and Street each get a composed preview, built differently so the page never repeats a block. Elsewhere follows at a visibly smaller scale. The page ends with the assignment line.</p>
+  </div>
+  <div class="full">
+    <div class="screens">
+      <div class="frame"><div class="lbl">Home, desktop 1440</div>
+        <div class="scr d"><div class="mk">
+          <div class="hd"><div class="w">Neil Kodner<span>Photographer</span></div><nav><span>Hockey</span><span>Street</span><span>About</span><span>Contact</span></nav></div>
+          <div class="g" style="margin-top:calc(72*var(--u));align-items:end">
+            <div style="grid-column:1/5;align-self:end;padding-bottom:calc(30*var(--u))">
+              <div style="font-size:calc(34*var(--u));line-height:1.22;letter-spacing:-.01em;font-weight:380;font-variation-settings:'opsz' 36">Neil Kodner is a photographer in Los Gatos, California. He photographs hockey, and the cities he passes through.</div>
+              <div class="cap" style="margin-top:calc(24*var(--u));color:var(--ink)">Available for editorial and team assignments in the Bay Area. <u>See the hockey work</u></div>
+            </div>
+            <div style="grid-column:5/13"><img src="img/h-04395.webp" alt=""><div class="cap"><b>SAP Center, San Jose.</b> San Jose State vs. Santa Clara, January 2026.</div></div>
+          </div>
+          <div class="g" style="margin-top:calc(168*var(--u));align-items:end">
+            <div style="grid-column:1/4;align-self:start"><div style="font-size:calc(30*var(--u));font-variation-settings:'opsz' 36">Hockey</div><div class="cap" style="font-size:calc(15*var(--u));line-height:1.45">College and NHL games at SAP Center, 2024 to 2026.</div><div class="cap" style="color:var(--ink);margin-top:calc(16*var(--u))"><u>12 photographs</u></div></div>
+            <div style="grid-column:4/8"><img src="img/h-04674.webp" alt=""></div>
+            <div style="grid-column:8/13"><img src="img/h-04314.webp" alt="" style="width:62%;margin-left:auto"></div>
+          </div>
+          <div class="g" style="margin-top:calc(24*var(--u))"><div style="grid-column:1/13"><img src="img/h-0958.webp" alt="" style="height:calc(560*var(--u));width:100%;object-fit:cover"></div></div>
+          <div class="g" style="margin-top:calc(168*var(--u))">
+            <div style="grid-column:1/8"><img src="img/s-chinatown.webp" alt=""><div class="cap"><b>Chinatown, San Francisco.</b> 2025.</div></div>
+            <div style="grid-column:9/12;margin-top:calc(160*var(--u))"><img src="img/s-pier.webp" alt=""></div>
+          </div>
+          <div class="g" style="margin-top:calc(32*var(--u))"><div style="grid-column:9/13"><div style="font-size:calc(30*var(--u));font-variation-settings:'opsz' 36">Street</div><div class="cap" style="font-size:calc(15*var(--u))">San Francisco, Seattle, Chicago, New York.</div><div class="cap" style="color:var(--ink);margin-top:calc(12*var(--u))"><u>13 photographs</u></div></div></div>
+          <div class="g" style="margin-top:calc(168*var(--u))">
+            <div style="grid-column:1/4"><div style="font-size:calc(24*var(--u))">Elsewhere</div><div class="cap">Aviation, birds, the coast. <u>9 photographs</u></div></div>
+            <div style="grid-column:4/13;display:flex;gap:calc(16*var(--u))"><img src="img/e-tbirds.webp" alt="" style="height:calc(190*var(--u));width:auto"><img src="img/e-cormorant.webp" alt="" style="height:calc(190*var(--u));width:auto"><img src="img/e-locks.webp" alt="" style="height:calc(190*var(--u));width:auto"></div>
+          </div>
+          <div style="background:var(--paper-2);margin-top:calc(168*var(--u));padding:calc(56*var(--u)) calc(64*var(--u))" class="g"><div style="grid-column:1/5;font-family:var(--sans);font-size:calc(15*var(--u));color:var(--ink-2)">For assignments, credentials and editorial work</div><div style="grid-column:5/13;font-size:calc(40*var(--u));text-decoration:underline;text-underline-offset:calc(6*var(--u));text-decoration-thickness:calc(1*var(--u))">nkodner@gmail.com</div></div>
+          <div class="ft" style="background:var(--paper)"><span>Neil Kodner, photographer. Los Gatos, California.</span><span>Instagram · LinkedIn</span><span>© 2026</span></div>
+        </div></div>
+      </div>
+      <div class="frame mob"><div class="lbl">Home, phone 390</div>
+        <div class="scr m ph"><div class="mk">
+          <div class="hd"><div class="w" style="font-family:var(--sans);font-weight:600">Neil Kodner<span style="font-weight:400;color:var(--ink-2);margin-left:calc(10*var(--u))">Photographer</span></div><nav style="display:flex;font-family:var(--sans)"><span>Hockey</span><span>Street</span><span>About</span><span>Contact</span></nav></div>
+          <img src="img/h-04674.webp" alt="" style="margin-top:calc(28*var(--u));padding:0 calc(18*var(--u))">
+          <div class="in"><div class="cap"><b>SAP Center, San Jose.</b> January 2026.</div>
+            <div style="font-size:calc(25*var(--u));line-height:1.28;margin-top:calc(28*var(--u));font-variation-settings:'opsz' 30">Neil Kodner is a photographer in Los Gatos, California. He photographs hockey, and the cities he passes through.</div>
+            <div class="cap" style="color:var(--ink);margin-top:calc(14*var(--u))">Available for editorial and team assignments. <u>Hockey</u></div>
+            <div style="font-size:calc(26*var(--u));margin-top:calc(72*var(--u))">Hockey</div><div class="cap" style="margin-top:0">12 photographs</div></div>
+          <img src="img/h-04395.webp" alt="" style="margin-top:calc(16*var(--u))">
+          <img src="img/h-0958.webp" alt="" style="margin-top:calc(16*var(--u))">
+          <div class="in"><div style="font-size:calc(26*var(--u));margin-top:calc(72*var(--u))">Street</div><div class="cap" style="margin-top:0">13 photographs</div></div>
+          <img src="img/s-chinatown.webp" alt="" style="margin-top:calc(16*var(--u))">
+          <div class="in"><img src="img/s-pier.webp" alt="" style="width:64%;margin:calc(16*var(--u)) 0 0 auto"></div>
+        </div></div>
+      </div>
+    </div>
+    <p class="note">Phone decisions: the opening photograph switches to a vertical (04674) through a <span class="sans">&lt;picture&gt;</span> media query, since a horizontal at 390px is only 260px tall. Horizontal photographs bleed edge to edge, verticals sit inside the 18px margins. The lede follows the photograph. Elsewhere and the assignment line follow the street preview.</p>
+  </div>
+
+  <div class="body" style="margin-top:72px">
+    <h2>Hockey.</h2>
+    <p>The page an editor receives. It opens with the title and one sentence of facts, then the sequence. Scale changes every one or two plates. Pairs appear only where two frames show one moment. The page closes on the index and the assignment line, so a photo editor scanning fast finds the frames and the email address without hunting.</p>
+  </div>
+  <div class="full">
+    <div class="screens">
+      <div class="frame"><div class="lbl">Hockey, desktop 1440 (first five rows)</div>
+        <div class="scr d"><div class="mk">
+          <div class="hd"><div class="w">Neil Kodner<span>Photographer</span></div><nav><span class="on">Hockey</span><span>Street</span><span>About</span><span>Contact</span></nav></div>
+          <div class="g" style="margin-top:calc(72*var(--u));align-items:baseline">
+            <div style="grid-column:1/6;font-size:calc(72*var(--u));line-height:.98;letter-spacing:-.02em;font-weight:340;font-variation-settings:'opsz' 72">Hockey</div>
+            <div style="grid-column:7/12;font-size:calc(21*var(--u));line-height:1.45">College and NHL games at SAP Center in San Jose, 2024 to 2026.<div class="cap" style="color:var(--ink)">12 photographs · <u>Index</u> · <u>Contact for assignments</u></div></div>
+          </div>
+          <div class="g" style="margin-top:calc(72*var(--u))"><div style="grid-column:1/13"><img src="img/h-04395.webp" alt=""><div class="cap"><span class="pn" style="margin-right:calc(14*var(--u))">01</span>San Jose State’s No. 21 shoots on the Santa Clara goal. <b>SAP Center, San Jose. January 2026.</b></div></div></div>
+          <div class="g" style="margin-top:calc(112*var(--u));align-items:end">
+            <div style="grid-column:5/9"><img src="img/h-04674.webp" alt=""></div>
+            <div style="grid-column:9/12" class="cap"><span class="pn">02</span><br>No. 15 takes a slapshot. <b>SAP Center, San Jose. 2026.</b></div>
+          </div>
+          <div class="g" style="margin-top:calc(112*var(--u));align-items:end">
+            <div style="grid-column:1/10"><img src="img/h-02573.webp" alt=""></div>
+            <div style="grid-column:10/13" class="cap"><span class="pn">03</span><br>A scramble in the crease with the goaltender down. <b>San Jose. 2025.</b></div>
+          </div>
+          <div class="g" style="margin-top:calc(112*var(--u))">
+            <div style="grid-column:1/13;display:flex;gap:calc(24*var(--u))"><img src="img/h-04314.webp" alt="" style="width:30.6%"><img src="img/h-04319.webp" alt="" style="width:69.4%;align-self:start;height:auto"></div>
+            <div style="grid-column:1/9" class="cap"><span class="pn" style="margin-right:calc(14*var(--u))">04–05</span>The same goal from both benches: a Santa Clara player looks away as San Jose State celebrates. <b>SAP Center, San Jose. January 2026.</b></div>
+          </div>
+          <div class="g" style="margin-top:calc(112*var(--u))"><div style="grid-column:1/13"><img src="img/h-0958.webp" alt=""><div class="cap"><span class="pn" style="margin-right:calc(14*var(--u))">06</span>The Sharks at home, from the upper deck. <b>SAP Center, San Jose. 2025.</b></div></div></div>
+          <div style="height:calc(80*var(--u))"></div>
+        </div></div>
+        <p class="note" style="margin-top:10px">The pair at 04–05 sizes both images to one height: widths are proportional to aspect ratio (2:3 and 3:2 give 30.6 and 69.4 percent after the gutter).</p>
+      </div>
+      <div class="frame mob"><div class="lbl">Hockey, phone 390</div>
+        <div class="scr m ph"><div class="mk">
+          <div class="hd"><div class="w" style="font-family:var(--sans);font-weight:600">Neil Kodner<span style="font-weight:400;color:var(--ink-2);margin-left:calc(10*var(--u))">Photographer</span></div><nav style="display:flex;font-family:var(--sans)"><span class="on">Hockey</span><span>Street</span><span>About</span><span>Contact</span></nav></div>
+          <div class="in" style="margin-top:calc(32*var(--u))"><div style="font-size:calc(44*var(--u));line-height:1;font-weight:340;letter-spacing:-.02em">Hockey</div><div style="font-size:calc(18*var(--u));line-height:1.45;margin-top:calc(12*var(--u))">College and NHL games at SAP Center in San Jose, 2024 to 2026.</div><div class="cap" style="color:var(--ink)">12 photographs · <u>Index</u> · <u>Contact</u></div></div>
+          <img src="img/h-04395.webp" alt="" style="margin-top:calc(32*var(--u))"><div class="in cap"><span class="pn">01</span>&nbsp; San Jose State’s No. 21 shoots. <b>SAP Center, San Jose. Jan 2026.</b></div>
+          <div class="in" style="margin-top:calc(72*var(--u))"><img src="img/h-04674.webp" alt=""><div class="cap"><span class="pn">02</span>&nbsp; No. 15 takes a slapshot. <b>San Jose. 2026.</b></div></div>
+          <img src="img/h-02573.webp" alt="" style="margin-top:calc(72*var(--u))"><div class="in cap"><span class="pn">03</span>&nbsp; A scramble in the crease. <b>San Jose. 2025.</b></div>
+          <div class="in" style="margin-top:calc(72*var(--u))"><img src="img/h-04314.webp" alt="" style="width:72%"></div>
+          <img src="img/h-04319.webp" alt="" style="margin-top:calc(12*var(--u))"><div class="in cap"><span class="pn">04–05</span>&nbsp; The same goal from both benches.</div>
+        </div></div>
+        <p class="note" style="margin-top:10px">Pairs stack on phones and keep one caption after the second image. Uprights sit inside the margins at full content width (354px, so about 530px tall).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="body" style="margin-top:72px">
+    <h2>Street.</h2>
+    <p>Same system, different tempo. Street uses wider gaps (168px), smaller images (horizontals across columns 3–10, verticals 5–8), and captions in one fixed position: the right margin, aligned to the bottom of each picture. There is one pair: the two motion-blurred train platforms, Chicago and (to confirm) London. Captions are place and year only. These pictures do not need a who-what-when.</p>
+  </div>
+  <div class="full">
+    <div class="screens">
+      <div class="frame"><div class="lbl">Street, desktop 1440 (opening rows)</div>
+        <div class="scr d"><div class="mk">
+          <div class="hd"><div class="w">Neil Kodner<span>Photographer</span></div><nav><span>Hockey</span><span class="on">Street</span><span>About</span><span>Contact</span></nav></div>
+          <div class="g" style="margin-top:calc(72*var(--u));align-items:baseline"><div style="grid-column:1/5;font-size:calc(72*var(--u));line-height:.98;letter-spacing:-.02em;font-weight:340">Street</div><div style="grid-column:7/12;font-size:calc(21*var(--u));line-height:1.45">San Francisco, Seattle, Chicago, New York, London. Mostly with a Leica Q3, 2024 to 2026.</div></div>
+          <div class="g" style="margin-top:calc(112*var(--u));align-items:end"><div style="grid-column:3/11"><img src="img/s-chinatown.webp" alt=""></div><div class="cap" style="grid-column:11/13"><span class="pn">01</span><br><b>Chinatown, San Francisco.</b> 2025.</div></div>
+          <div class="g" style="margin-top:calc(168*var(--u));align-items:end"><div style="grid-column:5/9"><img src="img/s-pier.webp" alt=""></div><div class="cap" style="grid-column:11/13"><span class="pn">02</span><br><b>Pier, San Francisco.</b> 2025.</div></div>
+          <div class="g" style="margin-top:calc(168*var(--u));align-items:end"><div style="grid-column:3/11"><img src="img/s-ferry.webp" alt=""></div><div class="cap" style="grid-column:11/13"><span class="pn">03</span><br><b>Ferry, Seattle.</b> 2025.</div></div>
+          <div class="g" style="margin-top:calc(168*var(--u));align-items:end"><div style="grid-column:2/12;display:flex;gap:calc(24*var(--u))"><img src="img/s-cta.webp" alt="" style="width:50%"><img src="img/s-tube.webp" alt="" style="width:50%"></div><div class="cap" style="grid-column:2/9"><span class="pn" style="margin-right:calc(14*var(--u))">07–08</span><b>Chicago and London.</b> 2025.</div></div>
+          <div style="height:calc(96*var(--u))"></div>
+        </div></div>
+      </div>
+      <div class="frame mob"><div class="lbl">Street, phone 390</div>
+        <div class="scr m ph"><div class="mk">
+          <div class="hd"><div class="w" style="font-family:var(--sans);font-weight:600">Neil Kodner<span style="font-weight:400;color:var(--ink-2);margin-left:calc(10*var(--u))">Photographer</span></div><nav style="display:flex;font-family:var(--sans)"><span>Hockey</span><span class="on">Street</span><span>About</span><span>Contact</span></nav></div>
+          <div class="in" style="margin-top:calc(32*var(--u))"><div style="font-size:calc(44*var(--u));line-height:1;font-weight:340">Street</div><div style="font-size:calc(18*var(--u));line-height:1.45;margin-top:calc(12*var(--u))">San Francisco, Seattle, Chicago, New York, London.</div></div>
+          <div class="in" style="margin-top:calc(40*var(--u))"><img src="img/s-chinatown.webp" alt=""><div class="cap"><span class="pn">01</span>&nbsp; <b>Chinatown, San Francisco.</b> 2025.</div></div>
+          <div class="in" style="margin-top:calc(96*var(--u))"><img src="img/s-pier.webp" alt="" style="width:80%;margin:0 auto"><div class="cap" style="width:80%;margin-left:auto;margin-right:auto"><span class="pn">02</span>&nbsp; <b>Pier, San Francisco.</b> 2025.</div></div>
+          <div class="in" style="margin-top:calc(96*var(--u))"><img src="img/s-ferry.webp" alt=""></div>
+        </div></div>
+        <p class="note" style="margin-top:10px">Street keeps its margins on phones, including horizontals. Hockey bleeds, Street does not. Uprights shrink to 80 percent width and centre, so each picture is surrounded by paper.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="body" style="margin-top:72px">
+    <h2>Elsewhere, About, Contact.</h2>
+    <p><b>Elsewhere</b> is a notebook. Justified rows of two or three photographs at a shared height (about 340px desktop), true ratios, plate numbers and short captions underneath. Denser than Hockey or Street on purpose, so its place in the hierarchy is visible. On phones, one per row inside margins.</p>
+    <p><b>About</b> puts a portrait (if Neil supplies one, 4:5, columns 1–4) beside a short text in Newsreader at columns 6–11, followed by a facts list set in Schibsted, modelled on Schutmaat’s Information page. <b>Contact</b> is the email address at 44px with a copy button, one practical sentence, and the social links.</p>
+  </div>
+  <div class="full">
+    <div class="screens">
+      <div class="frame"><div class="lbl">About, desktop 1440</div>
+        <div class="scr d"><div class="mk">
+          <div class="hd"><div class="w">Neil Kodner<span>Photographer</span></div><nav><span>Hockey</span><span>Street</span><span class="on">About</span><span>Contact</span></nav></div>
+          <div class="g" style="margin-top:calc(72*var(--u))">
+            <div style="grid-column:1/5"><div style="aspect-ratio:4/5;background:var(--plate);display:flex;align-items:center;justify-content:center;font-family:var(--sans);font-size:calc(14*var(--u));color:var(--ink-2)">Portrait of Neil, 4:5, to supply</div></div>
+            <div style="grid-column:6/12">
+              <div style="font-size:calc(72*var(--u));line-height:.98;font-weight:340;letter-spacing:-.02em">About</div>
+              <div style="font-size:calc(19*var(--u));line-height:1.55;margin-top:calc(32*var(--u))">I’m Neil Kodner, a photographer based in Los Gatos, California.<br><br>Hockey is the centre of my work. <span style="background:var(--paper-2)">[One or two sentences on Neil’s background in hockey.]</span> I photograph college and professional games around the Bay Area, mostly at SAP Center in San Jose.<br><br>Away from the rink I photograph cities and the people in them, usually with a small camera.</div>
+              <div style="display:grid;grid-template-columns:30% 70%;gap:calc(8*var(--u)) calc(16*var(--u));font-family:var(--sans);font-size:calc(14.5*var(--u));margin-top:calc(40*var(--u));border-top:calc(1*var(--u)) solid var(--ink);padding-top:calc(16*var(--u))">
+                <span style="color:var(--ink-2)">Based</span><span>Los Gatos, California. Bay Area.</span>
+                <span style="color:var(--ink-2)">Photographs</span><span>Hockey. Street. Aviation and wildlife.</span>
+                <span style="color:var(--ink-2)">Available for</span><span>Editorial assignments, team and league media work.</span>
+                <span style="color:var(--ink-2)">Equipment</span><span>Sony Alpha, 70–200mm f/2.8. Leica Q3. Fujifilm X100VI.</span>
+                <span style="color:var(--ink-2)">Contact</span><span><u>nkodner@gmail.com</u></span>
+              </div>
+            </div>
+          </div>
+          <div style="height:calc(96*var(--u))"></div>
+        </div></div>
+      </div>
+      <div class="frame mob"><div class="lbl">Contact, phone 390</div>
+        <div class="scr m ph"><div class="mk">
+          <div class="hd"><div class="w" style="font-family:var(--sans);font-weight:600">Neil Kodner<span style="font-weight:400;color:var(--ink-2);margin-left:calc(10*var(--u))">Photographer</span></div><nav style="display:flex;font-family:var(--sans)"><span>Hockey</span><span>Street</span><span>About</span><span class="on">Contact</span></nav></div>
+          <div class="in" style="margin-top:calc(40*var(--u))">
+            <div style="font-size:calc(44*var(--u));line-height:1;font-weight:340">Contact</div>
+            <div style="font-size:calc(27*var(--u));margin-top:calc(36*var(--u));text-decoration:underline;text-underline-offset:calc(5*var(--u));text-decoration-thickness:calc(1*var(--u));word-break:break-all">nkodner@gmail.com</div>
+            <div style="display:inline-block;margin-top:calc(14*var(--u));border:calc(1*var(--u)) solid var(--ink-2);padding:calc(6*var(--u)) calc(12*var(--u));font-family:var(--sans);font-size:calc(13*var(--u))">Copy address</div>
+            <div style="font-size:calc(17*var(--u));line-height:1.5;margin-top:calc(32*var(--u))">For an assignment, include the date, venue and deadline. Based in Los Gatos, on Pacific time.</div>
+            <div style="font-family:var(--sans);font-size:calc(15*var(--u));margin-top:calc(32*var(--u));line-height:2;border-top:calc(1*var(--u)) solid var(--rule);padding-top:calc(12*var(--u))"><u>Instagram</u><br><u>LinkedIn</u></div>
+          </div>
+          <div style="height:calc(260*var(--u))"></div>
+          <div class="ft">Neil Kodner, photographer. Los Gatos, California.<br>© 2026</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 9 -->
+<section class="s" id="sequencing">
+  <div class="rail"><b>9. Photography presentation</b>Sequence, row types, captions, files</div>
+  <div class="body">
+    <h2>A working sequence for Hockey.</h2>
+    <p>Built from the 20 frames in R2 to prove the system. Neil makes the final selection. The logic: open on the clearest single moment, drop to one player, widen to the crowd at the net, show one goal from both sides, step back to the building, return to individuals, celebrate, breathe, go to the NHL, and end on the audience.</p>
+    <div class="tbl"><table>
+      <tr><th class="n">Plate</th><th></th><th>File</th><th>Row</th><th>Why it sits here</th></tr>
+      <tr><td class="n">01</td><td><img src="img/h-04395.webp" alt="" loading="lazy"></td><td class="n">DSC04395</td><td>Full</td><td>The whole sport in one frame: shooter, puck mid-air, goalie. Horizontal, readable at any size.</td></tr>
+      <tr><td class="n">02</td><td><img src="img/h-04674.webp" alt="" loading="lazy"></td><td class="n">DSC04674</td><td>Upright, cols 5–8</td><td>Scale drops to one body. Cleanest background in the set.</td></tr>
+      <tr><td class="n">03</td><td><img src="img/h-02573.webp" alt="" loading="lazy"></td><td class="n">DSC02573</td><td>Wide, cols 1–9</td><td>Density after two single-player frames. Goalie down, six players.</td></tr>
+      <tr><td class="n">04–05</td><td><img src="img/h-04314.webp" alt="" loading="lazy"></td><td class="n">DSC04314 + 04319</td><td>Pair</td><td>One goal, two benches. The best storytelling in the set and the reason pairs exist.</td></tr>
+      <tr><td class="n">06</td><td><img src="img/h-0958.webp" alt="" loading="lazy"></td><td class="n">DSCF0958</td><td>Full</td><td>The building. Resets scale and tells an editor where Neil works.</td></tr>
+      <tr><td class="n">07</td><td><img src="img/h-04254.webp" alt="" loading="lazy"></td><td class="n">DSC04254</td><td>Upright, cols 8–11, caption left</td><td>Wrist shot with fans above the boards. Mirrors plate 02’s position.</td></tr>
+      <tr><td class="n">08–09</td><td><img src="img/h-05875.webp" alt="" loading="lazy"></td><td class="n">DSC05875 + 05897</td><td>Pair</td><td>Goal celebration in two beats: the embrace, then the pile.</td></tr>
+      <tr><td class="n">10</td><td><img src="img/h-04505.webp" alt="" loading="lazy"></td><td class="n">DSC04505</td><td>Wide, cols 4–12, caption left</td><td>Goalie and teammate after the whistle. The quiet frame.</td></tr>
+      <tr><td class="n">11</td><td><img src="img/h-0880.webp" alt="" loading="lazy"></td><td class="n">DSCF0880</td><td>Full</td><td>A Shark turns to a standing crowd. The NHL frame.</td></tr>
+      <tr><td class="n">12</td><td><img src="img/h-fan.webp" alt="" loading="lazy"></td><td class="n">L1000452</td><td>Coda, cols 3–10</td><td>A fan filming the game, in black and white. Ends on the audience and leads into Street.</td></tr>
+    </table></div>
+    <p class="note">Left out: 02899, 04243, 04388, 04429 (more No. 21), 02559 (busy boards), 06009 and 06027 (good battles, close in feel to 03), 04377 and 05881 (covered by the 08–09 pair).</p>
+
+    <h3>Street order</h3>
+    <p class="small">01 Chinatown, San Francisco · 02 pier silhouette · 03 Seattle ferry passenger · 04 Oculus, New York (vertical) · 05 Bay Bridge cyclist (black and white) · 06 Wrigley Field · 07–08 CTA and Underground platforms (pair) · 09 Chicago Theatre and manhole · 10 bagel baker, New York · 11 Pike Place Market · 12 red sculpture at night · 13 silhouettes at sunset. The order alternates bright and dark, colour and black and white, and never puts two black-and-white frames side by side except as a pair.</p>
+
+    <h3>Rules for any gallery</h3>
+    <ul>
+      <li>Never crop to fit a layout. The layout adapts to the ratio. Crops happen in Lightroom, by Neil, for the picture’s sake.</li>
+      <li>Open on a horizontal (desktop) and name a vertical alternate for phones.</li>
+      <li>Change scale at least every second plate. No more than two Full rows in a row.</li>
+      <li>Pair only frames from the same moment or a deliberate rhyme. Never pair to fill space.</li>
+      <li>Twelve is the target for Hockey. Ten strong plates beat fourteen with filler.</li>
+    </ul>
+
+    <h3>Captions</h3>
+    <p>Hockey captions follow the editorial order of who, what, where, when, in two parts: a plain sentence, then the dateline in semibold. Use team names and numbers, add player names only when Neil knows them for certain. No shutter speeds or focal lengths on the page; editors who want EXIF ask for files. Street and Elsewhere captions give place and year only.</p>
+
+    <h3>Image handling</h3>
+    <dl class="kv">
+      <dt>Lightroom export</dt><dd>JPEG, sRGB (not Display P3: sRGB displays the same everywhere and survives conversion), 3000px long edge, quality 88, output sharpening Screen / Standard, metadata Copyright and Contact only, Remove Location Info on.</dd>
+      <dt>Masters</dt><dd>Stored in the repository under <span class="sans">src/photos/hockey/</span> etc. About 1.5 MB each, so 35 images is about 55 MB.</dd>
+      <dt>Derivatives</dt><dd>Generated at build: widths 480, 800, 1200, 1600, 2200, 3000. AVIF at quality 60 and JPEG (mozjpeg) at quality 80 as fallback. No WebP: AVIF covers current browsers and JPEG covers the rest.</dd>
+      <dt>sizes attribute</dt><dd>Full: <span class="sans">(min-width:1100px) min(1520px, 91vw), 100vw</span>. Wide: <span class="sans">(min-width:1100px) 68vw, 100vw</span>. Upright: <span class="sans">(min-width:1100px) 30vw, (min-width:700px) 60vw, 92vw</span>. Pair: computed per image from its share of the row.</dd>
+      <dt>Loading</dt><dd>Plate 01 and the homepage opener: <span class="sans">loading="eager" fetchpriority="high"</span>. All others: <span class="sans">loading="lazy" decoding="async"</span>. Width and height on every image.</dd>
+      <dt>Alt text</dt><dd>Required in the content file; the build fails without it. Describes the picture plainly: “A San Jose State player in blue shoots; the puck is in the air on its way to the Santa Clara goaltender.” Captions do not repeat as alt text.</dd>
+      <dt>Social previews</dt><dd>Each page’s Open Graph image is its first plate, cropped to 1200 × 630 at build. This is the one place a crop is allowed.</dd>
+      <dt>Privacy</dt><dd>Build fails if any master contains GPS EXIF. Derivatives carry no metadata.</dd>
+    </dl>
+  </div>
+</section>
+
+<!-- ============================================================ 10 -->
+<section class="s" id="tech">
+  <div class="rail"><b>10. Technical recommendation</b>The simplest build that produces correct responsive images</div>
+  <div class="body">
+    <h2>Eleventy, photos in the repo, GitHub Pages.</h2>
+    <p>Eleventy 3 with the official <span class="sans">@11ty/eleventy-img</span> plugin, Nunjucks templates, one YAML file per gallery, one CSS file, about 20 lines of JavaScript for the copy button. GitHub Actions builds on every push to <span class="sans">main</span> and deploys to GitHub Pages. The custom domain and DNS stay as they are.</p>
+    <div class="tbl"><table>
+      <tr><th>Option</th><th>Verdict</th><th>Reason</th></tr>
+      <tr><td>Hand-written static HTML</td><td>No</td><td>35 images × 6 widths × 2 formats of srcset markup by hand will drift. The derivatives need a tool regardless.</td></tr>
+      <tr><td><b>Eleventy + eleventy-img</b></td><td><b>Yes</b></td><td>Outputs plain HTML, no client framework. The image plugin is maintained by the Eleventy team and handles AVIF, JPEG, widths, sizes and caching.</td></tr>
+      <tr><td>Astro</td><td>No</td><td>Good image tooling, but components, Vite and a framework upgrade cycle for a site with no interactivity.</td></tr>
+      <tr><td>Next.js</td><td>No</td><td>An application framework. Nothing here is an application.</td></tr>
+      <tr><td>Squarespace (a stripped template like Schutmaat or Iooss)</td><td>Credible fallback</td><td>Four strong references run on it. Costs about $200 a year, no code. Its galleries cannot do captions beside images, true-height pairs or per-plate phone behaviour without hand-placing every block, and Neil gives up the stack he already runs.</td></tr>
+      <tr><td>Cargo</td><td>No</td><td>Designer-friendly, but layouts are composed by hand per page and the image pipeline is opaque.</td></tr>
+      <tr><td>Keep R2 for images</td><td>No</td><td>The bucket needs a nameserver move to get CDN caching. GitHub Pages already serves from a CDN. 55 MB of masters in git is fine at this curation pace.</td></tr>
+    </table></div>
+    <h3>Repository layout</h3>
+<div class="tbl"><pre class="small" style="margin:0;font-family:var(--sans);line-height:1.6">src/
+  _data/site.yml            name, email, social links, description
+  _data/galleries/hockey.yml   ordered plates
+  _data/galleries/street.yml
+  _data/galleries/elsewhere.yml
+  _includes/base.njk         head, header, footer
+  _includes/plate.njk        one figure, any row type
+  index.njk  hockey.njk  street.njk  elsewhere.njk  about.md  contact.njk  404.njk
+  photos/hockey/*.jpg        Lightroom masters
+  css/site.css               tokens + layout, about 450 lines
+  fonts/                     newsreader-roman.woff2, schibsted.woff2
+eleventy.config.js
+.github/workflows/deploy.yml</pre></div>
+    <h3>A gallery file</h3>
+<div class="tbl"><pre class="small" style="margin:0;font-family:var(--sans);line-height:1.6">title: Hockey
+standfirst: College and NHL games at SAP Center in San Jose, 2024 to 2026.
+plates:
+  - file: hockey/DSC04395.jpg
+    row: full
+    alt: A San Jose State player in blue shoots; the puck is in the air toward the Santa Clara goaltender.
+    caption: San Jose State's No. 21 shoots on the Santa Clara goal.
+    dateline: SAP Center, San Jose. January 2026.
+    phone_alt_file: hockey/DSC04674.jpg     # optional, homepage opener only
+  - file: hockey/DSC04674.jpg
+    row: upright
+    side: center
+    ...
+  - pair:
+      - { file: hockey/DSC04314.jpg, alt: ... }
+      - { file: hockey/DSC04319.jpg, alt: ... }
+    caption: The same goal from both benches ...
+    dateline: SAP Center, San Jose. January 2026.</pre></div>
+    <h3>Publishing workflow</h3>
+    <ol>
+      <li>Export from Lightroom with the preset above into <span class="sans">src/photos/hockey/</span>.</li>
+      <li>Add or reorder the entry in <span class="sans">hockey.yml</span>: file, row, alt, caption, dateline.</li>
+      <li>Preview with <span class="sans">npx @11ty/eleventy --serve</span> (optional).</li>
+      <li>Commit and push. The site is live in about two minutes.</li>
+    </ol>
+    <p class="note">Running cost: $0 beyond the domain. GitHub Pages’ soft limit of 100 GB a month covers roughly 30,000 views of the full hockey page.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 11 -->
+<section class="s" id="keep">
+  <div class="rail"><b>11. Keep, replace, remove</b>Every file in the current repository</div>
+  <div class="body">
+    <h2>Most of it goes.</h2>
+    <div class="tbl"><table>
+      <tr><th>Item</th><th>Decision</th><th>Note</th></tr>
+      <tr><td>GitHub repo, GitHub Pages, CNAME, Namecheap DNS</td><td>Keep</td><td>Switch Pages source to GitHub Actions.</td></tr>
+      <tr><td>robots.txt, sitemap.xml, 404.html</td><td>Replace</td><td>Generated or rewritten by Eleventy.</td></tr>
+      <tr><td>index.html, about/, photography/, album.html, photo/</td><td>Replace</td><td>New templates. Old paths become redirect stubs.</td></tr>
+      <tr><td>css/tokens.css, style.css, lightbox.css, print.css</td><td>Replace</td><td>One new site.css.</td></tr>
+      <tr><td>fonts/space-grotesk-*.woff2</td><td>Remove</td><td>Replaced by Newsreader and Schibsted Grotesk.</td></tr>
+      <tr><td>js/app.js, gallery.js, hero.js, photo.js</td><td>Remove</td><td>Pages render at build time.</td></tr>
+      <tr><td>vendor/photoswipe</td><td>Remove</td><td>No lightbox.</td></tr>
+      <tr><td>catalog.json, feed.xml</td><td>Remove</td><td>No runtime catalog. A feed of curated galleries has little use.</td></tr>
+      <tr><td>scripts/build_catalog.py, build_seo.py, upload-to-r2.sh, requirements.txt</td><td>Remove</td><td>The GPS check from check_gps.py moves into the Eleventy build.</td></tr>
+      <tr><td>.github/workflows/update-catalog.yml</td><td>Remove</td><td>Replaced by deploy.yml on push. Ends the timestamp commits.</td></tr>
+      <tr><td>README, ROADMAP, ARCHITECTURE_REVIEW, IMPLEMENTATION, prompts/</td><td>Archive</td><td>Move to <span class="sans">docs/archive/</span> with a note that this proposal supersedes them. Rewrite README and CLAUDE.md for the new workflow.</td></tr>
+      <tr><td>R2 bucket and R2 secrets</td><td>Retire</td><td>Download the originals Neil wants, keep the bucket 90 days as a fallback, then delete it and the four repository secrets.</td></tr>
+      <tr><td>Upload portal, Worker, D1, nameserver migration (planned)</td><td>Cancel</td><td>Not needed for a hand-published portfolio.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<!-- ============================================================ 12 -->
+<section class="s" id="roadmap">
+  <div class="rail"><b>12. Implementation roadmap</b>About six working days of development, plus Neil’s editing time</div>
+  <div class="body">
+    <h2>Ten phases, one dependency that matters.</h2>
+    <p>Everything waits on Neil’s photo selection except the scaffolding and the design system. Development uses the current 54 images as stand-ins, labelled as such, until the final masters arrive.</p>
+    <div class="tbl"><table>
+      <tr><th class="n">#</th><th>Phase</th><th>Work</th><th class="n">Effort</th><th>Needs from Neil</th></tr>
+      <tr><td class="n">0</td><td>Selection</td><td>Neil picks 12 hockey, about 13 street, about 9 elsewhere. Exports masters. Drafts captions and alt text.</td><td class="n">Neil</td><td>Everything in section 13. Blocks phases 5 and 8.</td></tr>
+      <tr><td class="n">1</td><td>Setup</td><td>Branch, Eleventy skeleton, deploy workflow building to an Actions artifact for review, GPS check.</td><td class="n">0.5 d</td><td>None</td></tr>
+      <tr><td class="n">2</td><td>Foundations</td><td>Fonts subset and self-hosted, tokens, grid, header, footer, links and focus states, a private type and grid test page.</td><td class="n">1 d</td><td>None</td></tr>
+      <tr><td class="n">3</td><td>Gallery engine</td><td>YAML schema with validation, plate partial with five row types, image shortcode with sizes per row, anchors, index strip.</td><td class="n">1.5 d</td><td>None</td></tr>
+      <tr><td class="n">4</td><td>Pages</td><td>Home, Hockey, Street, Elsewhere, About, Contact, 404, redirect stubs.</td><td class="n">1 d</td><td>Draft About text</td></tr>
+      <tr><td class="n">5</td><td>Content</td><td>Load final masters and YAML, tune sequence and row choices against the real images.</td><td class="n">0.5 d</td><td>Final photos and captions</td></tr>
+      <tr><td class="n">6</td><td>Responsive pass</td><td>Check at 360, 390, 430, 768, 1024, 1280, 1440, 1920. Adjust per-plate phone behaviour.</td><td class="n">0.5 d</td><td>Review on his own phone</td></tr>
+      <tr><td class="n">7</td><td>Accessibility and speed</td><td>axe scan, keyboard pass, contrast check, Lighthouse on Hockey (phone profile).</td><td class="n">0.5 d</td><td>None</td></tr>
+      <tr><td class="n">8</td><td>Metadata</td><td>Titles, descriptions, Open Graph images, Person JSON-LD, sitemap. Test previews in iMessage, Slack, LinkedIn.</td><td class="n">0.5 d</td><td>Confirm descriptions</td></tr>
+      <tr><td class="n">9</td><td>Launch</td><td>Switch Pages source, merge to main, verify HTTPS and redirects, delete the catalog workflow, archive docs.</td><td class="n">0.25 d</td><td>Go-ahead</td></tr>
+    </table></div>
+    <p class="small">After launch: replace weaker hockey plates as new access comes. Add a second sport only with eight or more strong frames. Retire R2 after 90 days.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 13 -->
+<section class="s" id="content">
+  <div class="rail"><b>13. Content requirements</b>What only Neil can supply</div>
+  <div class="body">
+    <h2>Facts, photographs, decisions.</h2>
+    <h4>Must have before launch</h4>
+    <ul class="check">
+      <li>Final hockey selection, 10 to 12 frames, exported with the preset in section 9.</li>
+      <li>For each hockey frame: teams, venue, month and year, and player names only where certain.</li>
+      <li>Street selection (10 to 14) with place and year. Confirm the platform in L1002033 is London.</li>
+      <li>Elsewhere selection (6 to 10).</li>
+      <li>Alt text for every image, or approval of drafts.</li>
+      <li>One or two sentences on his hockey background, in his words: played, coached, worked in the sport, years around the game. The site will state only what he writes.</li>
+      <li>Which leagues and teams he has photographed, and from where (credentialed, stands, club access).</li>
+      <li>Confirm the line “Available for editorial and team assignments in the Bay Area” and whether he travels.</li>
+      <li>Instagram handle, if he wants it listed.</li>
+    </ul>
+    <h4>Recommended</h4>
+    <ul class="check">
+      <li>A domain address such as neil@neilkodner.com. Namecheap forwards it to Gmail for free. It reads better on a credential request.</li>
+      <li>A portrait for About, 4:5, made by someone else.</li>
+      <li>Publications, credentials or teams worked for, only if real. The About facts list has a slot that stays hidden while empty.</li>
+    </ul>
+    <h4>For the hockey portfolio over the next season</h4>
+    <ul class="check">
+      <li>Goaltender saves, tight. Faceoffs. Bench and tunnel. Warm-ups and anthem. Post-game handshake lines.</li>
+      <li>Players other than San Jose State’s No. 21, and more than one program.</li>
+      <li>Frames where the sponsor boards do not compete with the action.</li>
+      <li>One environmental portrait of a player or coach.</li>
+    </ul>
+    <p class="note">Removed from the current About page: the Airbnb day job. It reads as “hobbyist” to an editor, and LinkedIn already carries it.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 14 -->
+<section class="s" id="checklist">
+  <div class="rail"><b>14. Design quality checklist</b>Pass or fail, before launch</div>
+  <div class="body">
+    <h2>Criteria for the finished site.</h2>
+    <ul class="check">
+      <li>A stranger can say “sports photographer, hockey” within five seconds of opening the homepage on a phone.</li>
+      <li>The word Hockey is the first navigation item and appears above the fold at 390px.</li>
+      <li>The email address is reachable in one tap from every page and appears in full on Hockey.</li>
+      <li>No photograph is cropped, rounded, bordered, shadowed, filtered or overlaid with text.</li>
+      <li>No image exceeds the viewport height on any tested device.</li>
+      <li>Every hockey plate has a caption with a dateline. Every image has alt text.</li>
+      <li>Scale changes at least every second plate on Hockey. No two Full rows back to back.</li>
+      <li>Only two typefaces load. Total font weight under 130 KB.</li>
+      <li>No uppercase text anywhere. No icons. No pill, chip or badge shapes.</li>
+      <li>Lighthouse (phone) on Hockey: Performance ≥ 95, Accessibility 100, Best Practices 100, SEO 100. LCP under 2.0 s on a 4G profile. CLS 0.</li>
+      <li>All text meets WCAG 2.2 AA. Focus is visible on every interactive element. Tab order follows reading order.</li>
+      <li>The site is complete with JavaScript disabled.</li>
+      <li>Shared links show the right image and title in iMessage, Slack and LinkedIn.</li>
+      <li>Updating a gallery requires editing one YAML file and adding JPEGs. Nothing else.</li>
+      <li>Every statement about Neil on the site is one he wrote or approved.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ 15 -->
+<section class="s" id="review">
+  <div class="rail"><b>15. Design review</b>The anti-template test, answered honestly</div>
+  <div class="body">
+    <h2>What changed after the review.</h2>
+    <p>The first draft of this direction used a warm cream ground (#F1EFEA), a serif display face and a brick-red accent. That combination is one of the most common looks in generated portfolio and editorial sites. It was replaced with the cooler grey Paper and the Blueline accent, which also serve the ice better. Two other things were cut: a homepage “contents” block that duplicated the navigation, and a lightbox the large images made unnecessary.</p>
+    <div class="tbl"><table>
+      <tr><th>Question</th><th>Answer</th></tr>
+      <tr><td>Could this be mistaken for a generated site?</td><td>The risk sits in the serif-on-light-ground family. It is answered by specifics a template lacks: the grey tuned to ice, newsroom captions with datelines, hand-assigned row types, no hero text over images, no cards, no capitals, no icons.</td></tr>
+      <tr><td>Does it rely on landing-page patterns?</td><td>No centred headline, no button, no feature cards, no testimonials. The only call to action is an email address in a sentence.</td></tr>
+      <tr><td>Does the typography feel chosen?</td><td>Both faces come from news publishing, which is the world an editor works in. Each has one job.</td></tr>
+      <tr><td>Do the photographs lead?</td><td>The first screen is 60 percent photograph on desktop and 70 percent on a phone. Type never sits on an image.</td></tr>
+      <tr><td>Is the homepage interesting without decoration?</td><td>Its interest comes from composition: text bottom-aligned to a photograph, mirrored previews, a change of scale at Elsewhere.</td></tr>
+      <tr><td>Does the gallery feel curated?</td><td>Each plate has a stated reason for its position (section 9). Pairs exist only where frames share a moment.</td></tr>
+      <tr><td>Memorable?</td><td>The datelined captions and the grey ground are the signature. Quietly specific, not loud.</td></tr>
+      <tr><td>Credible to an editor or media relations director?</td><td>Hockey first, teams and venues named, an index, the email in full. It looks like someone who knows how pictures get filed.</td></tr>
+      <tr><td>Broader identity?</td><td>Street has its own slower page with equal craft. Elsewhere shows range at a smaller scale.</td></tr>
+      <tr><td>Will it hold up in five years?</td><td>Nothing in it is fashionable. Newsreader, a grey ground and a 12-column grid aged well in print for decades.</td></tr>
+      <tr><td>Is every component justified?</td><td>Header, plate, index, assignment line, footer. Five components. The copy button is the only script.</td></tr>
+      <tr><td>Could something simpler work?</td><td>Plate alone is simpler and fails editors. Removing captions would remove the main credibility signal. This is the smallest version that does both jobs.</td></tr>
+      <tr><td>Anything added because sites are expected to have it?</td><td>Dark mode, a lightbox, a newsletter, a feed, a blog, a hamburger menu and scroll animations were each considered and left out.</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<footer class="end">
+  <span>Prepared for Neil Kodner. Photographs © Neil Kodner. Reference screenshots © their owners, used for critique.</span>
+  <span class="copybox">Source: branch claude/neilkodner-redesign-3y4fog, docs/redesign/</span>
+</footer>
+</div>
+</body>
+</html>
