@@ -24,6 +24,11 @@ Node 20+. No client-side framework; the only script is `src/js/copy.js`.
 - Photographs are never cropped, rounded, bordered, shadowed or overlaid with text.
   No image taller than the viewport. No all-caps text, icons, cards, lightbox or scroll animation.
 
+## History
+
+`docs/archive/` describes the previous R2/catalog site. It is history only; never use it as a guide to
+the current code. `docs/redesign/` holds the brief, the proposal and a list of where the build differs.
+
 ## Generated, do not edit
 
 - `_site/` (build output, gitignored)

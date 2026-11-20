@@ -1,10 +1,27 @@
 # neilkodner.com
 
-Photography portfolio of Neil Kodner. A static site built with [Eleventy](https://www.11ty.dev/)
-and deployed to GitHub Pages by GitHub Actions on every push to `main`.
+Photography portfolio of Neil Kodner, live at [neilkodner.com](https://neilkodner.com).
+A static site built with [Eleventy](https://www.11ty.dev/) and deployed to GitHub Pages by
+GitHub Actions on every push to `main`. No server, no database, no scheduled jobs.
 
-The design rationale, research and roadmap are in [`docs/redesign/`](docs/redesign/index.html).
-The previous R2 + catalog setup is documented in [`docs/archive/`](docs/archive/).
+## The site
+
+| Page | What |
+|---|---|
+| `/` | Opening hockey photograph, a one-line introduction, previews of Hockey, Street and Elsewhere, and the assignment contact |
+| `/hockey/` | The main portfolio: 12 photographs, hand-sequenced, with datelined captions |
+| `/street/` | Street and travel together: 13 photographs, slower pacing, place and date only |
+| `/elsewhere/` | Aviation, birds and the coast. Linked from home and the footer, not the main navigation |
+| `/about/`, `/contact/` | Short biography with a facts list, and the email address |
+
+Navigation is Hockey, Street, About, Contact. The design (called "Dateline") uses a grey
+ground tuned for white ice, Newsreader for text and Schibsted Grotesk for captions and
+navigation. The full rationale, research and design system are in
+[`docs/redesign/`](docs/redesign/), along with the [original brief](docs/redesign/brief.md)
+and a list of where the build differs from the proposal.
+
+The previous site (R2 bucket, `catalog.json`, slideshow, lightbox) is described in
+[`docs/archive/`](docs/archive/) for history only. None of it applies to the current code.
 
 ## Publishing photos
 
@@ -47,7 +64,7 @@ several widths. Later builds reuse them.
 
 | Path | What |
 |---|---|
-| `src/_data/site.yml` | Name, email, social links, navigation |
+| `src/_data/site.yml` | Name, email, LinkedIn link, navigation |
 | `src/_data/galleries/*.yml` | Photo order, captions, alt text |
 | `src/index.njk` | Homepage (its photos are chosen in this file) |
 | `src/about.njk`, `src/contact.njk` | About and Contact text |
@@ -55,3 +72,20 @@ several widths. Later builds reuse them.
 | `src/_includes/` | Page shell, gallery layout, assignment band |
 | `src/_data/redirects.yml` | Old URLs that forward to new pages |
 | `eleventy.config.js` | Image sizes, plate numbering, GPS check |
+| `.github/workflows/deploy.yml` | Build and deploy on push to `main` |
+
+## Deployment
+
+In the repository's Settings → Pages, Source must be set to **GitHub Actions**. Each push to
+`main` runs `deploy.yml`, which builds the site and publishes `_site/`. Resized images are
+cached between runs, so a deploy without new photos takes about two minutes end to end.
+
+## Open items
+
+- The launch photos are 2000 px placeholders copied from the old R2 bucket. Replace them with
+  3000 px Lightroom exports.
+- `confirm:` notes in `src/_data/galleries/*.yml` list facts still to check (mostly venues and
+  opponents). They never appear on the site.
+- `src/about.njk` has a TODO for a sentence about hockey background.
+- The old R2 bucket and its four repository secrets can be deleted once the bucket is no longer
+  needed as a backup.

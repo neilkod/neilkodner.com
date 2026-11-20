@@ -1,3 +1,6 @@
+> **Archived. This describes the previous site, which was replaced in November 2026.**
+> It does not match the current code. See the [current README](../../README.md) and [`docs/redesign/`](../redesign/).
+
 # Implementation spec
 
 Executable companion to [`ARCHITECTURE_REVIEW.md`](ARCHITECTURE_REVIEW.md). That document

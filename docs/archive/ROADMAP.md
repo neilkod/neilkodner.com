@@ -1,3 +1,6 @@
+> **Archived. This describes the previous site, which was replaced in November 2026.**
+> It does not match the current code. See the [current README](../../README.md) and [`docs/redesign/`](../redesign/).
+
 # Roadmap
 
 Forward-looking plan based on the performance/UX audit of 2026-06-11. Each phase is

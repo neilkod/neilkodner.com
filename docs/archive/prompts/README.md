@@ -1,3 +1,6 @@
+> **Archived. This describes the previous site, which was replaced in November 2026.**
+> It does not match the current code. See the [current README](../../../README.md) and [`docs/redesign/`](../../redesign/).
+
 # Prompts
 
 This directory is a build log — each file is the prompt used to construct a feature of the site in a Claude Code session, in order.
