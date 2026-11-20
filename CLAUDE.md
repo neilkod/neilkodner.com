@@ -26,8 +26,9 @@ Node 20+. No client-side framework; the only script is `src/js/copy.js`.
 
 ## History
 
-`docs/archive/` describes the previous R2/catalog site. It is history only; never use it as a guide to
-the current code. `docs/redesign/` holds the brief, the proposal and a list of where the build differs.
+The previous R2/catalog site and its docs were removed; commit `8869580` is its last version. Never use
+it as a guide to the current code. `docs/redesign/` holds the brief, the proposal and a list of where
+the build differs.
 
 ## Generated, do not edit
 

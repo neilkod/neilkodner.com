@@ -23,6 +23,8 @@ The Dateline design is built and live at [neilkodner.com](https://neilkodner.com
 | About with a portrait and a sentence on hockey background | No portrait yet. The hockey background sentence is a TODO in `src/about.njk`. |
 | Fonts under 130 KB total | 167 KB total, almost all of it Newsreader (variable, two axes). |
 | A domain email such as neil@neilkodner.com | Not set up. The site uses the existing Gmail address. |
+| Old docs and build prompts moved to `docs/archive/` | Removed from the repo. Commit `8869580` holds the last version of the old site and its docs. |
+| Update Catalog workflow deleted | Deleted, along with every script and file it maintained. Its four R2 secrets are still in the repo settings. |
 
 ### Still to do
 

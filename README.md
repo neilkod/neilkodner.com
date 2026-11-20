@@ -20,8 +20,10 @@ navigation. The full rationale, research and design system are in
 [`docs/redesign/`](docs/redesign/), along with the [original brief](docs/redesign/brief.md)
 and a list of where the build differs from the proposal.
 
-The previous site (R2 bucket, `catalog.json`, slideshow, lightbox) is described in
-[`docs/archive/`](docs/archive/) for history only. None of it applies to the current code.
+The previous site (R2 bucket, `catalog.json`, slideshow, lightbox) and its documentation were
+removed. They survive in git history: commit
+[`8869580`](https://github.com/neilkod/neilkodner.com/tree/8869580) is the last version of the
+old site, with its README, ROADMAP, architecture review and build prompts.
 
 ## Publishing photos
 
