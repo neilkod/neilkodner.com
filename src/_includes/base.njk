@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  {%- set pageTitle = (title + " · " + site.name) if title else (site.name + ", " + site.role) %}
+  {%- set pageDesc = description or site.description %}
+  <title>{{ pageTitle }}</title>
+  <meta name="description" content="{{ pageDesc }}">
+  <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+  {%- if noindex %}<meta name="robots" content="noindex">{% endif %}
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ site.name }}">
+  <meta property="og:title" content="{{ pageTitle }}">
+  <meta property="og:description" content="{{ pageDesc }}">
+  <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+  {%- if ogPhoto %}
+  <meta property="og:image" content="{{ site.url }}{{ ogPhoto | ogImage }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  {%- endif %}
+
+  <link rel="preload" href="/fonts/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/site.css">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+
+  {%- if page.url == "/" %}
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Person","name":"{{ site.name }}","jobTitle":"Photographer","url":"{{ site.url }}","email":"mailto:{{ site.email }}","address":{"@type":"PostalAddress","addressLocality":"Los Gatos","addressRegion":"CA","addressCountry":"US"},"sameAs":[{% if site.instagram %}"https://www.instagram.com/{{ site.instagram }}/",{% endif %}"{{ site.linkedin }}"]}
+  </script>
+  {%- endif %}
+</head>
+<body class="{{ bodyClass }}">
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap grid">
+      <a class="wordmark" href="/"{% if page.url == "/" %} aria-current="page"{% endif %}>{{ site.name }}<span>{{ site.role }}</span></a>
+      <nav class="nav" aria-label="Main">
+        <ul>
+        {%- for item in site.nav %}
+          <li><a href="{{ item.url }}"{% if page.url == item.url %} aria-current="page"{% endif %}>{{ item.title }}</a></li>
+        {%- endfor %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    {{ content | safe }}
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap grid">
+      <p class="f-id">{{ site.name }}, photographer. {{ site.location }}.</p>
+      <ul class="f-links">
+        <li><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
+        {%- if site.instagram %}<li><a href="https://www.instagram.com/{{ site.instagram }}/">Instagram</a></li>{% endif %}
+        <li><a href="{{ site.linkedin }}">LinkedIn</a></li>
+        <li><a href="/elsewhere/">Elsewhere</a></li>
+      </ul>
+      <p class="f-copy">© {{ "" | year }} {{ site.name }}. Photographs may not be reproduced without permission.</p>
+    </div>
+  </footer>
+  <script src="/js/copy.js" defer></script>
+</body>
+</html>

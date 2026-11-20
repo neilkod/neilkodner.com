@@ -1,0 +1,36 @@
+# Elsewhere: aviation, birds, the coast. Shown as justified rows,
+# so `row` is ignored here. Order still matters.
+
+title: Elsewhere
+slug: elsewhere
+standfirst: Aviation, birds and the California coast.
+mobile: inset
+
+plates:
+  - file: elsewhere/dsc01346.jpg
+    alt: Four USAF Thunderbirds F-16s fly in tight diamond formation, trailing smoke.
+    dateline: USAF Thunderbirds. June 2025.
+  - file: elsewhere/dsc00933.jpg
+    alt: Two pilots in an open-canopy jet give a wave before taxiing.
+    dateline: June 2025.
+  - file: elsewhere/dsc01583.jpg
+    alt: Five Thunderbirds jets climb in formation against a blue sky, smoke trails behind them.
+    dateline: USAF Thunderbirds. June 2025.
+  - file: elsewhere/dsc08111.jpg
+    alt: A double-crested cormorant spreads its wings to dry on a branch over brown water.
+    dateline: Cormorant. February 2026.
+  - file: elsewhere/dsc08948.jpg
+    alt: A duck on a concrete ledge shakes water from its bill, droplets in the air.
+    dateline: February 2026.
+  - file: elsewhere/dsc09360.jpg
+    alt: The Golden Gate Bridge seen through a chain-link fence hung with padlocks at dusk.
+    dateline: Golden Gate Bridge, San Francisco. March 2026.
+  - file: elsewhere/l1000106.jpg
+    alt: Sea foam on wet sand catches the last of the sunset light.
+    dateline: December 2025.
+  - file: elsewhere/l1000347.jpg
+    alt: The pilings of a pier silhouetted against an orange sunset, reflected on wet sand.
+    dateline: December 2025.
+  - file: elsewhere/dji_20260427193101_0006_d.jpg
+    alt: Two tennis courts seen from directly above, blue and green among trees.
+    dateline: April 2026.

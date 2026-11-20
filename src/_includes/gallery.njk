@@ -1,0 +1,46 @@
+---
+layout: base.njk
+---
+{%- set g = galleries[gallery] %}
+{%- set plates = g.plates | numberPlates %}
+<div class="gallery gallery--{{ g.slug }} mobile-{{ g.mobile }}">
+  <header class="wrap grid g-head">
+    <h1>{{ g.title }}</h1>
+    <div class="standfirst">
+      <p>{{ g.standfirst }}</p>
+      <p class="g-meta">{{ g.plates | plateCount }} photographs · <a href="#index">Index</a>{% if g.slug == "hockey" %} · <a href="#assignments">Contact for assignments</a>{% endif %}</p>
+    </div>
+  </header>
+
+  <div class="wrap plates">
+  {%- asyncEach p in plates %}
+    <figure class="plate row-{{ p.row }} side-{{ p.side or 'none' }}" id="{{ p.anchor }}" style="--r:{{ p.r }}">
+      {%- if p.row == "pair" %}
+      <div class="plate-img pair">
+        {%- asyncEach ph in p.photos %}{% pairPhoto ph.file, ph.alt, ph.share %}{% endeach %}
+      </div>
+      {%- else %}
+      <div class="plate-img">{% photo p.photos[0].file, p.photos[0].alt, p.row, (p.anchor == "1") %}</div>
+      {%- endif %}
+      <figcaption class="cap"><span class="pn">{{ p.num }}</span> {% if p.caption %}<span class="ct">{{ p.caption }}</span> {% endif %}<b class="dl">{{ p.dateline }}</b></figcaption>
+    </figure>
+  {%- endeach %}
+  </div>
+
+  <section class="wrap index" id="index" aria-labelledby="index-h">
+    <h2 id="index-h" class="index-h">Index</h2>
+    <ol class="index-list">
+    {%- asyncEach p in plates %}
+      {%- asyncEach ph in p.photos %}
+      <li><a href="#{{ p.anchor }}" style="--r:{{ ph.r }}">{% thumb ph.file, ph.alt %}<span class="pn">{{ p.num }}</span></a></li>
+      {%- endeach %}
+    {%- endeach %}
+    </ol>
+  </section>
+
+  {%- if g.slug == "hockey" %}
+  {% include "assignments.njk" %}
+  {%- else %}
+  <p class="wrap next">{% if g.slug == "street" %}Next: <a href="/elsewhere/">Elsewhere</a>, aviation, birds and the coast.{% endif %}</p>
+  {%- endif %}
+</div>

@@ -5,3 +5,7 @@
 *.jpg binary
 *.png binary
 *.svg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.woff2 binary

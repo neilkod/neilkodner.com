@@ -1,0 +1,30 @@
+---
+layout: base.njk
+title: Elsewhere
+description: Aviation, birds and the California coast, photographed by Neil Kodner.
+ogPhoto: elsewhere/dsc01346.jpg
+permalink: /elsewhere/
+bodyClass: page-elsewhere
+---
+{%- set g = galleries.elsewhere %}
+{%- set plates = g.plates | numberPlates %}
+<div class="gallery gallery--elsewhere">
+  <header class="wrap grid g-head">
+    <h1>{{ g.title }}</h1>
+    <div class="standfirst">
+      <p>{{ g.standfirst }}</p>
+      <p class="g-meta">{{ g.plates | plateCount }} photographs</p>
+    </div>
+  </header>
+  <div class="wrap">
+    <div class="justified">
+    {%- asyncEach p in plates %}
+      <figure class="j-item" id="{{ p.anchor }}" style="--r:{{ p.r }}">
+        {% photo p.photos[0].file, p.photos[0].alt, "small" %}
+        <figcaption class="cap"><span class="pn">{{ p.num }}</span> <b class="dl">{{ p.dateline }}</b></figcaption>
+      </figure>
+    {%- endeach %}
+    </div>
+  </div>
+  <p class="wrap next">Back to <a href="/hockey/">Hockey</a> or <a href="/street/">Street</a>.</p>
+</div>

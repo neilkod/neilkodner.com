@@ -1,0 +1,84 @@
+# Street sequence. Street and travel live together here.
+# Captions are place and date only. Same row types as hockey.yml.
+
+title: Street
+slug: street
+standfirst: San Francisco, Seattle, Chicago, New York and London, 2024 to 2026.
+mobile: inset
+
+plates:
+  - row: wide
+    side: center
+    file: street/dsc09057.jpg
+    alt: A man in black walks across a Chinatown street under strings of red lanterns.
+    dateline: Chinatown, San Francisco. March 2026.
+
+  - row: upright
+    side: center
+    file: street/dsc09116.jpg
+    alt: A silhouetted figure walks through a dark hall toward bright windows, hanging globe lamps above.
+    dateline: San Francisco. March 2026.
+    confirm: Exact place.
+
+  - row: wide
+    side: center
+    file: street/dsc09890.jpg
+    alt: Through a ferry's rounded windows, a lone passenger sits in a warm-lit cabin against the blue evening.
+    dateline: Ferry, Seattle. April 2026.
+
+  - row: upright
+    side: center
+    file: street/l1000716.jpg
+    alt: Looking down into the white ribbed hall of the Oculus, crowds crossing the floor below.
+    dateline: The Oculus, New York. August 2024.
+
+  - row: wide
+    side: center
+    file: street/dsc09190.jpg
+    alt: Black and white. A cyclist rides along the waterfront railing with the Bay Bridge behind under heavy clouds.
+    dateline: The Embarcadero, San Francisco. March 2026.
+
+  - row: wide
+    side: center
+    file: street/l1011730.jpg
+    alt: The red Wrigley Field marquee seen through red petunias in the foreground.
+    dateline: Wrigley Field, Chicago. July 2025.
+
+  - row: pair
+    photos:
+      - file: street/l1011688.jpg
+        alt: A man with a backpack waits on a Chicago L platform as a silver train blurs past.
+      - file: street/l1002033.jpg
+        alt: Black and white. A woman checks her phone as a Northern line train blurs into Old Street station.
+    dateline: Chicago, July 2025. Old Street, London, May 2025.
+
+  - row: upright
+    side: center
+    file: street/l1011672.jpg
+    alt: The Chicago Theatre's vertical sign glows at night above a manhole cover in the street.
+    dateline: State Street, Chicago. July 2025.
+
+  - row: wide
+    side: center
+    file: street/l1000632.jpg
+    alt: Black and white. A baker works behind trays of fresh bagels.
+    dateline: New York. August 2024.
+
+  - row: wide
+    side: center
+    file: street/dsc09829.jpg
+    alt: Black and white. The Public Market Center sign and clock above wet cobblestones.
+    dateline: Pike Place Market, Seattle. April 2026.
+
+  - row: wide
+    side: center
+    file: street/l1000247.jpg
+    alt: A silhouetted figure with arms outstretched stands among glowing red geometric sculptures at night.
+    dateline: December 2025.
+    confirm: Place.
+
+  - row: coda
+    file: street/dsc03881.jpg
+    alt: Silhouettes of four people on a hill against an orange sunset, one taking a photo with a phone.
+    dateline: November 2025.
+    confirm: Place.

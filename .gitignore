@@ -1,8 +1,7 @@
-# Python
-__pycache__/
-*.py[cod]
-.venv/
-venv/
+# Build
+node_modules/
+_site/
+.cache/
 
 # OS
 .DS_Store

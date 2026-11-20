@@ -1,0 +1,14 @@
+name: Neil Kodner
+role: Photographer
+url: https://neilkodner.com
+location: Los Gatos, California
+email: nkodner@gmail.com
+description: Neil Kodner is a photographer in Los Gatos, California. Hockey, street photography, and the cities he passes through.
+# Leave empty to hide. Add the handle without @ when ready.
+instagram: ""
+linkedin: https://www.linkedin.com/in/neilkodner
+nav:
+  - { title: Hockey, url: /hockey/ }
+  - { title: Street, url: /street/ }
+  - { title: About, url: /about/ }
+  - { title: Contact, url: /contact/ }

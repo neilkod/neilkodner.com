@@ -1,0 +1,10 @@
+# Old URLs from the previous site. GitHub Pages has no server-side
+# redirects, so each becomes a small page with a meta refresh.
+- { from: /photography/, to: / }
+- { from: /photography/hockey/select-images/, to: /hockey/ }
+- { from: /photography/places/new-york-city/, to: /street/ }
+- { from: /photography/places/seattle/, to: /street/ }
+- { from: /photography/aviation/usaf-thunderbirds/, to: /elsewhere/ }
+- { from: /photography/aviation/other/, to: /elsewhere/ }
+- { from: /album.html, to: / }
+- { from: /photo/, to: / }

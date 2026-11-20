@@ -1,0 +1,52 @@
+---
+layout: base.njk
+ogPhoto: hockey/dsc04395.jpg
+permalink: /
+bodyClass: page-home
+---
+{#- Homepage. Photos are chosen here by hand, not pulled from the galleries automatically. -#}
+<section class="wrap grid h-open" aria-label="Introduction">
+  <div class="h-lede">
+    <h1 class="lede">Neil Kodner is a photographer in Los Gatos, California. He photographs hockey, and the cities he passes through.</h1>
+    <p class="h-avail">Available for editorial and team assignments. <a href="/hockey/">See the hockey work</a></p>
+  </div>
+  <figure class="h-photo">
+    {% opener "hockey/dsc04395.jpg", "A San Jose State player in blue and gold shoots. The puck is in the air, heading for the Santa Clara goaltender in the foreground.", "hockey/dsc04674.jpg" %}
+    <figcaption class="cap"><b class="dl">San Jose State vs. Santa Clara, San Jose.</b> January 2026.</figcaption>
+  </figure>
+</section>
+
+<section class="wrap grid h-hockey" aria-labelledby="h-hockey">
+  <div class="h-label">
+    <h2 id="h-hockey"><a href="/hockey/">Hockey</a></h2>
+    <p>College and NHL hockey in San Jose, 2024 to 2026.</p>
+    <p class="more"><a href="/hockey/">{{ galleries.hockey.plates | plateCount }} photographs</a></p>
+  </div>
+  <a class="h-hk-a" href="/hockey/#2" aria-label="Hockey, photograph 2">{% photo "hockey/dsc04674.jpg", "A San Jose State player, number 15, follows through on a slapshot.", "preview" %}</a>
+  <a class="h-hk-b" href="/hockey/#4" aria-label="Hockey, photographs 4 and 5">{% photo "hockey/dsc04314.jpg", "A Santa Clara player in white and red looks away while San Jose State players celebrate behind him.", "(min-width: 1100px) 22vw, 60vw" %}</a>
+  <a class="h-hk-c" href="/hockey/#6" aria-label="Hockey, photograph 6">{% photo "hockey/dscf0958.jpg", "SAP Center seen from the upper deck during a Sharks game, fans standing with arms raised in the foreground.", "full" %}</a>
+</section>
+
+<section class="wrap grid h-street" aria-labelledby="h-street">
+  <a class="h-st-a" href="/street/#1" aria-label="Street, photograph 1">{% photo "street/dsc09057.jpg", "A man in black walks across a Chinatown street under strings of red lanterns.", "wide" %}</a>
+  <a class="h-st-b" href="/street/#2" aria-label="Street, photograph 2">{% photo "street/dsc09116.jpg", "A silhouetted figure walks through a dark hall toward bright windows, hanging globe lamps above.", "upright" %}</a>
+  <div class="h-label">
+    <h2 id="h-street"><a href="/street/">Street</a></h2>
+    <p>San Francisco, Seattle, Chicago, New York and London.</p>
+    <p class="more"><a href="/street/">{{ galleries.street.plates | plateCount }} photographs</a></p>
+  </div>
+</section>
+
+<section class="wrap grid h-else" aria-labelledby="h-else">
+  <div class="h-label">
+    <h2 id="h-else"><a href="/elsewhere/">Elsewhere</a></h2>
+    <p>Aviation, birds and the coast. <a href="/elsewhere/">{{ galleries.elsewhere.plates | plateCount }} photographs</a></p>
+  </div>
+  <div class="h-else-row">
+    <a href="/elsewhere/#1" style="--r:{{ 'elsewhere/dsc01346.jpg' | ratio }}">{% photo "elsewhere/dsc01346.jpg", "Four USAF Thunderbirds F-16s fly in tight diamond formation, trailing smoke.", "small" %}</a>
+    <a href="/elsewhere/#4" style="--r:{{ 'elsewhere/dsc08111.jpg' | ratio }}">{% photo "elsewhere/dsc08111.jpg", "A double-crested cormorant spreads its wings to dry on a branch over brown water.", "small" %}</a>
+    <a href="/elsewhere/#6" style="--r:{{ 'elsewhere/dsc09360.jpg' | ratio }}">{% photo "elsewhere/dsc09360.jpg", "The Golden Gate Bridge seen through a chain-link fence hung with padlocks at dusk.", "small" %}</a>
+  </div>
+</section>
+
+{% include "assignments.njk" %}

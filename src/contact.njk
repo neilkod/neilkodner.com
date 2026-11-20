@@ -1,0 +1,19 @@
+---
+layout: base.njk
+title: Contact
+description: Contact Neil Kodner about hockey assignments and editorial work.
+permalink: /contact/
+bodyClass: page-contact
+---
+<div class="wrap grid contact">
+  <h1>Contact</h1>
+  <div class="contact-body">
+    <p class="contact-mail"><a class="big-mail" href="mailto:{{ site.email }}">{{ site.email }}</a></p>
+    <p><button class="copy" type="button" data-copy="{{ site.email }}">Copy address</button></p>
+    <p class="contact-note">For an assignment, include the date, the venue and your deadline. I’m based in Los Gatos, California, on Pacific time.</p>
+    <ul class="contact-links">
+      {%- if site.instagram %}<li><a href="https://www.instagram.com/{{ site.instagram }}/">Instagram</a></li>{% endif %}
+      <li><a href="{{ site.linkedin }}">LinkedIn</a></li>
+    </ul>
+  </div>
+</div>

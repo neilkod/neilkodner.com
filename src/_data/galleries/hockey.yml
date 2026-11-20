@@ -1,0 +1,91 @@
+# Hockey sequence. Order here is the order on the page.
+#
+# row:  full     one photo across the whole grid
+#       wide     horizontal across 9 columns, caption beside it (side: left | right)
+#       upright  vertical in 4 columns, caption beside it (side: center | right)
+#       pair     two photos from one moment, same height, one caption
+#       coda     last plate, centered
+#
+# `confirm:` notes are for Neil and never appear on the site.
+# Dates come from the original files' capture dates.
+
+title: Hockey
+slug: hockey
+standfirst: College and NHL hockey in San Jose, 2024 to 2026.
+mobile: bleed
+
+plates:
+  - row: full
+    file: hockey/dsc04395.jpg
+    alt: A San Jose State player in blue and gold shoots. The puck is in the air, heading for the Santa Clara goaltender in the foreground.
+    caption: A San Jose State forward shoots on the Santa Clara goaltender.
+    dateline: San Jose. January 2026.
+    confirm: Venue (SAP Center?) and player name if wanted.
+
+  - row: upright
+    side: center
+    file: hockey/dsc04674.jpg
+    alt: A San Jose State player, number 15, follows through on a slapshot.
+    caption: A San Jose State player takes a slapshot.
+    dateline: San Jose. November 2024.
+    confirm: Opponent and venue.
+
+  - row: wide
+    side: left
+    file: hockey/dsc02573.jpg
+    alt: Players crowd the crease while the San Jose State goaltender lies on the ice covering the puck.
+    caption: A scramble in front of the San Jose State goal.
+    dateline: October 2025.
+    confirm: Opponent and rink.
+
+  - row: pair
+    photos:
+      - file: hockey/dsc04314.jpg
+        alt: A Santa Clara player in white and red looks away while San Jose State players celebrate behind him.
+      - file: hockey/dsc04319.jpg
+        alt: San Jose State players gather near the boards after a goal as a Santa Clara player skates past.
+    caption: One goal, two benches. A Santa Clara player skates off as San Jose State celebrates.
+    dateline: San Jose. January 2026.
+
+  - row: full
+    file: hockey/dscf0958.jpg
+    alt: SAP Center seen from the upper deck during a Sharks game, fans standing with arms raised in the foreground.
+    caption: The Sharks at home, from the upper deck.
+    dateline: SAP Center, San Jose. December 2024.
+
+  - row: upright
+    side: right
+    file: hockey/dsc04254.jpg
+    alt: A San Jose State player leans into a shot along the boards, with fans in the seats above.
+    caption: A San Jose State player shoots, with the crowd above the boards.
+    dateline: San Jose. January 2026.
+
+  - row: pair
+    photos:
+      - file: hockey/dsc05875.jpg
+        alt: Two San Jose State players embrace after a goal while a teammate raises his stick.
+      - file: hockey/dsc05897.jpg
+        alt: A group of San Jose State players huddle together celebrating.
+    caption: A goal celebrated in two beats, the embrace and then the pile.
+    dateline: February 2025.
+    confirm: Opponent and venue.
+
+  - row: wide
+    side: right
+    file: hockey/dsc04505.jpg
+    alt: The San Jose State goaltender and a teammate stand together by the boards during a stoppage.
+    caption: The San Jose State goaltender and a teammate during a stoppage.
+    dateline: San Jose. January 2026.
+
+  - row: full
+    file: hockey/dscf0880.jpg
+    alt: A Sharks player in teal skates past the boards with his arm raised as the crowd behind the glass stands and cheers.
+    caption: A Sharks player celebrates in front of the home crowd.
+    dateline: SAP Center, San Jose. November 2024.
+
+  - row: coda
+    file: hockey/l1000452.jpg
+    alt: Black and white. A man in the stands films the game on his phone, the rink spread out below him.
+    caption: A fan films the game from the stands.
+    dateline: March 2026.
+    confirm: Which game and arena.
