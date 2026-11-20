@@ -385,6 +385,16 @@ button.copy:hover { border-color: var(--blueline); color: var(--blueline); }
 .about, .contact { margin-top: var(--s-top); }
 .about-body, .contact-body { margin-top: 28px; }
 .about-body p { max-width: 34em; margin: 0 0 16px; }
+.about-more { margin-top: 44px; }
+.about-more a { white-space: nowrap; }
+.about-more h2 {
+  font-size: 24px; font-weight: 400; line-height: 1.15; letter-spacing: -0.005em;
+  font-variation-settings: "opsz" 36; margin: 0 0 12px;
+}
+@media (min-width: 1100px) {
+  .about-more { margin-top: 56px; }
+  .about-more h2 { font-size: 28px; margin-bottom: 14px; }
+}
 .facts {
   display: grid; grid-template-columns: minmax(110px, 30%) minmax(0, 1fr); gap: 8px 16px;
   font-family: var(--sans); font-size: 14.5px; line-height: 1.5;
